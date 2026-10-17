@@ -4,14 +4,22 @@
 
 ## Files
 
-- `NeCosmos_v05.html` — 最新プロトタイプ。知恵ネコ、環境提案、死因統計などを含みます。
-- `NeCosmos_v04.html` — V0.4 prototype.
-- `NeCosmos_v033.html` — V0.3.3 prototype.
-- `NeCosmos_引継ぎ資料.md` — 新規プロジェクト向けの引継ぎ資料。
+- `public/index.html` — Cloudflare Workerで配信するV0.5
+- `NeCosmos_v05.html` — V0.5の保管用原本
+- `NeCosmos_v04.html` — V0.4 prototype
+- `NeCosmos_v033.html` — V0.3.3 prototype
+- `NeCosmos_引継ぎ資料.md` — 新規プロジェクト向けの引継ぎ資料
+- `wrangler.jsonc` — Workerの静的アセット設定
 
-## Run
+## Cloudflare Workers deployment
 
-HTMLファイルをダウンロードし、SafariまたはChromeで開いてください。ブラウザのローカルストレージに世界のデータを保存します。
+Cloudflare Workers Buildsのデプロイコマンドは `npx wrangler deploy` です。`wrangler.jsonc` が `public/` を静的ファイルの配信元に指定します。Workerの名前をCloudflareダッシュボードで変更した場合は、`wrangler.jsonc` の `name` も同じ値にしてください。
+
+カスタムドメインはWorkerの **Settings → Domains & Routes** から追加できます。例: `necosmos.mikaspark.com`。
+
+## Run locally
+
+`public/index.html` をSafariまたはChromeで開いてください。世界データはブラウザのローカルストレージに保存されます。
 
 ## Notes
 
