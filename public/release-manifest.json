@@ -654,12 +654,12 @@
       "sha256": "f51bfcb732a4233127f48560b367bcbc70d2c897153060421ac8d7fd9d8fc535"
     },
     "index.html": {
-      "bytes": 8889,
-      "sha256": "97828461c19f56f1e05d81e1b975d2824b18e848240579551949e2f5d0ba8dd6"
+      "bytes": 11005,
+      "sha256": "0370ae9f3557dfa8c56e8bca9b6b016a93c729597d778f1f0ec14fa264caed2b"
     },
     "js/main.js": {
-      "bytes": 20819,
-      "sha256": "03315efe652c51f7db4a3c6f8a46cdac0d7630e690583d5b7db411437a21fba2"
+      "bytes": 23060,
+      "sha256": "d44fe76c3897d0acdc14a77e9471285c95ecbd768552b38d33a1aa34ccd85298"
     },
     "js/render.js": {
       "bytes": 14835,

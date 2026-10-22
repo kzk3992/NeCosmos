@@ -71,6 +71,35 @@ function kiwiIncome(st) {
 // ------------------------------------------------------------------ simulation control
 async function waitIdle() { while (app.busy) await new Promise((r) => setTimeout(r, 30)); }
 function readMeta() { try { const m = JSON.parse(localStorage.getItem(META_KEY) || "null"); return m && typeof m === "object" ? m : null; } catch { return null; } }
+let resumeAfterWorldDialog = false;
+
+function openWorldDialog() {
+  if (!app.ready || !app.state) return;
+  resumeAfterWorldDialog = app.running;
+  app.running = false;
+  stopModes();
+  $("worldError").textContent = "";
+  if ($("extinctionDialog").open) $("extinctionDialog").close();
+  if (!$("newWorldDialog").open) $("newWorldDialog").showModal();
+  refreshAll();
+}
+
+function notifyExtinction(st, force = false) {
+  if (Object.values(st.counts).some((n) => n > 0)) {
+    if (app.ending?.kind === "extinct") app.ending = null;
+    return;
+  }
+  if (app.ending && !force) return;
+  if (!app.ending) {
+    app.ending = { day: st.day, kind: "extinct" };
+    log(st.day, "最後の猫が姿を消した。世界の記録として残ります（観察は続けられます）。", "milestone");
+  }
+  app.running = false;
+  resumeAfterWorldDialog = false;
+  if ($("newWorldDialog").open) $("newWorldDialog").close();
+  $("extinctionDescription").textContent = `${st.day}日目。最後の猫が姿を消し、この世界の猫は0匹になりました。`;
+  if (!$("extinctionDialog").open) $("extinctionDialog").showModal();
+}
 
 async function newWorld(params) {
   app.running = false;
@@ -79,6 +108,10 @@ async function newWorld(params) {
   app.busy = true;
   let st;
   try { st = await app.engine.call("new", params); } finally { app.busy = false; }
+  resumeAfterWorldDialog = false;
+  $("newWorldDialog").close();
+  $("extinctionDialog").close();
+  stopModes();
   app.params = params;
   for (const k of ["terrain", "climate", "composition", "seed"]) if (params[k] != null) $(k).value = params[k];
   app.kiwi = 80; app.history = []; app.evaluations = []; app.log = []; app.ending = null;
@@ -115,12 +148,7 @@ function applyStep(st, before) {
     if (e.kind === "wisdom") log(e.day, wisdomText(e.detail), "wisdom");
     else if (e.detail.startsWith("extinct:")) log(e.day, `${SPECIES_JP[e.detail.split(":")[1]] || e.detail}がいなくなった。`, "turn");
   }
-  const total = Object.values(st.counts).reduce((a, b) => a + b, 0);
-  if (total === 0 && !app.ending) {
-    app.ending = { day: st.day, kind: "extinct" };
-    log(st.day, "最後の猫が姿を消した。世界の記録として残ります（観察は続けられます）。", "milestone");
-    app.running = false;
-  }
+  notifyExtinction(st);
   refreshAll();
 }
 
@@ -255,6 +283,9 @@ async function loadGame() {
   Object.assign(app, { kiwi: Number.isFinite(meta.kiwi) ? meta.kiwi : 0, history: arr(meta.history), evaluations: arr(meta.evaluations),
     log: arr(meta.log), params: meta.params && typeof meta.params === "object" ? meta.params : app.params, ending: meta.ending ?? null, state: st });
   app.world.setWorld(st);
+  if (app.params) for (const k of ["terrain", "climate", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
+  $("extinctionDialog").close();
+  notifyExtinction(st, true);
   refreshAll();
   toast(`読み込みました（${st.day}日目）`);
   return true;
@@ -270,6 +301,7 @@ function pushHistory(st) { app.history.push({ day: st.day, ...st.counts }); }
 function refreshAll() {
   const st = app.state;
   if (!st) return;
+  $("newWorldBtn").disabled = $("worldSettingsBtn").disabled = !app.ready;
   $("day").textContent = `${st.day}日目`;
   $("kiwi").textContent = Math.floor(app.kiwi);
   const total = Object.values(st.counts).reduce((a, b) => a + b, 0);
@@ -331,11 +363,39 @@ function fail(e) {
 
 // ------------------------------------------------------------------ wiring
 function wire() {
+  $("newWorldBtn").onclick = $("worldSettingsBtn").onclick = openWorldDialog;
+  $("cancelNewWorld").onclick = () => $("newWorldDialog").close();
+  $("newWorldDialog").addEventListener("close", () => {
+    if (resumeAfterWorldDialog) app.running = true;
+    resumeAfterWorldDialog = false;
+    refreshAll();
+  });
+  $("extinctionNewWorld").onclick = openWorldDialog;
+  $("extinctionContinue").onclick = () => {
+    $("extinctionDialog").close();
+    app.running = true;
+    refreshAll();
+  };
+  $("extinctionDialog").addEventListener("cancel", () => {
+    // Escape leaves this world paused; the always-visible new-world button remains available.
+    app.running = false;
+    refreshAll();
+  });
   $("newBtn").onclick = async () => {
+    if (!$("seed").reportValidity()) return;
     const seed = Number($("seed").value);
-    if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) return toast("シードは0〜4294967295の整数にしてください");
-    try { await newWorld({ terrain: $("terrain").value, climate: $("climate").value,
-      composition: $("composition").value, seed }); } catch (e) { fail(e); }
+    if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) {
+      $("worldError").textContent = "シードは0〜4294967295の整数にしてください";
+      return;
+    }
+    $("newBtn").disabled = true;
+    try {
+      await newWorld({ terrain: $("terrain").value, climate: $("climate").value, composition: $("composition").value, seed });
+      app.running = true;
+      setStatus("ready", "新しい世界を観察しています");
+      refreshAll();
+    } catch (e) { $("worldError").textContent = String(e.message || e); }
+    finally { $("newBtn").disabled = false; }
   };
   $("randSeed").onclick = () => { $("seed").value = Math.floor(Math.random() * 1e6); };
   $("playBtn").onclick = () => { app.running = !app.running; refreshAll(); };

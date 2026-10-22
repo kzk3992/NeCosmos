@@ -39,7 +39,14 @@ section{margin-bottom:14px}h3{margin:0 0 6px;font-size:13px;color:var(--mint);fo
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2a3c56;border:1px solid var(--gold);padding:8px 14px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
 #toast.show{opacity:1}
 .muted{color:var(--muted);font-size:12px}.wet{color:#7fd0ff;font-size:11px}.obj{font-size:12px}
-dialog{background:#192437;color:inherit;border:1px solid var(--line);border-radius:12px;max-width:640px}
+button.primary{background:#4f7158;border-color:#91bd9d;font-weight:600}button.primary:hover:not(:disabled){background:#62876b}
+#newWorldBtn{flex-shrink:0}#worldSettingsBtn{width:100%}
+dialog::backdrop{background:#06101bd9;backdrop-filter:blur(4px)}
+dialog h2{margin:0 0 12px;color:var(--gold);font-size:21px}
+dialog .row{margin:12px 0}.dialogActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+#worldError{color:var(--red)}
+@media(max-width:900px){header{position:sticky;top:0;z-index:20}.hud{flex-wrap:wrap}dialog{width:calc(100vw - 36px);max-height:85dvh;overflow:auto}}
+dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #0009;background:#192437;color:inherit;border:1px solid var(--line);border-radius:12px;max-width:640px}
 @media (max-width:900px){
   body{overflow:auto}
   #app{grid-template-columns:1fr;grid-template-rows:auto 58vh auto auto;grid-template-areas:"head" "view" "left" "right";height:auto}
@@ -59,23 +66,16 @@ dialog{background:#192437;color:inherit;border:1px solid var(--line);border-radi
 <div id="app">
   <header>
     <h1>NeCosmos</h1><span class="ver">v0.10 · 猫だけの小さな宇宙</span>
+    <button id="newWorldBtn" class="primary" disabled>＋ 新しい世界</button>
     <div class="hud"><span id="day">—</span><span id="total">—</span><span>🥝 <b id="kiwi">0</b></span><span id="level"></span>
       <button id="aboutBtn">ⓘ</button></div>
   </header>
 
   <aside class="left">
     <section>
-      <h3>新しい世界</h3>
-      <div class="row"><label for="terrain">地形</label><select id="terrain">
-        <option value="valley">谷</option><option value="hills">丘陵</option><option value="flat">平原</option>
-        <option value="depression">窪地</option><option value="initial_river">川のある平原</option><option value="mountain">中央に山</option></select></div>
-      <div class="row"><label for="climate">気候</label><select id="climate">
-        <option value="wet">湿潤</option><option value="tundra">苔原</option><option value="dry">乾燥</option>
-        <option value="cold">寒冷</option><option value="moss">温暖（旧）</option></select></div>
-      <div class="row"><label for="composition">猫たち</label><select id="composition">
-        <option value="all8">8種すべて</option><option value="pcd">草・もぐもぐ・きのこ</option><option value="producers">草ねこだけ</option></select></div>
-      <div class="row"><label for="seed">シード</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="1"><button id="randSeed" title="ランダム">🎲</button></div>
-      <div class="row"><button id="newBtn">この条件で始める</button></div>
+      <h3>世界</h3>
+      <button id="worldSettingsBtn" class="primary" disabled>＋ 新しい世界を始める</button>
+      <p class="muted">地形・気候・猫の組み合わせを選んで、最初から始められます。</p>
     </section>
     <section>
       <h3>観察</h3>
@@ -121,7 +121,32 @@ dialog{background:#192437;color:inherit;border:1px solid var(--line);border-radi
     </section>
   </aside>
 </div>
-<div id="toast"></div>
+<div id="toast" role="status"></div>
+<dialog id="newWorldDialog" aria-labelledby="newWorldTitle" aria-describedby="newWorldDescription">
+  <h2 id="newWorldTitle">新しい世界を始める</h2>
+  <p id="newWorldDescription">地形や気候を選んで、新しい猫たちの暮らしを始めましょう。</p>
+  <p class="muted">今の世界から切り替わります。保存済みの世界は「読み込み」で戻せます。残したい場合は、先に今の世界を保存してください。</p>
+      <div class="row"><label for="terrain">地形</label><select id="terrain">
+        <option value="valley">谷</option><option value="hills">丘陵</option><option value="flat">平原</option>
+        <option value="depression">窪地</option><option value="initial_river">川のある平原</option><option value="mountain">中央に山</option></select></div>
+      <div class="row"><label for="climate">気候</label><select id="climate">
+        <option value="wet">湿潤</option><option value="tundra">苔原</option><option value="dry">乾燥</option>
+        <option value="cold">寒冷</option><option value="moss">温暖（旧）</option></select></div>
+      <div class="row"><label for="composition">猫たち</label><select id="composition">
+        <option value="all8">8種すべて</option><option value="pcd">草・もぐもぐ・きのこ</option><option value="producers">草ねこだけ</option></select></div>
+      <div class="row"><label for="seed">シード</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="1"><button id="randSeed" title="ランダム">🎲</button></div>
+      <div class="row"><button id="newBtn" class="primary">新しい世界を始める</button><button id="cancelNewWorld" type="button">戻る</button></div>
+  <p id="worldError" role="alert"></p>
+</dialog>
+<dialog id="extinctionDialog" aria-labelledby="extinctionTitle" aria-describedby="extinctionDescription">
+  <h2 id="extinctionTitle">猫たちがいなくなりました</h2>
+  <p id="extinctionDescription"></p>
+  <p>新しい世界を始めるか、この世界の水や地形の変化を見守り続けるかを選べます。</p>
+  <div class="dialogActions">
+    <button id="extinctionNewWorld" class="primary">新しい世界を始める</button>
+    <button id="extinctionContinue">この世界の観察を続ける</button>
+  </div>
+</dialog>
 <dialog id="about">
   <h3>NeCosmos v0.10 について</h3>
   <p>猫だけで成り立つ小さな惑星を観察するゲームです。猫を直接操作することはできません。猫たちの暮らしが、草や水、土の流れと少しずつ影響し合います。</p>
