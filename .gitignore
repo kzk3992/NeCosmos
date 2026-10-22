@@ -23,3 +23,6 @@ NeCosmos-Simulation/configs/scenarios/seeds.json
 # Local trial plans (production uses only weather.json).
 NeCosmos-Simulation/configs/scenarios/cap200_review.json
 NeCosmos-Simulation/configs/scenarios/weather_review.json
+
+# Local ecology/browser measurements; report tables and test sources are tracked.
+artifacts/

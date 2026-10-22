@@ -45,3 +45,11 @@ Cloudflare Workers Buildsで `npx wrangler deploy` を実行します。`wrangle
 ## 依存ライブラリ
 
 Pyodide 0.27.7 / NumPy 2.0.2、Three.js 0.160.0を同梱しています。実行時のCDNアクセスは不要です。ライセンスと配布元は [NOTICE](public/vendor/NOTICE.md) を参照してください。
+
+## 惑星時間・行動と描画の分離（レビュー中）
+
+×1は15秒/惑星日、じっくり観察は300秒/惑星日、最大×100。年齢表示は48惑星日で1歳相当です。旧寿命・繁殖パラメータと200匹上限は維持しています。Workerの生態系と表示座標・実時間の仕草を分離し、観察中はエンジンの移動計画へ同期、通常・高速中は瞬間移動で座標を反映します。
+
+[実装・検証レポート](docs/planet-time-report.md) に、最新HEADの調査、75件のテスト、実ブラウザでの300秒観察、3シード×10,000日の前後比較、200/500匹の性能測定と未達項目を記載しています。専用仕草素材と大量個体時の描画性能には残る課題があり、本番リリース済みという意味ではありません。
+
+開発用: `npm ci`、`npm test`、`npm start`。起動後に `npm run test:browser`。ブラウザ検証はPlaywrightと `/usr/bin/chromium` を使用します。生態系のPython依存は `NeCosmos-Simulation/requirements.txt` を参照してください。検証の生データ・画像はローカルの `artifacts/` に保持し、配信しません。

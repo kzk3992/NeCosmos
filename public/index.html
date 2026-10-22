@@ -80,8 +80,8 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
     <section>
       <h3>観察</h3>
       <div class="row"><button id="playBtn">▶ 観察</button>
-        <button data-speed="1">×1</button><button data-speed="5" class="on">×5</button><button data-speed="20">×20</button><button data-speed="60">×60</button></div>
-      <div class="muted">倍率は 1 秒あたりの日数です。</div>
+        <button data-speed="0.05">じっくり観察</button><button data-speed="1" class="on">×1</button><button data-speed="5">×5</button><button data-speed="10">×10</button><button data-speed="20">×20</button><button data-speed="100">×100</button></div><small id="speedInfo" aria-live="polite">×1 · 15秒/惑星日</small>
+      <div id="eventSummary" aria-live="polite"></div><div class="muted">×1は15秒で1惑星日。48惑星日で1歳相当です。</div>
       <div class="row"><button id="saveBtn">保存</button><button id="loadBtn">読み込み</button></div>
       <div class="row"><label>猫の大きさ</label><input id="catScale" type="range" min="1" max="3" step="0.1" value="1.6"></div>
     </section>
@@ -158,9 +158,9 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
   <h3>NeCosmos v0.10.1 について</h3>
   <p>猫だけで成り立つ小さな惑星を観察するゲームです。猫を直接操作することはできません。猫たちの暮らしが、草や水、土の流れと少しずつ影響し合います。</p>
   <ul class="muted">
-    <li>シミュレーション：Phase 4 で検証・凍結した Python / NumPy の生態系・地形モデルを、ブラウザ内の Pyodide（Web Worker）でそのまま動かしています。数値の調整や救済措置は入れていません。</li>
+    <li>シミュレーション：Python / NumPy の生態系・地形モデルを、ブラウザ内の Pyodide（Web Worker）で動かしています。寿命・繁殖・資源の係数を維持し、行動目標と移動・採食の順序を分離しています。</li>
     <li>季節と前日の天候から気温・雨・日照・湿度が変わり、水や猫の暮らしに影響します。新しい世界で天候の傾向を選べます。</li>
-    <li>1 日は猫の 1 年齢に相当します。300 日ごとの観察記録は記録のためだけのもので、世界には影響しません。</li>
+    <li>1惑星日ごとに年齢が1日増え、48惑星日で1歳相当です。×1は15秒、じっくり観察は300秒で1惑星日が進みます。300 日ごとの観察記録は記録のためだけのもので、世界には影響しません。</li>
     <li>ネコキウイは観察の報酬です。生態系の物質とは別に扱っており、置き物の購入や生息域の拡張に使えます。</li>
     <li>保護される置き物（タワーなど）は地面の変化を抑えますが、水位が上がれば水没することもあります。</li>
     <li>保存データはこのブラウザの中だけにあります（v0.9 のデータには影響しません）。</li>

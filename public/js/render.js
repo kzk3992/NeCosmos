@@ -2,6 +2,7 @@
 // 8-direction pixel cat sprites, Phase 3 GLB objects. Sim (x, y, z) metres, Blender Z-up ->
 // Three (x - 8, z, 8 - y). Rendering never waits on the simulation worker.
 import * as THREE from "three";
+import { Presentation } from "./presentation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
@@ -17,7 +18,7 @@ export class World3D {
   constructor(container, catalog) {
     this.container = container;
     this.catalog = catalog;
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(this.renderer.domElement);
@@ -40,6 +41,16 @@ export class World3D {
     this.catScale = 1.6;
     this.texCache = {};
     this.catSprites = new Map();
+    this.spritePool = [];
+    this.batches = new Map();
+    this.batchGeometry = new THREE.PlaneGeometry(1,1);
+    this.batchGeometry.translate(0,.5-FEET_V,0);
+    this.instanceTransform = new THREE.Object3D();
+    this.resolutionCheck=performance.now();
+    this.pixelRatio=Math.min(window.devicePixelRatio,2);
+    this.presentation = new Presentation();
+    this.lastFrame = performance.now();
+    this.fps = 0;
     this.lastCell = new Map();
     this.heading = new Map();
     this.objects = new Map();
@@ -50,7 +61,16 @@ export class World3D {
     this.state = null;
     window.addEventListener("resize", () => this.resize());
     this.resize();
-    const loop = () => { this.controls.update(); this.updateSpriteDirs(); this.renderer.render(this.scene, this.camera); requestAnimationFrame(loop); };
+    const loop = () => {
+      const now=performance.now(), dt=(now-this.lastFrame)/1000; this.lastFrame=now;
+      this.fps = dt > 0 ? .9*this.fps+.1/dt : this.fps;
+      this.presentation.frame(dt);
+      this.controls.update(); this.renderFrame();
+      if (now-this.resolutionCheck>2000) {
+        this.resolutionCheck=now;
+        if (this.fps<27 && this.pixelRatio>.5) {this.pixelRatio=Math.max(.5,this.pixelRatio*.8);this.renderer.setPixelRatio(this.pixelRatio);this.resize();}
+      } requestAnimationFrame(loop);
+    };
     loop();
   }
 
@@ -63,9 +83,11 @@ export class World3D {
 
   // ------------------------------------------------------------------ terrain / water / rock
   setWorld(st) {
-    for (const k of ["terrain", "water", "rock"]) if (this[k]) { this.scene.remove(this[k]); this[k].geometry.dispose(); }
-    for (const s of this.catSprites.values()) this.scene.remove(s);
+    for (const k of ["terrain", "water", "rock"]) if (this[k]) { this.scene.remove(this[k]); this[k].geometry.dispose(); this[k].material.dispose(); }
+    for (const s of this.catSprites.values()) { this.scene.remove(s); this.spritePool.push(s); }
+    this.presentation = new Presentation();
     this.catSprites.clear(); this.lastCell.clear(); this.heading.clear();
+    for(const b of this.batches.values()) {b.mesh.visible=false;b.ids=[];b.mesh.count=0;}
     for (const o of this.objects.values()) this.scene.remove(o.root);
     this.objects.clear();
     const n = st.n, d = st.cell_m;
@@ -185,32 +207,42 @@ export class World3D {
     return this.texCache[key];
   }
 
+  renderFrame() { this.animateCats();this.updateSpriteDirs();this.updateBatches();this.renderer.render(this.scene, this.camera); }
+
   updateCats(st) {
-    const cats = st.cats, d = st.cell_m, seen = new Set();
-    for (let k = 0; k < cats.id.length; k++) {
-      const id = cats.id[k], sp = st.species[cats.sp[k]], j = cats.j[k], i = cats.i[k];
-      seen.add(id);
-      let s = this.catSprites.get(id);
-      if (!s) {
-        s = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texture(sp, "front"), transparent: true, alphaTest: 0.5 }));
-        s.center.set(0.5, FEET_V);
-        s.userData = { id, sp };
-        this.scene.add(s);
-        this.catSprites.set(id, s);
-        this.heading.set(id, ((id * 2654435761) >>> 0) % 360);
-      }
-      const prev = this.lastCell.get(id);
-      if (prev && (prev[0] !== j || prev[1] !== i)) {                 // face the direction of travel
-        this.heading.set(id, (Math.atan2(i - prev[1], -(j - prev[0])) * 180 / Math.PI + 360) % 360);
-      }
-      this.lastCell.set(id, [j, i]);
-      const h = ((id * 2246822519) >>> 0) / 4294967296, h2 = ((id * 3266489917) >>> 0) / 4294967296;
-      const x = (i + 0.5) * d + (h - 0.5) * 0.3, y = (j + 0.5) * d + (h2 - 0.5) * 0.3;
-      s.position.copy(toThree(x, y, this.heightAt(x, y) + 0.01));
-      s.scale.set(SPRITE_M * this.catScale, SPRITE_M * this.catScale, 1);
-      Object.assign(s.userData, { age: cats.age[k], energy: cats.energy[k], mass: cats.mass[k], action: cats.action[k], j, i, x, y, sp });
+    this.presentation.sync(st);
+    const cats=st.cats, seen=new Set(cats.id);
+    for (const [id,s] of this.catSprites) if (!seen.has(id)) {
+      this.scene.remove(s); this.spritePool.push(s); this.catSprites.delete(id);
+      this.lastCell.delete(id); this.heading.delete(id);
     }
-    for (const [id, s] of this.catSprites) if (!seen.has(id)) { this.scene.remove(s); s.material.dispose(); this.catSprites.delete(id); }
+    for (let k=0;k<cats.id.length;k++) {
+      const id=cats.id[k], sp=st.species[cats.sp[k]];
+      let s=this.catSprites.get(id);
+      if (!s) {
+        s=this.spritePool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({transparent:true,alphaTest:.5}));
+        s.center.set(.5,FEET_V); s.userData={id,sp}; s.material.rotation=0;
+        this.catSprites.set(id,s);
+      }
+      Object.assign(s.userData,{age:cats.age[k],energy:cats.energy[k],mass:cats.mass[k],action:cats.action[k],j:cats.j[k],i:cats.i[k],sp});
+    }
+    this.animateCats();
+  }
+
+  animateCats() {
+    if (!this.state) return;
+    const frustum=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix,this.camera.matrixWorldInverse));
+    for (const [id,s] of this.catSprites) {
+      const r=this.presentation.live.get(id);
+      if (!r) { s.visible=false; continue; }
+      this.heading.set(id,r.heading);
+      s.position.copy(toThree(r.x,r.y,this.heightAt(r.x,r.y)+.01+(r.walking ? .025*Math.abs(Math.sin(r.gait)) : (r.bob||0))));
+      const stretch=r.walking ? 1+.025*Math.sin(r.gait) : r.gesture===2 ? 1+.025*Math.sin(r.phase*2) : 1;
+      s.scale.set(SPRITE_M*this.catScale,SPRITE_M*this.catScale*stretch,1);
+      s.material.rotation=r.behavior==='eat' ? .06*Math.sin(r.phase*3) : r.gesture===3 ? .025*Math.sin(r.phase) : 0;
+      s.visible=frustum.intersectsSphere(new THREE.Sphere(s.position,.9*this.catScale));
+      Object.assign(s.userData,{x:r.x,y:r.y,behavior:r.behavior});
+    }
   }
 
   updateSpriteDirs() {
@@ -224,6 +256,29 @@ export class World3D {
       const idx = ((Math.round(az * 180 / Math.PI / 45) % 8) + 8) % 8;
       const t = this.texture(s.userData.sp, DIRS[idx]);
       if (s.material.map !== t) { s.material.map = t; s.material.needsUpdate = true; }
+    }
+  }
+
+  updateBatches() {
+    for (const b of this.batches.values()) {b.ids=[];b.mesh.count=0;b.mesh.visible=false;}
+    for (const [id,s] of this.catSprites) {
+      if (!s.visible || !s.material.map) continue;
+      const key=s.material.map.uuid;
+      let b=this.batches.get(key);
+      if (!b) {
+        const mesh=new THREE.InstancedMesh(this.batchGeometry,new THREE.MeshBasicMaterial({map:s.material.map,transparent:true,alphaTest:.5,side:THREE.DoubleSide}),512);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=false;
+        b={mesh,ids:[]};this.batches.set(key,b);this.scene.add(mesh);
+      }
+      if (b.ids.length>=512) continue;
+      const o=this.instanceTransform;
+      o.position.copy(s.position);o.quaternion.copy(this.camera.quaternion);
+      o.rotateZ(s.material.rotation);o.scale.copy(s.scale);o.updateMatrix();
+      b.mesh.setMatrixAt(b.ids.length,o.matrix);b.ids.push(id);
+    }
+    for (const b of this.batches.values()) {
+      b.mesh.count=b.ids.length;b.mesh.visible=!!b.ids.length;b.mesh.instanceMatrix.needsUpdate=true;
+      if(b.ids.length) {b.mesh.computeBoundingBox();b.mesh.computeBoundingSphere();}
     }
   }
 
@@ -296,8 +351,11 @@ export class World3D {
 
   pickCat(ev) {
     this.raycaster.setFromCamera(this.ndc(ev), this.camera);
-    const hit = this.raycaster.intersectObjects([...this.catSprites.values()], false)[0];
-    return hit ? hit.object.userData : null;
+    const batches=[...this.batches.values()].filter(b=>b.mesh.visible);
+    const hit=this.raycaster.intersectObjects(batches.map(b=>b.mesh),false)[0];
+    if(!hit) return null;
+    const b=batches.find(b=>b.mesh===hit.object);
+    return this.catSprites.get(b.ids[hit.instanceId])?.userData || null;
   }
 
   pickObject(ev) {

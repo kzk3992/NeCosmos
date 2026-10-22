@@ -1,6 +1,8 @@
 // NeCosmos v0.10 main: UI, ネコキウイ economy (outside the ecology), saves, observers, test API.
 // The simulation runs in a Web Worker (Pyodide + the frozen Python/NumPy core); the UI never blocks on it.
 import { World3D } from "./render.js";
+import { PlanetClock, ModeSwitch, MODES } from "./time.js";
+const clock = new PlanetClock();
 
 const VERSION = "0.10.1";
 const compatibleSave = (meta) => meta && ["0.10.0", VERSION].includes(meta.version);
@@ -46,7 +48,8 @@ class Engine {
 // ------------------------------------------------------------------ app state
 const app = {
   engine: null, world: null, catalog: null, ready: false, status: "loading", error: null,
-  state: null, running: false, speed: 5, busy: false, kiwi: 80, history: [], evaluations: [], log: [],
+  state: null, running: false, speed: 1, switching: false, busy: false, kiwi: 80, history: [], evaluations: [], log: [],
+  eventCounts: {birth:0,death:0},
   mode: "view", placeId: null, placeYaw: 0, ghostOk: false, params: null, ending: null,
 };
 
@@ -104,6 +107,7 @@ function notifyExtinction(st, force = false) {
 
 async function newWorld(params) {
   app.running = false;
+  clock.reset();
   await waitIdle();
   setStatus("busy", "新しい世界をつくっています…");
   app.busy = true;
@@ -115,9 +119,12 @@ async function newWorld(params) {
   stopModes();
   app.params = { ...params, weatherMode: st.weather.mode };
   for (const k of ["terrain", "climate", "weatherMode", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
+  app.eventCounts = {birth:0,death:0};
   app.kiwi = 80; app.history = []; app.evaluations = []; app.log = []; app.ending = null;
   app.state = st;
   app.world.setWorld(st);
+  app.world.presentation.setMode(app.speed);
+  if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), st.day);
   log(0, `新しい世界：${terrainJP(params.terrain)}・${climateJP(params.climate)}・${compJP(params.composition)}（シード ${params.seed}）`, "milestone");
   pushHistory(st);
   refreshAll();
@@ -132,6 +139,7 @@ async function step(n) {
     const before = app.state.day;
     const st = await app.engine.call("step", n);
     applyStep(st, before);
+    if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), st.day);
     return st;
   } finally { app.busy = false; }
 }
@@ -139,6 +147,7 @@ async function step(n) {
 function applyStep(st, before) {
   app.state = st;
   app.world.update(st);
+  for (const e of st.behaviorEvents || []) if (e.kind === 'birth' || e.kind === 'death') app.eventCounts[e.kind]++;
   for (const d of st.daily) {
     app.kiwi += kiwiIncome({ counts: Object.fromEntries(st.species.map((s) => [s, d[s]])) });
     if (d.day % 5 === 0) app.history.push({ day: d.day, ...Object.fromEntries(st.species.map((s) => [s, d[s]])) });
@@ -167,21 +176,51 @@ function wisdomText(k) {
     water: "知恵ねこが乾いた土地に水を巡らせた。", fire: "知恵ねこが焚き火を灯した。", observe: "知恵ねこは静かに見守っている。" }[k] || `知恵ねこ：${k}`;
 }
 
+const modeSwitch = new ModeSwitch(async (latest) => {
+  const resume = app.running;
+  app.switching = true;
+  try {
+    await waitIdle(); // finish the current committed daily step
+    app.world.presentation.paused = true;
+    const st = await app.engine.call("state");
+    app.state = st;
+    app.world.update(st);
+    app.world.presentation.sync(st, true);
+    const speed = latest();
+    app.speed = speed;
+    clock.setMode(speed); // discard old mode's uncommitted elapsed time
+    app.world.presentation.setMode(speed);
+    app.world.presentation.sync(st, true);
+    if (speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), st.day);
+    app.world.renderFrame();
+    await new Promise(requestAnimationFrame);
+    // running is not assigned here: extinction, manual pause and event stops win.
+    if (!resume) app.running = false;
+    document.querySelectorAll('[data-speed]').forEach(b => b.classList.toggle('on', +b.dataset.speed === speed));
+    refreshAll();
+  } finally { app.world.presentation.paused = false; app.switching = false; }
+});
 function loop() {
-  let last = performance.now(), acc = 0;
-  setInterval(async () => {
-    const now = performance.now();
-    if (app.running && app.ready && !app.busy) {
-      acc += ((now - last) / 1000) * app.speed;
-      // Return the exact day-300 state to observers, even at high observation speed.
-      const n = Math.min(Math.floor(acc), 30, EVAL_PERIOD - app.state.day % EVAL_PERIOD);
-      if (n >= 1) {
-        acc -= n;
-        try { await step(n); } catch (e) { if (e.message !== "busy") fail(e); }
+  let last = performance.now(), dispatched = false, measuredAt = last, measuredDay = 0;
+  setInterval(() => {
+    const now = performance.now(), dt = (now-last)/1000; last=now;
+    // Count elapsed real time even while a worker step is in flight. Never overlap steps.
+    clock.advance(dt, app.running && app.ready && !app.switching);
+    if (app.switching) clock.reset();
+    if (app.running && app.ready && !app.switching && !app.busy && !dispatched) {
+      const n = clock.take(Math.min(30, EVAL_PERIOD-app.state.day%EVAL_PERIOD));
+      if (n) {
+        dispatched=true;
+        step(n).catch(fail).finally(() => { dispatched=false; });
       }
-    } else acc = 0;
-    last = now;
-  }, 100);
+    }
+    app.world?.presentation.sampleObservation(clock.acc);
+    if (now-measuredAt >= 1000 && app.state) {
+      const effective = (app.state.day-measuredDay)/((now-measuredAt)/1000);
+      $('speedInfo').textContent = `${MODES[String(app.speed)].label} · ${MODES[String(app.speed)].seconds}秒/惑星日 · 実効 ${effective.toFixed(2)}日/秒`;
+      measuredAt=now; measuredDay=app.state.day;
+    }
+  }, 25);
 }
 
 // ------------------------------------------------------------------ unlock / objects
@@ -195,6 +234,7 @@ async function buyUnlock() {
   app.kiwi -= cost;
   app.state = await app.engine.call("state");
   app.world.update(app.state);
+  if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), app.state.day);
   log(app.state.day, `生息域を拡張した（${next * 25}%）。`, "milestone");
   refreshAll();
 }
@@ -239,6 +279,7 @@ async function placeAt(ev) {
   app.kiwi -= o.price;
   app.state = await app.engine.call("state");
   app.world.update(app.state);
+  if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), app.state.day);
   log(app.state.day, `${o.name || o.id}を置いた。`, "choice");
   refreshAll();
 }
@@ -253,6 +294,7 @@ async function removeAt(ev) {
   app.kiwi += Math.floor((meta.price || 0) / 2);
   app.state = await app.engine.call("state");
   app.world.update(app.state);
+  if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), app.state.day);
   log(app.state.day, `${meta.name || o.id}を片付けた（保護も解除）。`, "choice");
   refreshAll();
 }
@@ -264,7 +306,7 @@ async function saveGame() {
   try {
     localStorage.setItem(SAVE_KEY, blob);
     localStorage.setItem(META_KEY, JSON.stringify({ version: VERSION, kiwi: app.kiwi, history: app.history.slice(-600),
-      evaluations: app.evaluations, log: app.log.slice(0, 60), params: app.params, ending: app.ending, savedAt: Date.now() }));
+      evaluations: app.evaluations, log: app.log.slice(0, 60), params: app.params, ending: app.ending, speed: app.speed, savedAt: Date.now() }));
     toast(`保存しました（${app.state.day}日目）`);
     return true;
   } catch (e) { toast("保存に失敗しました：" + e.message); return false; }
@@ -274,6 +316,7 @@ async function loadGame() {
   const blob = localStorage.getItem(SAVE_KEY), meta = readMeta();
   if (!blob || !meta || !compatibleSave(meta)) { toast("v0.10 の保存データがありません"); return false; }
   app.running = false;
+  clock.reset();
   await waitIdle();
   app.busy = true;
   let st;
@@ -284,7 +327,10 @@ async function loadGame() {
   Object.assign(app, { kiwi: Number.isFinite(meta.kiwi) ? meta.kiwi : 0, history: arr(meta.history), evaluations: arr(meta.evaluations),
     log: arr(meta.log), params: meta.params && typeof meta.params === "object" ? meta.params : app.params, ending: meta.ending ?? null, state: st });
   app.params = { ...(app.params || {}), weatherMode: st.weather.mode };
+  if (MODES[String(meta.speed)]) {app.speed=meta.speed;clock.setMode(meta.speed);}
   app.world.setWorld(st);
+  app.world.presentation.setMode(app.speed);
+  if (app.speed === .05) app.world.presentation.setPlan(await app.engine.call("prepare"), st.day);
   if (app.params) for (const k of ["terrain", "climate", "weatherMode", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
   $("extinctionDialog").close();
   notifyExtinction(st, true);
@@ -304,6 +350,7 @@ function refreshAll() {
   const st = app.state;
   if (!st) return;
   $("newWorldBtn").disabled = $("worldSettingsBtn").disabled = !app.ready;
+  $("eventSummary").textContent = app.speed >= 20 ? `出生 ${app.eventCounts.birth}・死亡 ${app.eventCounts.death}（この観察中の累計）` : "";
   $("day").textContent = `${st.day}日目`;
   const weather = st.weather;
   if (weather) {
@@ -407,10 +454,7 @@ function wire() {
   };
   $("randSeed").onclick = () => { $("seed").value = Math.floor(Math.random() * 1e6); };
   $("playBtn").onclick = () => { app.running = !app.running; refreshAll(); };
-  for (const b of document.querySelectorAll("[data-speed]")) b.onclick = () => {
-    app.speed = +b.dataset.speed;
-    document.querySelectorAll("[data-speed]").forEach((x) => x.classList.toggle("on", x === b));
-  };
+  for (const b of document.querySelectorAll("[data-speed]")) b.onclick = () => modeSwitch.request(+b.dataset.speed).catch(fail);
   $("unlockBtn").onclick = buyUnlock;
   $("saveBtn").onclick = saveGame;
   $("loadBtn").onclick = loadGame;
@@ -431,7 +475,7 @@ function wire() {
     else if (app.mode === "remove") removeAt(e);
     else {
       const c = app.world.pickCat(e);
-      $("catInfo").innerHTML = c ? `<b>${SPECIES_JP[c.sp]}</b> #${c.id}<br>年齢 ${c.age} 歳（1日=1年）・エネルギー ${c.energy.toFixed(2)}・体重 ${c.mass.toFixed(3)} kg<br>いまの行動：${ACTION_JP[c.action] || "—"}` : "";
+      $("catInfo").innerHTML = c ? `<b>${SPECIES_JP[c.sp]}</b> #${c.id}<br>年齢 ${(c.age / 48).toFixed(2)} 歳相当（${c.age}惑星日）・エネルギー ${c.energy.toFixed(2)}・体重 ${c.mass.toFixed(3)} kg<br>いまの行動：${ACTION_JP[c.action] || "—"}` : "";
     }
   });
 }
@@ -446,6 +490,7 @@ async function boot() {
     const saved = localStorage.getItem(SAVE_KEY);
     const meta = readMeta();
     if (!(saved && meta && compatibleSave(meta) && await loadGame())) await newWorld({ terrain: $("terrain").value, climate: $("climate").value, weatherMode: $("weatherMode").value, composition: $("composition").value, seed: parseInt($("seed").value, 10) });
+    setStatus("ready", "準備完了 — ▶ で観察を始めましょう");
     readyResolve(true);
   } catch (e) { fail(e); }
 }
@@ -456,6 +501,19 @@ const readyPromise = new Promise((r) => { readyResolve = r; });
 // ------------------------------------------------------------------ test API (browser checks)
 window.NeCosmos = {
   version: VERSION,
+  ecologicalPositions: fraction => app.engine.call("observe", fraction),
+  displayPositions: () => [...app.world.presentation.live.values()].map(({id,x,y,behavior,walking,gait})=>({id,x,y,behavior,walking,gait})),
+  setSpeed: speed => modeSwitch.request(speed),
+  playback: () => ({speed:app.speed, running:app.running, switching:app.switching, pendingDays:clock.acc}),
+  presentation: () => ({live:app.world.presentation.live.size, pool:app.world.presentation.pool.length, fps:app.world.fps, reassignMs:app.world.presentation.reassignMs, reassignments:app.world.presentation.reassignments}),
+  // Synthetic render-only load; does not raise the ecology's production cap.
+  renderStress: count => {
+    if (new URLSearchParams(location.search).get('smoke') !== 'stress') throw new Error('stress query required');
+    const st=structuredClone(app.state), source=app.state.cats;
+    for(const key of Object.keys(st.cats)) st.cats[key]=Array.from({length:count},(_,k)=>key==='id'?100000+k:source[key][k%source.id.length]);
+    app.world.update(st);app.world.presentation.sync(st,true);
+  },
+  play: value => { app.running=!!value; refreshAll(); },
   ready: readyPromise,
   get status() { return { status: app.status, error: app.error, ready: app.ready, day: app.state?.day, engine: app.engineInfo }; },
   newWorld: (p) => newWorld(p),

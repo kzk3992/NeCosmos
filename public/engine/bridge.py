@@ -10,6 +10,7 @@ Thin wrapper over the verified Phase 4 core (/workspace/NeCosmos-Simulation):
 Nothing here changes equations, parameters or matter: placing an object only moves soil inside its
 footprint (volume neutral, as in the core) and recomputes the protection field.
 """
+import copy
 import base64
 import hashlib
 import json
@@ -102,19 +103,60 @@ def new_world(params_json):
         ov["terrain.terrains.mountain"] = MOUNTAIN
     sc = {"terrain": p["terrain"], "climate": p["climate"], "composition": p["composition"],
           "seed": int(p["seed"]), "days": 10 ** 9, "unlock": "fixed", "overrides": ov, "weather_mode": mode, "max_population": MAX_POPULATION}
+    STATE.pop("pending_sim", None)
+    STATE.pop("pending_row", None)
     STATE["sim"] = Simulation(sc)
     STATE["sim"].eco.max_population = MAX_POPULATION
     STATE["objects"] = {}
     STATE["next_pid"] = 1
     STATE["params"] = p
+    STATE["behavior_events"] = []
     return state(include_static=True)
 
 
 def step(n):
     sim = STATE["sim"]
+    if not isinstance(n, (int, float)) or int(n) != n or not 1 <= n <= 300:
+        raise ValueError("step requires 1..300 whole planet days")
     rows = []
+    behavior_events = []
     for _ in range(int(n)):
-        rows.append(sim.step())
+        p = sim.eco.pop
+        before = {int(cid): (int(p.j[k]), int(p.i[k])) for k, cid in enumerate(p.id)}
+        deaths_start = len(sim.eco.deaths)
+        pending = STATE.pop('pending_sim', None)
+        if pending is not None and pending.day == sim.day + 1:
+            sim = pending
+            STATE['sim'] = sim
+            rows.append(STATE.pop('pending_row'))
+        else:
+            rows.append(sim.step())
+        p = sim.eco.pop
+        for k, cid in enumerate(p.id):
+            cid = int(cid)
+            pos = (int(p.j[k]), int(p.i[k]))
+            kinds = []
+            if cid not in before: kinds.append("birth")
+            else:
+                if before[cid] != pos: kinds.append("move")
+                if int(p.action[k]) in (3, 4): kinds.append("eat")
+                elif int(p.action[k]) == 0: kinds.append("rest")
+                elif int(p.action[k]) == 5: kinds.append("interact")
+            for kind in kinds:
+                event = dict(kind=kind, id=cid, planetTime=sim.day, position=list(pos), origin=list(before.get(cid,pos)))
+                if kind == 'move':
+                    event['planetTime'] = sim.day-1
+                    event['endPlanetTime'] = sim.day-1 + math.hypot(pos[0]-before[cid][0],pos[1]-before[cid][1])*sim.w['dx']/75
+                behavior_events.append(event)
+        fed = {e['id'] for e in behavior_events if e['kind']=='eat' and e['planetTime']==sim.day}
+        for e in getattr(sim.eco, 'feeding_plan', []):
+            if e['id'] not in fed:
+                behavior_events.append(dict(kind='eat',id=e['id'],planetTime=sim.day,position=e['position']))
+        for d in sim.eco.deaths[deaths_start:]:
+            behavior_events.append(dict(kind="death", id=d['id'], planetTime=sim.day, position=[d['j'],d['i']]))
+        behavior_events.append(dict(kind="environmentChange", id=None, planetTime=sim.day))
+    # Retained in the save for offline/headless callers; UI can aggregate these.
+    STATE['behavior_events'] = behavior_events
     last = rows[-1]
     events = []
     for r in rows:
@@ -125,11 +167,37 @@ def step(n):
             events.append({"day": d, "kind": "tipping", "detail": ev})
     out = json.loads(state())
     out["events"] = events
+    out["behaviorEvents"] = behavior_events
     out["daily"] = [{"day": r["day"], "pop": r["pop_total"], **{s: r[f"pop_{s}"] for s in SP}} for r in rows]
     out["residual"] = {"water_m3": max(abs(r["res_water_m3"]) for r in rows), "soil_m3": max(abs(r["res_soil_m3"]) for r in rows),
                        "matter_kg": max(abs(r["res_matter_kg"]) for r in rows)}
     out["row"] = {k: (v if isinstance(v, (int, float, str)) else None) for k, v in last.items()}
     return json.dumps(out)
+
+
+def prepare():
+    """Calculate exactly once, commit only on step; no animation-dependent RNG.
+
+    The pending daily transaction is invalidated on player world mutations and
+    deliberately not auto-advanced while offline. Saves rebuild it deterministically.
+    """
+    if STATE.get('pending_sim') is None:
+        future = copy.deepcopy(STATE['sim'])
+        row = future.step()
+        STATE['pending_sim'], STATE['pending_row'] = future, row
+    future = STATE['pending_sim']
+    return json.dumps({'day': future.day, 'moves': getattr(future.eco, 'motion_plan', []),
+                       'feeds': getattr(future.eco, 'feeding_plan', []), 'cell_m': future.w['dx']})
+
+
+def observe(fraction):
+    """Sample engine-owned continuous positions; never run a biological step."""
+    from src.ecosystem.timeline import sample
+    future=STATE.get('pending_sim')
+    if future is None: raise ValueError('prepare a daily transaction first')
+    fraction=float(fraction)
+    return json.dumps({'planetTime': STATE['sim'].day+fraction,
+                       'positions': sample(getattr(future.eco,'motion_plan',[]), future.w['dx'], fraction)})
 
 
 def _r(a, nd=4):
@@ -147,7 +215,11 @@ def state(include_static=False):
            "river": getattr(sim, "river_mask", getattr(sim.river, "preexisting", np.zeros_like(z, bool))).ravel().astype(int).tolist(),
            "pond": getattr(sim, "pond_mask", np.zeros_like(z, bool)).ravel().astype(int).tolist(),
            "cats": {"id": p.id.tolist(), "sp": p.sp.tolist(), "j": p.j.tolist(), "i": p.i.tolist(), "age": p.age.tolist(),
-                    "energy": np.round(p.energy, 3).tolist(), "mass": np.round(p.mass, 4).tolist(), "action": p.action.tolist()},
+                    "energy": np.round(p.energy, 3).tolist(), "mass": np.round(p.mass, 4).tolist(), "action": p.action.tolist(),
+                    "biologicalAgeYears": (p.age / 48).tolist(),
+                    "behavior": [getattr(sim.eco, 'behavior', {}).get(int(cid), {}).get('state', 'idle') for cid in p.id]},
+           "planetTime": sim.day, "biologicalYearDays": 48,
+           "behaviorEvents": STATE.get('behavior_events', []),
            "counts": {s: int((p.sp == k).sum()) for k, s in enumerate(SP)},
            "extinct": dict(sim.extinct), "river_events": {k: v for k, v in sim.river.events.items()},
            "objects": _objects_state(), "species": SP,
@@ -165,6 +237,7 @@ def unlock(level):
     level = int(level)
     if not (1 <= level <= len(sim.unlock_masks)) or level <= sim.level:
         return json.dumps({"ok": False, "reason": "invalid level"})
+    STATE.pop("pending_sim", None)
     sim.level = level
     sim.w["unlocked"] = sim.unlock_masks[level - 1].copy()
     sim.events.append((sim.day, f"unlock level {level} (player)"))
@@ -235,6 +308,7 @@ def place(meta_json, x, y, yaw):
     chk = _check(meta, x, y, yaw)
     if not chk["ok"]:
         return json.dumps(chk)
+    STATE.pop("pending_sim", None)
     sim = STATE["sim"]
     pid = STATE["next_pid"]
     STATE["next_pid"] += 1
@@ -255,6 +329,7 @@ def remove(pid):
     rec = STATE["objects"].pop(pid, None)
     if rec is None:
         return json.dumps({"ok": False, "reason": "not found"})
+    STATE.pop("pending_sim", None)
     sim = STATE["sim"]
     sim.towers = [t for t in sim.towers if t.get("pid") != pid]   # protection released
     _refresh_protection()
@@ -266,6 +341,10 @@ def _refresh_protection():
     w = sim.w
     w["protection"] = protection.protection_field(w["x"], w["y"], sim.towers, w["dx"]) if sim.towers else np.zeros_like(w["h"])
     w["z"] = w["bedrock"] + w["soil"]
+    w['obstacles'] = np.zeros_like(w['h'], dtype=bool)
+    for o in STATE['objects'].values():
+        if o['meta']['terrainMode'] == 'TerrainProtected':
+            w['obstacles'] |= _core_cells(o['meta'], o['x'], o['y'], o['yaw'])
 
 
 def _plats(o, base):
@@ -363,7 +442,8 @@ def _dec(v):
 
 def save():
     doc = {"format": "necosmos-v0.10-json", "sim": _enc(STATE["sim"]), "objects": _enc(STATE["objects"]),
-           "next_pid": STATE["next_pid"], "params": _enc(STATE["params"])}
+           "next_pid": STATE["next_pid"], "params": _enc(STATE["params"]),
+           "behavior_events": STATE.get("behavior_events", [])}
     return base64.b64encode(zlib.compress(json.dumps(doc).encode(), 6)).decode("ascii")
 
 
@@ -390,7 +470,9 @@ def load(b64):
         sim._env_cells(sim.day)
     sim.eco.max_population = MAX_POPULATION
     params = dict(params or {}, weatherMode=sim.weather_driver.mode)
-    STATE.update(sim=sim, objects=objects, next_pid=int(doc['next_pid']), params=params)
+    STATE.pop("pending_sim", None)
+    STATE.pop("pending_row", None)
+    STATE.update(sim=sim, objects=objects, next_pid=int(doc['next_pid']), params=params, behavior_events=doc.get("behavior_events", []))
     return state(include_static=True)
 
 
