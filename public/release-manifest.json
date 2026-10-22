@@ -1,5 +1,5 @@
 {
-  "version": "0.10.0",
+  "version": "0.10.1",
   "files": {
     "_headers": {
       "bytes": 231,
@@ -7,7 +7,7 @@
     },
     "assets/catalog.json": {
       "bytes": 64986,
-      "sha256": "b6ea0744d474a93176ac41bc644db3acaa8cd60fdbb95f818bb59dc3945165a2"
+      "sha256": "506aa34c5f4a275e065a043a75471c005532b6d4fe6602e5e10d97123facd15c"
     },
     "assets/cats/chie_cat/chie_cat_back.png": {
       "bytes": 2881,
@@ -585,6 +585,10 @@
       "bytes": 1077,
       "sha256": "a3a855d1863d1587e16c5b2dd6aa1a3b53fc35f5d7403f8c8c2b22244d9f937c"
     },
+    "engine/NeCosmos-Simulation/configs/scenarios/weather.json": {
+      "bytes": 809,
+      "sha256": "15b49f101884907b92925eccf04cd1612c07638317615d32ab3cd34ba6c3ddf8"
+    },
     "engine/NeCosmos-Simulation/configs/species/species.json": {
       "bytes": 16450,
       "sha256": "616c26421e28c3ec842812fa8ce29886db9a04235a17ecafe69dbc563dca5ec9"
@@ -606,16 +610,16 @@
       "sha256": "490a65fb89d61b0271510221c99ef9720aeb1b504a01678633a9fecfa8825ce0"
     },
     "engine/NeCosmos-Simulation/src/coupling/simulation.py": {
-      "bytes": 28173,
-      "sha256": "e91da2cd4facda39aeadf3c4e9dee1029b23c041fdf4f77b5985ce514ec7b3a2"
+      "bytes": 32809,
+      "sha256": "3df8744018168997f60db8ba3c448ee9d4109f9a18cdfdcd7f7bb73bbfa85e9d"
     },
     "engine/NeCosmos-Simulation/src/ecosystem/__init__.py": {
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "engine/NeCosmos-Simulation/src/ecosystem/cats.py": {
-      "bytes": 29188,
-      "sha256": "e8dddc65145e17bd11b0fb2a7a2108694954db716f44ea8e07fb899f04f98149"
+      "bytes": 29596,
+      "sha256": "82e99a5f3409383914e15f92a3d4060583932220b9b26c46cc35d410953139aa"
     },
     "engine/NeCosmos-Simulation/src/hydrology/__init__.py": {
       "bytes": 0,
@@ -626,8 +630,8 @@
       "sha256": "903cd701f165cb06e6efa45918a7fd3ced1a903510750e3cbd0b6d76e12d3a86"
     },
     "engine/NeCosmos-Simulation/src/hydrology/water.py": {
-      "bytes": 9810,
-      "sha256": "d1a549d13c38cc6256b0c24f0ab7256ba20a49058a010543b5b68ddb2bfe82c2"
+      "bytes": 12118,
+      "sha256": "d058a4ae61cd1a7c4c5c2079090727f65be31520a0b56496ada76290114218d7"
     },
     "engine/NeCosmos-Simulation/src/terrain/__init__.py": {
       "bytes": 0,
@@ -645,21 +649,29 @@
       "bytes": 3684,
       "sha256": "37c1164602fbea16e3d0610d58f17e81f85c1a65d838007bc501a367ad499a9e"
     },
+    "engine/NeCosmos-Simulation/src/weather/__init__.py": {
+      "bytes": 72,
+      "sha256": "fe114afa87aa4f5c5779bbbb177ff5f8e42607f6f94630650bba279b4d9ddb3a"
+    },
+    "engine/NeCosmos-Simulation/src/weather/generator.py": {
+      "bytes": 4155,
+      "sha256": "1213e1b4abf5957b43ac5c8d6cd45465125d9c957caad59ab91ec575dc83a4f2"
+    },
     "engine/bridge.py": {
-      "bytes": 16787,
-      "sha256": "332e3d774def7e446ba9931bddcc8e7a3fcf15f08bbdc808541ae0f20d5561d0"
+      "bytes": 18376,
+      "sha256": "95394ed0f3680e27605cc6dd2e79ad30e1fcdfcfb6d909af697bd047478712b7"
     },
     "engine/manifest.json": {
-      "bytes": 1067,
-      "sha256": "f51bfcb732a4233127f48560b367bcbc70d2c897153060421ac8d7fd9d8fc535"
+      "bytes": 1228,
+      "sha256": "1d4fe842ca4fccb5009336ad5079e80271a96f2caf7ee0723734c36d38da15a4"
     },
     "index.html": {
-      "bytes": 11005,
-      "sha256": "0370ae9f3557dfa8c56e8bca9b6b016a93c729597d778f1f0ec14fa264caed2b"
+      "bytes": 11716,
+      "sha256": "5af6b013709dc282add538d95fa65719adab79f3faa6508f1066c3f30a103d75"
     },
     "js/main.js": {
-      "bytes": 23060,
-      "sha256": "d44fe76c3897d0acdc14a77e9471285c95ecbd768552b38d33a1aa34ccd85298"
+      "bytes": 23833,
+      "sha256": "42604d59a95972b67a5cde9c92c5ac9b6d6634164c165a9ee19221f51ffa3f9c"
     },
     "js/render.js": {
       "bytes": 14835,

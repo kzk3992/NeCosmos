@@ -1,6 +1,6 @@
 """NeCosmos v0.10 browser bridge (runs inside Pyodide, in a Web Worker).
 
-Thin wrapper over the FROZEN Phase 4 core (/workspace/NeCosmos-Simulation, unchanged):
+Thin wrapper over the verified Phase 4 core (/workspace/NeCosmos-Simulation):
   * new_world / step / state      -> the real Simulation, day by day
   * unlock(level)                  -> player-bought habitat expansion (fixed footprint; 25/50/75/100 %)
   * check_place / place / remove   -> placeable objects; TerrainProtected objects use the core's own
@@ -38,6 +38,8 @@ if WASM_INDEX_SHIM:
 
 from src.coupling.simulation import SP, Simulation, load_cfg
 from src.terrain import generate, protection
+from src.weather.generator import WeatherGenerator, Weather
+from dataclasses import asdict
 
 FROZEN = "/workspace/NeCosmos-Simulation/configs/scenarios/frozen.json"
 STATE = {"sim": None, "objects": {}, "next_pid": 1, "params": None}
@@ -91,11 +93,15 @@ def new_world(params_json):
     p = json.loads(params_json)
     if not isinstance(p.get("seed"), int) or not 0 <= p["seed"] <= 0xFFFFFFFF:
         raise ValueError("シードは0〜4294967295の整数にしてください")
+    mode = p.get('weatherMode', 'normal')
+    if mode not in ('fixed', 'normal', 'wet', 'dry', 'extreme'):
+        raise ValueError('天候の設定が不正です')
+    p['weatherMode'] = mode
     ov = _frozen_overrides()
     if p["terrain"] == "mountain":
         ov["terrain.terrains.mountain"] = MOUNTAIN
     sc = {"terrain": p["terrain"], "climate": p["climate"], "composition": p["composition"],
-          "seed": int(p["seed"]), "days": 10 ** 9, "unlock": "fixed", "overrides": ov}
+          "seed": int(p["seed"]), "days": 10 ** 9, "unlock": "fixed", "overrides": ov, "weather_mode": mode, "max_population": MAX_POPULATION}
     STATE["sim"] = Simulation(sc)
     STATE["sim"].eco.max_population = MAX_POPULATION
     STATE["objects"] = {}
@@ -144,7 +150,9 @@ def state(include_static=False):
                     "energy": np.round(p.energy, 3).tolist(), "mass": np.round(p.mass, 4).tolist(), "action": p.action.tolist()},
            "counts": {s: int((p.sp == k).sum()) for k, s in enumerate(SP)},
            "extinct": dict(sim.extinct), "river_events": {k: v for k, v in sim.river.events.items()},
-           "objects": _objects_state(), "species": SP}
+           "objects": _objects_state(), "species": SP,
+           "weather": {"mode": sim.weather_driver.mode, **asdict(sim.weather_driver.current),
+                       "migratedAt": getattr(sim, 'weather_migrated_at', None)}}
     if include_static:
         out["rim"] = w["rim"].ravel().astype(int).tolist()
         out["unlock_masks"] = [m.ravel().astype(int).tolist() for m in sim.unlock_masks]
@@ -291,13 +299,13 @@ def _objects_state():
 
 
 # ------------------------------------------------------------------ persistence (safe JSON codec)
-# No pickle: state is encoded as JSON with explicit tags. Only the four allowlisted classes below can
+# No pickle: state is encoded as JSON with explicit tags. Only the allowlisted numerical/weather classes below can
 # be reconstructed (by name, via __new__ + __dict__); arrays keep dtype and shape; tuples and
 # non-string dict keys are tagged. Decoding never executes code from the save.
 from src.ecosystem.cats import Ecology, Population
 from src.hydrology.rivers import RiverTracker
 
-_CLASSES = {"Simulation": Simulation, "Ecology": Ecology, "Population": Population, "RiverTracker": RiverTracker}
+_CLASSES = {"Simulation": Simulation, "Ecology": Ecology, "Population": Population, "RiverTracker": RiverTracker, "WeatherGenerator": WeatherGenerator, "Weather": Weather}
 _DTYPES = {"float64", "float32", "int64", "int32", "int8", "uint8", "bool", "uint64"}
 
 
@@ -363,9 +371,26 @@ def load(b64):
     doc = json.loads(zlib.decompress(base64.b64decode(b64)).decode())
     if doc.get("format") != "necosmos-v0.10-json":
         raise ValueError("not a v0.10 save")
-    STATE.update(sim=_dec(doc["sim"]), objects=_dec(doc["objects"]), next_pid=int(doc["next_pid"]), params=_dec(doc["params"]))
-    # Apply the current gameplay limit to older saves without deleting existing cats.
-    STATE["sim"].eco.max_population = MAX_POPULATION
+    sim = _dec(doc['sim'])
+    objects, params = _dec(doc['objects']), _dec(doc['params'])
+    # Older worlds keep all material, cats and placed objects. Weather starts at the
+    # saved day; no invented replay of their unrecorded weather history.
+    if getattr(sim, 'weather_driver', None) is None:
+        sim.cfg['weather'] = load_cfg()['weather']
+        driver = WeatherGenerator(sim.seed, sim.clim, sim.cfg['weather'], 'normal')
+        season = math.sin((sim.day % 360) / 360 * 2 * math.pi)
+        driver.day = sim.day
+        driver.current = Weather(sim.day, 0, 0, float(sim.clim['temp_C'] + sim.clim['season_amp_C'] * season),
+                                 0.0, float(1 + 0.18 * season), 0.65, 0.0, False)
+        sim.weather_driver = driver
+        sim.sc['weather_mode'] = 'normal'
+        sim.weather_migrated_at = sim.day
+        sim.terrain_attribution = {k: np.zeros_like(sim.w['soil']) for k in ('hydro','cat_direct','biogeochemical')}
+        sim.terrain_attribution_origin_z = (sim.w['bedrock'] + sim.w['soil']).copy()
+        sim._env_cells(sim.day)
+    sim.eco.max_population = MAX_POPULATION
+    params = dict(params or {}, weatherMode=sim.weather_driver.mode)
+    STATE.update(sim=sim, objects=objects, next_pid=int(doc['next_pid']), params=params)
     return state(include_static=True)
 
 

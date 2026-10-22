@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101926">
-<title>NeCosmos v0.10 — 猫だけの小さな宇宙</title>
+<title>NeCosmos v0.10.1 — 猫だけの小さな宇宙</title>
 <style>
 :root{color-scheme:dark;--bg:#0d1420;--panel:#192437cc;--line:#35435a;--gold:#f6d38d;--muted:#a6b8cc;--mint:#9de2c0;--red:#e08a7a}
 *{box-sizing:border-box}
@@ -65,9 +65,9 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
 <body>
 <div id="app">
   <header>
-    <h1>NeCosmos</h1><span class="ver">v0.10 · 猫だけの小さな宇宙</span>
+    <h1>NeCosmos</h1><span class="ver">v0.10.1 · 猫だけの小さな宇宙</span>
     <button id="newWorldBtn" class="primary" disabled>＋ 新しい世界</button>
-    <div class="hud"><span id="day">—</span><span id="total">—</span><span>🥝 <b id="kiwi">0</b></span><span id="level"></span>
+    <div class="hud"><span id="day">—</span><span id="weatherSummary" aria-live="polite">—</span><span id="total">—</span><span>🥝 <b id="kiwi">0</b></span><span id="level"></span>
       <button id="aboutBtn">ⓘ</button></div>
   </header>
 
@@ -116,6 +116,10 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
       <div id="objects"></div>
     </section>
     <section>
+      <h3>今日の天候</h3>
+      <div id="weatherDetails" class="muted"></div>
+    </section>
+    <section>
       <h3>できごと</h3>
       <div id="log"></div>
     </section>
@@ -132,6 +136,9 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
       <div class="row"><label for="climate">気候</label><select id="climate">
         <option value="wet">湿潤</option><option value="tundra">苔原</option><option value="dry">乾燥</option>
         <option value="cold">寒冷</option><option value="moss">温暖（旧）</option></select></div>
+      <div class="row"><label for="weatherMode">天候</label><select id="weatherMode">
+        <option value="normal">季節で移ろう天候</option><option value="wet">雨がち</option><option value="dry">乾燥がち</option>
+        <option value="extreme">激しい雨も降る</option><option value="fixed">一定の天候</option></select></div>
       <div class="row"><label for="composition">猫たち</label><select id="composition">
         <option value="all8">8種すべて</option><option value="pcd">草・もぐもぐ・きのこ</option><option value="producers">草ねこだけ</option></select></div>
       <div class="row"><label for="seed">シード</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="1"><button id="randSeed" title="ランダム">🎲</button></div>
@@ -148,10 +155,11 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
   </div>
 </dialog>
 <dialog id="about">
-  <h3>NeCosmos v0.10 について</h3>
+  <h3>NeCosmos v0.10.1 について</h3>
   <p>猫だけで成り立つ小さな惑星を観察するゲームです。猫を直接操作することはできません。猫たちの暮らしが、草や水、土の流れと少しずつ影響し合います。</p>
   <ul class="muted">
     <li>シミュレーション：Phase 4 で検証・凍結した Python / NumPy の生態系・地形モデルを、ブラウザ内の Pyodide（Web Worker）でそのまま動かしています。数値の調整や救済措置は入れていません。</li>
+    <li>季節と前日の天候から気温・雨・日照・湿度が変わり、水や猫の暮らしに影響します。新しい世界で天候の傾向を選べます。</li>
     <li>1 日は猫の 1 年齢に相当します。300 日ごとの観察記録は記録のためだけのもので、世界には影響しません。</li>
     <li>ネコキウイは観察の報酬です。生態系の物質とは別に扱っており、置き物の購入や生息域の拡張に使えます。</li>
     <li>保護される置き物（タワーなど）は地面の変化を抑えますが、水位が上がれば水没することもあります。</li>

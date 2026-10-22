@@ -49,7 +49,7 @@ def _clamp(arr, st, key, scale):
     return arr
 
 
-def daily(st, cfg, rain_m, epot_m, erosion=True):
+def daily(st, cfg, rain_m, epot_m, erosion=True, defer_sediment=False):
     hy, se, so = cfg["hydrology"], cfg["sediment"], cfg["soil"]
     n_sub = hy["substeps"]
     A, dx = st["A"], st["dx"]
@@ -72,6 +72,7 @@ def daily(st, cfg, rain_m, epot_m, erosion=True):
     gross = np.zeros((n0, n1))
     ero = np.zeros((n0, n1))
     dep = np.zeros((n0, n1))
+    trace = []
     for sub in range(n_sub):
         led["exfil"] += soilmove.exfiltrate(st, fc)
         h, s, Ws = st["h"], st["soil"], st["Ws"]
@@ -140,6 +141,83 @@ def daily(st, cfg, rain_m, epot_m, erosion=True):
         gross += out_s
         led["outflow"] += float(qo.sum())
         st["h"], st["Ws"] = h, Ws
+        if defer_sediment:
+            trace.append((qx.copy(), qy.copy(), qo.copy(), out_s.copy(), avail.copy()))
+        else:
+            # sediment exchange (shared daily budget) then advection with the water fractions
+            if erosion:
+                slope = np.maximum(_neighbour_slopes(z, dx), se["min_slope"])
+                C = se["k_cap"] * out_s * slope
+                free = (~rim) * (1 - prot)
+                S = st["sed"]
+                e_want = se["k_erode"] * np.maximum(C - S, 0) * (1 - se["hardness_protect"] * st["hardness"]) \
+                    * (1 - se["cover_protect"] * st["cover"]) * free
+                e = soilmove.local_exchange(st, e_want, +1)
+                S = st["sed"]
+                d_want = se["k_dep"] * np.maximum(S - C, 0) * free
+                d = soilmove.local_exchange(st, d_want, -1)
+                led["throttled"] += float((e_want - e).sum() + (d_want - d).sum())
+                ero += e
+                dep += d
+                led["eroded"] += float(e.sum())
+                led["deposited"] += float(d.sum())
+            S = st["sed"]
+            frac = np.where(avail > 0, np.minimum(out_s / np.maximum(avail, 1e-300), 1.0), 0.0)
+            share = np.where(out_s > 0, S * frac / np.maximum(out_s, 1e-300), 0.0)
+            sx = np.where(qx > 0, qx * share[:, 1:], qx * share[:, :-1])
+            sy = np.where(qy > 0, qy * share[1:, :], qy * share[:-1, :])
+            so_out = qo * share
+            dS = -so_out
+            dS[:, :-1] += sx
+            dS[:, 1:] -= sx
+            dS[:-1, :] += sy
+            dS[1:, :] -= sy
+            st["sed"] = _clamp(S + dS, st, "sed", float(S.max()))
+            led["sed_export"] += float(so_out.sum())
+        h = _clamp(st["h"] + dvol / A, st, "water_h", float(st["h"].max()))
+        ep = epot_m / n_sub * st["evap_mult"]
+        es = np.minimum(h, ep)
+        h = h - es
+        cap = fc * st["soil"] * st["retention"]
+        eso = np.minimum(st["Ws"], (ep - es) * hy["soil_evap_frac"] * np.clip(st["Ws"] / np.maximum(cap, 1e-12), 0, 1))
+        st["Ws"] = st["Ws"] - eso
+        st["h"] = h
+        led["evap_surface"] += float(es.sum() * A)
+        led["evap_soil"] += float(eso.sum() * A)
+    led["exfil"] += soilmove.exfiltrate(st, fc)
+    # net daily outflow per cell and by direction (E, W, N, S, outside)
+    dirs = np.zeros((5, n0, n1))
+    dirs[0][:, :-1] = np.maximum(-Fx, 0)
+    dirs[1][:, 1:] = np.maximum(Fx, 0)
+    dirs[2][:-1, :] = np.maximum(-Fy, 0)
+    dirs[3][1:, :] = np.maximum(Fy, 0)
+    dirs[4] = Fo
+    Q = dirs.sum(0)
+    return {"Q": Q, "Q_gross": gross, "dirs": dirs, "ero": ero, "dep": dep, "ledger": led, "trace": trace}
+
+
+def creep(st, cfg):
+    """Daily hillslope creep + repose slumping through the shared budget (soilmove)."""
+    se = cfg["sediment"]
+    A, dx = st["A"], st["dx"]
+    z = st["bedrock"] + st["soil"]
+    k, rep = se["creep_coeff"], se["repose_slope"]
+    qs = []
+    for axis in (1, 0):
+        dz = np.diff(z, axis=axis)
+        qs.append(k * A * dz + 0.25 * A * np.sign(dz) * np.maximum(np.abs(dz) - rep * dx, 0))
+    return soilmove.transfer_faces(st, qs[0], qs[1], frozen=st["rim"])
+
+
+def sediment_from_trace(st, cfg, hyd, erosion=True):
+    """Terrain phase: replay committed water transports, without recomputing water.
+    No terrain feedback into this day's already committed hydraulic fluxes.
+    New soil capacity is reconciled by conserved exfiltration afterwards.
+    """
+    se=cfg['sediment'];dx=st['dx'];rim=st['rim'];prot=st['protection']
+    led=hyd['ledger'];ero=hyd['ero'];dep=hyd['dep']
+    for qx,qy,qo,out_s,avail in hyd['trace']:
+        z=st['bedrock']+st['soil']
         # sediment exchange (shared daily budget) then advection with the water fractions
         if erosion:
             slope = np.maximum(_neighbour_slopes(z, dx), se["min_slope"])
@@ -170,36 +248,5 @@ def daily(st, cfg, rain_m, epot_m, erosion=True):
         dS[1:, :] -= sy
         st["sed"] = _clamp(S + dS, st, "sed", float(S.max()))
         led["sed_export"] += float(so_out.sum())
-        h = _clamp(st["h"] + dvol / A, st, "water_h", float(st["h"].max()))
-        ep = epot_m / n_sub * st["evap_mult"]
-        es = np.minimum(h, ep)
-        h = h - es
-        cap = fc * st["soil"] * st["retention"]
-        eso = np.minimum(st["Ws"], (ep - es) * hy["soil_evap_frac"] * np.clip(st["Ws"] / np.maximum(cap, 1e-12), 0, 1))
-        st["Ws"] = st["Ws"] - eso
-        st["h"] = h
-        led["evap_surface"] += float(es.sum() * A)
-        led["evap_soil"] += float(eso.sum() * A)
-    led["exfil"] += soilmove.exfiltrate(st, fc)
-    # net daily outflow per cell and by direction (E, W, N, S, outside)
-    dirs = np.zeros((5, n0, n1))
-    dirs[0][:, :-1] = np.maximum(-Fx, 0)
-    dirs[1][:, 1:] = np.maximum(Fx, 0)
-    dirs[2][:-1, :] = np.maximum(-Fy, 0)
-    dirs[3][1:, :] = np.maximum(Fy, 0)
-    dirs[4] = Fo
-    Q = dirs.sum(0)
-    return {"Q": Q, "Q_gross": gross, "dirs": dirs, "ero": ero, "dep": dep, "ledger": led}
-
-
-def creep(st, cfg):
-    """Daily hillslope creep + repose slumping through the shared budget (soilmove)."""
-    se = cfg["sediment"]
-    A, dx = st["A"], st["dx"]
-    z = st["bedrock"] + st["soil"]
-    k, rep = se["creep_coeff"], se["repose_slope"]
-    qs = []
-    for axis in (1, 0):
-        dz = np.diff(z, axis=axis)
-        qs.append(k * A * dz + 0.25 * A * np.sign(dz) * np.maximum(np.abs(dz) - rep * dx, 0))
-    return soilmove.transfer_faces(st, qs[0], qs[1], frozen=st["rim"])
+    hyd["trace"] = []
+    return hyd

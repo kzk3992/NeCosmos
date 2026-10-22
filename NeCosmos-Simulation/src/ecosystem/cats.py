@@ -24,6 +24,12 @@ def _v(x):
     return x[0] if isinstance(x, list) else x
 
 
+def _credit(w, pool, indices, amount):
+    """New weather pipeline: receipts become available only in the cycle phase."""
+    target=w.get('_ecology_pending', {}).get(pool,w[pool])
+    np.add.at(target,indices,amount)
+
+
 class Population:
     FIELDS = ("id", "sp", "j", "i", "age", "energy", "mass", "last_birth", "born", "stress",
               "action", "eligible", "infl_soil_m3", "infl_cover", "infl_transport_kg")
@@ -243,7 +249,7 @@ class Ecology:
         bio = Pe * _v(g["biomass_frac"])
         res = Pe * _v(g["resource_frac"])
         np.subtract.at(w["N"], (J, I), bio + res)
-        np.add.at(w["G"], (J, I), res)
+        _credit(w, "G", (J, I), res)
         np.subtract.at(w["Ws"], (J, I), wu * f[J, I])
         mass_gain += bio
         gain += Pe
@@ -261,7 +267,7 @@ class Ecology:
         fG = np.where(dG > 0, np.minimum(1, w["G"] / np.maximum(dG, 1e-300)), 1)
         intake = bite * fG[J, I]
         np.subtract.at(w["G"], (J, I), intake)
-        np.add.at(w["O"], (J, I), intake * 0.32)                       # [confirmed] 32% of a bite -> organic
+        _credit(w, "O", (J, I), intake * 0.32)                       # [confirmed] 32% of a bite -> organic
         mass_gain += intake * 0.68
         epu = np.where(p.sp == MOGU, _v(self.S["mogumogu"]["energy_per_bite"]), 0.82)
         gain += intake * epu
@@ -281,7 +287,7 @@ class Ecology:
             take = dem * fr[J, I]
             np.subtract.at(w[pool], (J, I), take)
             to_n = np.where(p.sp == KINOKO, _v(kd["to_nutrient"]), np.where(p.sp == SLIME, _v(sd["to_nutrient"]), 1 - _v(fw["glean_mass"])))
-            np.add.at(w["N"], (J, I), take * to_n)
+            _credit(w, "N", (J, I), take * to_n)
             mass_gain += take * (1 - to_n)
             gain += take * np.where(p.sp == KINOKO, _v(kd["energy_per_unit"]), np.where(p.sp == SLIME, _v(sd["energy_per_unit"]), _v(fw["energy_per_unit"])))
             st["decomposed"] += float(take.sum())
@@ -297,7 +303,7 @@ class Ecology:
         p.mass = p.mass + mass_gain
         exc = np.minimum(np.maximum(p.mass, 0), 0.0005)                 # [confirmed] excretion -> organic
         p.mass -= exc
-        np.add.at(w["O"], (J, I), exc)
+        _credit(w, "O", (J, I), exc)
         # ---- movement (targets from today's fields; constraints: unlocked, slope, water)
         self._move(w, day, seed, years, st)
         # ---- reproduction (occupancy before births; explicit space capacity K per cell)
@@ -317,7 +323,7 @@ class Ecology:
             st["deaths_old"] += int(old.sum())
             st["deaths_collapse"] += int(collapse.sum())
             st["deaths_by_sp"] += np.bincount(p.sp[dead], minlength=8)
-            np.add.at(w["O"], (p.j[dead], p.i[dead]), np.maximum(p.mass[dead], 0))   # carcass -> organic
+            _credit(w, "O", (p.j[dead], p.i[dead]), np.maximum(p.mass[dead], 0))   # carcass -> organic
             neg = np.minimum(p.mass[dead], 0).sum()
             assert neg >= -1e-12, "negative carcass mass"
             cause = np.where(collapse, "collapse", np.where(old, "old_age", np.where(stress_cause, "stress", "starvation")))
@@ -336,7 +342,8 @@ class Ecology:
         j_from, i_from = p.j.copy(), p.i.copy()
         n0, n1 = w["N"].shape
         k = len(p)
-        go = rng.u01(seed, rng.MOVE, day, p.id) < self.move_p[p.sp]
+        activity = w['weather_activity'][p.j,p.i] if 'weather_activity' in w else 1.0
+        go = rng.u01(seed, rng.MOVE, day, p.id) < self.move_p[p.sp] * activity
         cj = p.j[:, None] + NB[None, :, 0]
         ci = p.i[:, None] + NB[None, :, 1]
         inside = (cj >= 0) & (cj < n0) & (ci >= 0) & (ci < n1)
@@ -350,7 +357,8 @@ class Ecology:
         # scores
         jitter = rng.u01(seed, rng.MOVE, day + 1_000_000, (p.id[:, None] * 8 + np.arange(5)[None, :]).ravel()).reshape(k, 5)
         sc = jitter * 1e-3
-        G, OR = w["G"][cjc, cic], (w["O"] + w["R"])[cjc, cic]
+        decision = w.get('_decision_resources', w)
+        G, OR = decision["G"][cjc, cic], (decision["O"] + decision["R"])[cjc, cic]
         sc = np.where((p.sp == MOGU)[:, None], G + sc, sc)
         sc = np.where((p.sp == TORI)[:, None], G * (w["moist"][cjc, cic] < 0.72) + sc, sc)
         sc = np.where(((p.sp == KINOKO) | (p.sp == SLIME))[:, None], OR + sc, sc)
@@ -381,7 +389,7 @@ class Ecology:
         for kk in np.flatnonzero(go & (p.sp == TORI)):
             j0, i0 = j_from[kk], i_from[kk]
             ja, jb, ia, ib = max(0, j0 - R), min(n0, j0 + R + 1), max(0, i0 - R), min(n1, i0 + R + 1)
-            Gs = w["G"][ja:jb, ia:ib] * (w["moist"][ja:jb, ia:ib] < 0.72)
+            Gs = decision["G"][ja:jb, ia:ib] * (w["moist"][ja:jb, ia:ib] < 0.72)
             okb = w["unlocked"][ja:jb, ia:ib] & (w["h"][ja:jb, ia:ib] <= self.wade)
             jit = rng.u01(seed, rng.MOVE, day + 2_000_000, p.id[kk] * 1024 + np.arange(Gs.size)).reshape(Gs.shape) * 1e-6
             score = np.where(okb, Gs + jit, -np.inf)
@@ -405,7 +413,7 @@ class Ecology:
             fr = np.where(D > 0, np.minimum(1, w["N"] / np.maximum(D, 1e-300)), 1)
             cargo = want * fr[j_from, i_from]
             np.subtract.at(w["N"], (j_from, i_from), cargo)
-            np.add.at(w["N"], (p.j, p.i), cargo)
+            _credit(w, "N", (p.j, p.i), cargo)
             p.infl_transport_kg += cargo
             st["sp_transport_kg"] += np.bincount(p.sp, cargo, 8)
             for kk in np.flatnonzero(cargo > 0):
@@ -455,7 +463,7 @@ class Ecology:
         for kk in newg:                                               # [confirmed] new grass seeds resource
             s = min(w["N"][p.j[kk], p.i[kk]], 0.025)
             w["N"][p.j[kk], p.i[kk]] -= s
-            w["G"][p.j[kk], p.i[kk]] += s
+            _credit(w, "G", (p.j[kk],p.i[kk]), s)
         st["births"] += len(idx)
         st["births_by_sp"] += np.bincount(sp, minlength=8)
 
@@ -480,7 +488,7 @@ class Ecology:
         self.pop.add(np.array([GRASS]), np.array([jj]), np.array([ii]), np.array([self.init_e[GRASS]]), np.array([0.055]), day)
         s = min(w["N"][jj, ii], 0.025)
         w["N"][jj, ii] -= s
-        w["G"][jj, ii] += s
+        _credit(w, "G", (jj,ii), s)
         st["spawned"] += 1
 
     # ------------------------------------------------------------------ wisdom clock [confirmed rules; water amount provisional]
@@ -513,7 +521,7 @@ class Ecology:
             self.catnip_until = day + _v(cs["catnip_days"])
             tgt = np.flatnonzero(p.sp != CHIE)
             k = tgt[np.argmin(p.id[tgt])] if len(tgt) else np.flatnonzero(p.sp == CHIE)[0]
-            w["O"][p.j[k], p.i[k]] += _v(cs["catnip_mass"])
+            _credit(w, "O", (p.j[k],p.i[k]), _v(cs["catnip_mass"]))
             st["catnip_in_kg"] = _v(cs["catnip_mass"])
             st["wisdom_event"] = "catnip"
         elif desert >= _v(cs["advice_share"]):

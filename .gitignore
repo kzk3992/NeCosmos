@@ -19,3 +19,7 @@ NeCosmos-Simulation/configs/scenarios/seeds.json
 *.blend1
 # Integration/browser test output remains local.
 .validation/
+
+# Local trial plans (production uses only weather.json).
+NeCosmos-Simulation/configs/scenarios/cap200_review.json
+NeCosmos-Simulation/configs/scenarios/weather_review.json

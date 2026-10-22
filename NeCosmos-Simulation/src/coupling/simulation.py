@@ -1,12 +1,19 @@
 """Coupled daily simulation: terrain + hydrology + sediment + rivers + 8-species ecology.
 
-Daily order (fixed step; observers never modify state or draw random numbers):
+Legacy daily order (weather_mode omitted; retained for historical comparison):
   1 unlock schedule (staged: +1 level every 300 d)    2 weather (exogenous counter RNG, seed+climate only)
   3 hydrology + sediment (substeps)                    4 river/pond tracker
   5 ecology (synchronous allocation, counter RNG)       6 coupling: cover, compaction, cat digging,
                                                           fish resuspension, humification, slime retention,
                                                           fluff warmth, wisdom fire
   7 creep (shared |dz| budget)                          8 exfiltration, biome hysteresis, ledgers, record
+Weather-enabled order (explicit weather_mode): Markov meteorology -> hydraulic fluxes
+on previous terrain -> conservative sediment replay + creep -> synchronous ecology
+(receipts deferred) + direct disturbance -> resource receipts and biogeochemical
+cycle -> commit. Cats see post-hydraulic terrain; all weather and hydraulic fluxes
+are independent of today's cat actions. Weather RH affects potential evaporation.
+Phase height increments are recorded separately; these are process attribution,
+not a claim that cat-mediated hydrology is a pure weather causal effect.
 Ledgers (residual = change in storage - net external flux, expected ~1e-12):
   water  (m^3): surface + soil water;  in rain + wisdom water;  out evaporation + plant use + outflow
   soil   (m^3): soil + suspended/resting sediment;  in humified organic volume;  out boundary export
@@ -24,6 +31,7 @@ from ..ecosystem.cats import CHIE, FUWA, GRASS, MOGU, SAKANA, SLIME, SP, TORI, E
 from ..hydrology import rivers, water
 from ..terrain import generate, protection, soilmove
 from . import rng
+from ..weather.generator import WeatherGenerator
 
 HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BIOMES = ["moss", "desert", "wet", "cold", "aquatic"]
@@ -35,7 +43,7 @@ def load_cfg():
         with open(os.path.join(HERE, "configs", p), encoding="utf-8") as f:
             return json.load(f)
     return {"species": j("species/species.json"), "terrain": j("terrain/terrain.json"),
-            "climates": j("scenarios/climates.json"), "comps": j("scenarios/compositions.json")}
+            "climates": j("scenarios/climates.json"), "comps": j("scenarios/compositions.json"), "weather": j("scenarios/weather.json")}
 
 
 def code_hash():
@@ -73,6 +81,7 @@ class Simulation:
         tc["sediment"]["k_erode"] *= em
         self.seed = int(sc["seed"])
         self.clim = cfg["climates"]["climates"][sc["climate"]]
+        self.weather_driver = WeatherGenerator(self.seed, self.clim, cfg['weather'], sc['weather_mode'], sc.get('extreme_start_day', 1)) if sc.get('weather_mode') else None
         self.days = int(sc["days"])
         self.motion = sc.get("terrain_motion", True)
         self.cat_effects = sc.get("cat_effects", True)
@@ -99,6 +108,7 @@ class Simulation:
         w["Ws"] = np.clip(self.clim["init_moist"], 0, 1) * fc * w["soil"]
         w["z"] = w["bedrock"] + w["soil"]
         self.w = w
+        self.terrain_attribution = {k: np.zeros((n,n)) for k in ('hydro', 'cat_direct', 'biogeochemical')}
         self.z0 = w["z"].copy()
         self.zmean0 = float(w["z"].mean())
         self.channel_mask = ter["channel_mask"]
@@ -135,9 +145,16 @@ class Simulation:
             "cat_effects": self.cat_effects, "lifespan_mult": sc.get("lifespan_mult", 1.0),
             "production_mult": sc.get("production_mult", 1.0),
             **({"grass_repro_min_age": sc["grass_repro_min_age"]} if "grass_repro_min_age" in sc else {})})
+        limit = sc.get("max_population")
+        if limit is not None:
+            if isinstance(limit, bool) or not isinstance(limit, int) or limit < 0:
+                raise ValueError("max_population must be a nonnegative integer or None")
+            self.eco.max_population = limit
         if comp:
             for k in comp:
                 comp[k] = int(round(comp[k] * sc.get("init_pop_mult", 1.0)))
+            if limit is not None and sum(comp.values()) > limit:
+                raise ValueError("Initial population exceeds explicit max_population")
             self.eco.place_initial(comp, w, self.seed)
         self.day = 0
         self.cum = {"rain": 0.0, "outflow": 0.0, "evap": 0.0, "plant": 0.0, "sed_export": 0.0, "humified_kg": 0.0,
@@ -165,16 +182,28 @@ class Simulation:
                     jj, ii = np.mgrid[0:w["h"].shape[0], 0:w["h"].shape[1]]
                     fire = np.maximum(fire, np.where((np.hypot(jj - fj, ii - fi) <= 1.5) & (w["O"] > 0.001), 3.0, 0.0))
         w["fire"] = fire
-        w["T"] = c["temp_C"] + c["season_amp_C"] * s + lapse * (w["z"] - self.zmean0) + fire + w["warm"]
+        if self.weather_driver:
+            today = self.weather_driver.current
+            air = today.temperature_C + self.cfg['weather']['lapse_C_per_m'] * (w['z'] - self.zmean0)
+            w['RH'] = np.full_like(w['h'], today.relative_humidity)
+            w['T_air'] = air.copy()
+            w['T'] = air + fire + w['warm']
+            w['weather_activity'] = np.clip((w['T'] + 10) / 25, 0.2, 1.0) * min(1.0, 0.35 + 0.65 * today.sunlight)
+        else:
+            w["T"] = c["temp_C"] + c["season_amp_C"] * s + lapse * (w["z"] - self.zmean0) + fire + w["warm"]
         fc = self.cfg["terrain"]["soil"]["field_capacity"]
         cap = fc * w["soil"] * w["retention"]
         w["theta"] = np.clip(w["Ws"] / np.maximum(cap, 1e-9), 0, 1)
         w["moist"] = np.clip(w["theta"] + 4 * w["h"], 0, 1)
-        self.light = self.cfg["climates"]["light"] * (1 + self.cfg["climates"]["light_season_amp"] * s)
+        self.light = self.weather_driver.current.sunlight if self.weather_driver else self.cfg["climates"]["light"] * (1 + self.cfg["climates"]["light_season_amp"] * s)
 
     def weather(self, day):
         """Exogenous daily rain (m) and potential evaporation (m): depends only on seed, climate, day."""
         c = self.clim
+        if self.weather_driver:
+            today = self.weather_driver.next(day)
+            epot = max(0.2, c['evap_base_mm'] + c['evap_mm_per_C'] * today.temperature_C) * today.sunlight * max(0.1, (1 - today.relative_humidity) / 0.4)
+            return today.precipitation_mm * self.sc.get('rain_mult', 1.0) / 1000, epot * self.sc.get('evap_mult', 1.0) / 1000
         u = rng.u01(self.seed, rng.WEATHER, day, [0, 1])
         wet = u[0] < c["wet_day_prob"]
         amount = (c["rain_mm_day"] / c["wet_day_prob"]) * -math.log(max(u[1], 1e-12)) if wet else 0.0
@@ -265,6 +294,9 @@ class Simulation:
             near[:, 1:] += fu[:, :-1]
             near[:, :-1] += fu[:, 1:]
             w["fuwa_near"] = near >= 2
+        self._cat_phase_z = (w['bedrock'] + w['soil']).copy()
+        if '_ecology_pending' in w:
+            for key, value in w.pop('_ecology_pending').items(): w[key] += value
         # abiotic soil biogeochemistry [provisional; always on, independent of cats]:
         # litter decay G -> O, slow mineralization O -> N, nutrient diffusion in soil water (conserved)
         bg = self.cfg["terrain"]["soil_biogeochem"]
@@ -343,20 +375,35 @@ class Simulation:
         z_start = (w["bedrock"] + w["soil"]).copy()
         rain, epot = self.weather(day)
         self._env_cells(day)                      # air temperature for snow / frozen ground
-        w["T_air"] = w["T"]
-        hyd = water.daily(w, cfg["terrain"], rain, epot, erosion=self.motion)
+        if not self.weather_driver:
+            w["T_air"] = w["T"]
+        hyd = water.daily(w, cfg["terrain"], rain, epot, erosion=self.motion, defer_sediment=bool(self.weather_driver))
+        if self.weather_driver:
+            water.sediment_from_trace(w, cfg['terrain'], hyd, erosion=self.motion)
+            creep_m3 = water.creep(w, cfg['terrain']) if self.motion else 0.0
+            hyd['ledger']['exfil'] += soilmove.exfiltrate(w, cfg['terrain']['soil']['field_capacity'])
+        z_after_hydro = (w['bedrock'] + w['soil']).copy()
         w["z"] = w["bedrock"] + w["soil"]
         riv, river_mask, pond_mask, down = self.river.update(day, hyd["Q"], hyd["dirs"], w["h"], w["z"], A)
         self.river_mask, self.pond_mask = river_mask, pond_mask
         self._env_cells(day)
+        if self.weather_driver:
+            w['_ecology_pending'] = {k: np.zeros_like(w[k]) for k in ('N','O','G')}
+            w['_decision_resources'] = {k: w[k].copy() for k in ('N','O','R','G')}
         st = self.eco.step(w, day, self.seed, {"light": self.light})
+        if self.weather_driver:
+            w.pop('_decision_resources')
         coup = self._coupling(day, st)
-        creep_m3 = water.creep(w, cfg["terrain"]) if self.motion else 0.0
+        if not self.weather_driver:
+            creep_m3 = water.creep(w, cfg["terrain"]) if self.motion else 0.0
         ex = soilmove.exfiltrate(w, cfg["terrain"]["soil"]["field_capacity"])     # retention may have dropped
         w["z"] = w["bedrock"] + w["soil"]
         self._env_cells(day)
         self._biome()
         dz_day = np.abs(w["z"] - z_start)
+        attribution = {'hydro': z_after_hydro-z_start, 'cat_direct': self._cat_phase_z-z_after_hydro, 'biogeochemical': w['z']-self._cat_phase_z}
+        if self.weather_driver:
+            for key, value in attribution.items(): self.terrain_attribution[key] += value
         # ledgers
         led = hyd["ledger"]
         store = self._storages()
@@ -398,6 +445,16 @@ class Simulation:
                     "humified_kg": coup["humified_kg"], "max_height_m": float(w["z"].max()), "mean_height_m": float(w["z"].mean()),
                     "max_daily_dz_m": float(dz_day.max()), "max_dz_used_m": float(w["dz_used"].max()),
                     "wet_cells": int((w["h"] > cfg["terrain"]["hydrology"]["wet_depth_m"]).sum())})
+        if self.weather_driver:
+            from dataclasses import asdict
+            row.update({'weather_'+k: v for k,v in asdict(self.weather_driver.current).items()})
+            row['weather_extreme'] = int(row['weather_extreme'])
+            row['potential_evap_mm'] = epot*1000
+            for key, value in attribution.items():
+                row['dz_'+key+'_signed_m3'] = float(value.sum()*A)
+                row['dz_'+key+'_absolute_m3'] = float(np.abs(value).sum()*A)
+                row['dz_'+key+'_max_m'] = float(np.abs(value).max())
+            row['dz_attribution_error_m'] = float(np.abs(sum(attribution.values())-(w['z']-z_start)).max())
         row.update(riv)
         row.update({f"biome_{b}_m2": float(biome_area[k]) for k, b in enumerate(BIOMES)})
         row["protection_area_m2"] = float((w["protection"] > 0.05).sum() * A)
@@ -470,6 +527,10 @@ class Simulation:
         for k, v in self.eco.pop.to_dict().items():
             if k != "next_id":
                 d["cat_" + k] = v
+        if self.weather_driver:
+            d['weather_state_json'] = np.array(json.dumps(self.weather_driver.export_state(), sort_keys=True))
+            d['RH'] = w['RH'].copy()
+            for key,value in self.terrain_attribution.items(): d['dz_cumulative_'+key] = value.copy()
         return d
 
     def state_hash(self):
@@ -481,6 +542,9 @@ class Simulation:
         order = np.argsort(p.id)
         for f in p.FIELDS:
             h.update(np.ascontiguousarray(getattr(p, f)[order]).tobytes())
+        if self.weather_driver:
+            h.update(json.dumps(self.weather_driver.export_state(), sort_keys=True).encode())
+            for value in self.terrain_attribution.values(): h.update(np.ascontiguousarray(value).tobytes())
         return h.hexdigest()
 
 

@@ -2,7 +2,8 @@
 // The simulation runs in a Web Worker (Pyodide + the frozen Python/NumPy core); the UI never blocks on it.
 import { World3D } from "./render.js";
 
-const VERSION = "0.10.0";
+const VERSION = "0.10.1";
+const compatibleSave = (meta) => meta && ["0.10.0", VERSION].includes(meta.version);
 const SAVE_KEY = "necosmos_v010_save", META_KEY = "necosmos_v010_meta";
 const SPECIES_JP = { grass: "草ねこ", mogumogu: "もぐもぐねこ", kinoko: "きのこねこ", fuwa: "ふわふわねこ", chie: "知恵ねこ",
   tori: "鳥ねこ", sakana: "魚ねこ", slime: "スライムねこ" };
@@ -112,8 +113,8 @@ async function newWorld(params) {
   $("newWorldDialog").close();
   $("extinctionDialog").close();
   stopModes();
-  app.params = params;
-  for (const k of ["terrain", "climate", "composition", "seed"]) if (params[k] != null) $(k).value = params[k];
+  app.params = { ...params, weatherMode: st.weather.mode };
+  for (const k of ["terrain", "climate", "weatherMode", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
   app.kiwi = 80; app.history = []; app.evaluations = []; app.log = []; app.ending = null;
   app.state = st;
   app.world.setWorld(st);
@@ -271,7 +272,7 @@ async function saveGame() {
 
 async function loadGame() {
   const blob = localStorage.getItem(SAVE_KEY), meta = readMeta();
-  if (!blob || !meta || meta.version !== VERSION) { toast("v0.10 の保存データがありません"); return false; }
+  if (!blob || !meta || !compatibleSave(meta)) { toast("v0.10 の保存データがありません"); return false; }
   app.running = false;
   await waitIdle();
   app.busy = true;
@@ -282,8 +283,9 @@ async function loadGame() {
   const arr = (v) => (Array.isArray(v) ? v : []);
   Object.assign(app, { kiwi: Number.isFinite(meta.kiwi) ? meta.kiwi : 0, history: arr(meta.history), evaluations: arr(meta.evaluations),
     log: arr(meta.log), params: meta.params && typeof meta.params === "object" ? meta.params : app.params, ending: meta.ending ?? null, state: st });
+  app.params = { ...(app.params || {}), weatherMode: st.weather.mode };
   app.world.setWorld(st);
-  if (app.params) for (const k of ["terrain", "climate", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
+  if (app.params) for (const k of ["terrain", "climate", "weatherMode", "composition", "seed"]) if (app.params[k] != null) $(k).value = app.params[k];
   $("extinctionDialog").close();
   notifyExtinction(st, true);
   refreshAll();
@@ -303,6 +305,12 @@ function refreshAll() {
   if (!st) return;
   $("newWorldBtn").disabled = $("worldSettingsBtn").disabled = !app.ready;
   $("day").textContent = `${st.day}日目`;
+  const weather = st.weather;
+  if (weather) {
+    const label = ["晴れ", "曇り", "雨", "激しい雨"][weather.state] || "晴れ";
+    $("weatherSummary").textContent = `${label} ${weather.temperature_C.toFixed(1)}℃`;
+    $("weatherDetails").textContent = `${label} · ${weather.temperature_C.toFixed(1)}℃ / 雨 ${weather.precipitation_mm.toFixed(1)}mm / 湿度 ${Math.round(weather.relative_humidity * 100)}% / 日照 ${Math.round(weather.sunlight * 100)}%`;
+  }
   $("kiwi").textContent = Math.floor(app.kiwi);
   const total = Object.values(st.counts).reduce((a, b) => a + b, 0);
   $("total").textContent = `${total} / ${st.maxPopulation || 200}匹`;
@@ -390,7 +398,7 @@ function wire() {
     }
     $("newBtn").disabled = true;
     try {
-      await newWorld({ terrain: $("terrain").value, climate: $("climate").value, composition: $("composition").value, seed });
+      await newWorld({ terrain: $("terrain").value, climate: $("climate").value, weatherMode: $("weatherMode").value, composition: $("composition").value, seed });
       app.running = true;
       setStatus("ready", "新しい世界を観察しています");
       refreshAll();
@@ -437,7 +445,7 @@ async function boot() {
     app.ready = true;
     const saved = localStorage.getItem(SAVE_KEY);
     const meta = readMeta();
-    if (!(saved && meta && meta.version === VERSION && await loadGame())) await newWorld({ terrain: $("terrain").value, climate: $("climate").value, composition: $("composition").value, seed: parseInt($("seed").value, 10) });
+    if (!(saved && meta && compatibleSave(meta) && await loadGame())) await newWorld({ terrain: $("terrain").value, climate: $("climate").value, weatherMode: $("weatherMode").value, composition: $("composition").value, seed: parseInt($("seed").value, 10) });
     readyResolve(true);
   } catch (e) { fail(e); }
 }
