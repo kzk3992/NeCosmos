@@ -41,6 +41,7 @@ from src.terrain import generate, protection
 
 FROZEN = "/workspace/NeCosmos-Simulation/configs/scenarios/frozen.json"
 STATE = {"sim": None, "objects": {}, "next_pid": 1, "params": None}
+MAX_POPULATION = 200
 
 
 def _frozen_overrides():
@@ -96,6 +97,7 @@ def new_world(params_json):
     sc = {"terrain": p["terrain"], "climate": p["climate"], "composition": p["composition"],
           "seed": int(p["seed"]), "days": 10 ** 9, "unlock": "fixed", "overrides": ov}
     STATE["sim"] = Simulation(sc)
+    STATE["sim"].eco.max_population = MAX_POPULATION
     STATE["objects"] = {}
     STATE["next_pid"] = 1
     STATE["params"] = p
@@ -133,7 +135,7 @@ def state(include_static=False):
     w = sim.w
     p = sim.eco.pop
     z = w["bedrock"] + w["soil"]
-    out = {"day": sim.day, "level": sim.level, "n": int(z.shape[0]), "cell_m": w["dx"],
+    out = {"day": sim.day, "level": sim.level, "maxPopulation": MAX_POPULATION, "n": int(z.shape[0]), "cell_m": w["dx"],
            "z": _r(z), "h": _r(w["h"]), "snow": _r(w["snow"]), "biome": w["biome_id"].ravel().astype(int).tolist(),
            "unlocked": w["unlocked"].ravel().astype(int).tolist(), "protection": _r(w["protection"], 3),
            "river": getattr(sim, "river_mask", getattr(sim.river, "preexisting", np.zeros_like(z, bool))).ravel().astype(int).tolist(),
@@ -362,6 +364,8 @@ def load(b64):
     if doc.get("format") != "necosmos-v0.10-json":
         raise ValueError("not a v0.10 save")
     STATE.update(sim=_dec(doc["sim"]), objects=_dec(doc["objects"]), next_pid=int(doc["next_pid"]), params=_dec(doc["params"]))
+    # Apply the current gameplay limit to older saves without deleting existing cats.
+    STATE["sim"].eco.max_population = MAX_POPULATION
     return state(include_static=True)
 
 

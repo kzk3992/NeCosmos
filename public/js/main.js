@@ -273,7 +273,7 @@ function refreshAll() {
   $("day").textContent = `${st.day}日目`;
   $("kiwi").textContent = Math.floor(app.kiwi);
   const total = Object.values(st.counts).reduce((a, b) => a + b, 0);
-  $("total").textContent = `${total}匹`;
+  $("total").textContent = `${total} / ${st.maxPopulation || 200}匹`;
   $("species").innerHTML = st.species.map((s) =>
     `<div class="sp ${st.counts[s] ? "" : "gone"}"><i style="background:${SPECIES_COL[s]}"></i>${SPECIES_JP[s]}<b>${st.counts[s]}</b></div>`).join("");
   const next = st.level + 1;

@@ -424,6 +424,14 @@ class Ecology:
         prob = self.base[p.sp] * self.rate_mult * self.repro_age_factor(p.sp, years) * catnip * space
         birth = elig & (rng.u01(seed, rng.REPRO, day, p.id) < prob)
         idx = np.flatnonzero(birth)
+        limit = getattr(self, "max_population", None)
+        if limit is not None:
+            slots = max(0, int(limit) - len(p))
+            # Choose before charging parents; rejected births retain all energy and mass.
+            # Independent counter stream avoids favouring a species or array order.
+            if len(idx) > slots:
+                priority = rng.u01(seed, 11, day, p.id[idx])
+                idx = idx[np.lexsort((p.id[idx], priority))[:slots]]
         if len(idx) == 0:
             return
         idx = idx[np.argsort(p.id[idx], kind="stable")]               # stable id order for new ids
@@ -453,7 +461,8 @@ class Ecology:
 
     # ------------------------------------------------------------------ spontaneous grass [confirmed rule, OFF by default]
     def _spawn_grass(self, w, day, seed, st, env):
-        if not self.grass_spawn:
+        limit = getattr(self, "max_population", None)
+        if not self.grass_spawn or (limit is not None and len(self.pop) >= limit):
             return
         ng = int((self.pop.sp == GRASS).sum())
         if ng >= 3:
@@ -484,7 +493,8 @@ class Ecology:
         if not has:
             ordinary = int((p.sp != CHIE).sum())
             cells = w["unlocked"] & (w["N"] >= _v(cs["spawn_nutrient"]))
-            if ordinary >= 1 and cells.any():
+            limit = getattr(self, "max_population", None)
+            if ordinary >= 1 and cells.any() and (limit is None or len(p) < limit):
                 flatN = np.where(cells, w["N"], -1).ravel()
                 k = int(np.argmax(flatN))
                 jj, ii = divmod(k, w["N"].shape[1])
