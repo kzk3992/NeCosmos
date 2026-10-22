@@ -1,0 +1,688 @@
+{
+ "_provenance": {
+  "confirmed": "confirmed:public/index.html V0.9 code",
+  "provisional": "provisional:Phase4 (not defined in game or changed by Phase4 brief)",
+  "notes": [
+   "USER REQUIREMENT (Phase4): 1 game day = 1 age-year -> days_per_year=1. Legacy game code used years=age/48 (48 days/year); recorded as a source mismatch, not followed here.",
+   "game code ages cats with years=age/48 (48 days per age-year); brief text 'day=age-year' kept as configurable days_per_year (default 48 from code)",
+   "README V0.9 text (grass 7-day breeding, +15pt rates 21%...) does NOT match public/index.html code (base .07 x .75 multiplier); code values used",
+   "game mogumogu preys on live grass cats (2nd predation kills); Phase4 brief overrides: mogumogu eats only generated grass resource G",
+   "game MAX_CATS=180 and (1-N/MAX) birth factor are a hidden cap; replaced by explicit per-cell space capacity (documented)",
+   "game genes/evolution (fish/slime/bird speciation from offspring genes) not simulated: fixed species traits (simplification recorded)"
+  ]
+ },
+ "days_per_year": {
+  "value": 1,
+  "src": "user requirement Phase4 (legacy code: 48)",
+  "legacy_value": 48
+ },
+ "reproduction": {
+  "energy_threshold": {
+   "value": 0.68,
+   "src": "confirmed:public/index.html V0.9 code"
+  },
+  "energy_cost": {
+   "value": 0.24,
+   "src": "confirmed:public/index.html V0.9 code"
+  },
+  "cooldown_days": {
+   "value": "per species (species.*.repro_cooldown_days)",
+   "src": "legacy global 60"
+  },
+  "rate_multiplier": {
+   "value": 0.75,
+   "src": "confirmed:public/index.html V0.9 code"
+  },
+  "age_factor": {
+   "value": "per species: age<min:0; min..decline_start:1; then max(.08, 1-(age-decline_start)/decline_span)",
+   "src": "legacy shape (1y, 7y, 12y at 48 d/y) re-expressed in age-years; per-species provisional"
+  },
+  "newborn_mass_max": {
+   "value": 0.16,
+   "src": "confirmed:public/index.html V0.9 code"
+  },
+  "space_capacity_per_cell": {
+   "value": 3,
+   "src": "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+  },
+  "environment_dependency": "temperature/moisture act on reproduction only through energy (stress damage, production, feeding); documented and tested (test_repro_env_via_energy)"
+ },
+ "senescence": {
+  "gompertz_beta_per_year": {
+   "value": 0.008333333333333333,
+   "src": "provisional: legacy curve re-expressed per age-year=day (0.4 per 48-day legacy year)"
+  },
+  "formula": "risk = -expm1(-exp(log h0 + beta*age)), log h0 = log(ln2*beta) - log(expm1(beta*T)) evaluated in log space (no overflow)"
+ },
+ "excretion_per_day": {
+  "value": 0.0005,
+  "src": "confirmed:public/index.html V0.9 code"
+ },
+ "stress": {
+  "cold_ref_C": 13,
+  "hot_ref_C": 31,
+  "cold_load": 0.0006,
+  "hot_load": 0.0004,
+  "base_load": 0.0003,
+  "src": "confirmed:public/index.html V0.9 code"
+ },
+ "movement": {
+  "walk_slope_max": {
+   "value": 0.7,
+   "src": "provisional: tan35deg as in Phase 3 walk slope"
+  },
+  "wade_depth_m": {
+   "value": 0.12,
+   "src": "provisional: Phase 3 wade_depth"
+  }
+ },
+ "species": {
+  "grass": {
+   "code": "moss",
+   "name": "草ねこ",
+   "role": "producer",
+   "daily_cost": [
+    0.004,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.07,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    847,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.7,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "production": "clip(light*(.08+.07*photo)*(.2+moist)*(n+.38)*(1-.6*cover)*clip((T+6)/30,.08,1.25),.0005,.09) [confirmed]; x water limit min(1,Ws/(.5*cap)) [provisional]",
+   "photosynthesis": [
+    0.68,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "biomass_frac": [
+    0.55,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "resource_frac": [
+    0.4,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cover_add": [
+    0.038,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "water_use_m_per_unit": [
+    0.004,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "reproduction_enabled": [
+    true,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "spontaneous_generation": [
+    false,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "spawn_rule": [
+    "if grass<3: cells T 8-30, moist .35-.82, n>=.08; daily p .018/.012/.006; consumes n .055 (+.025 seeded as resource)",
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "move_prob": [
+    0.02,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "repro_min_age_years": [
+    7,
+    "provisional:Phase4 (README V0.9: grass breeds from 7 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  },
+  "mogumogu": {
+   "code": "eater",
+   "name": "もぐもぐねこ",
+   "role": "consumer",
+   "daily_cost": [
+    0.001,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.03,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    903,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "bite": [
+    0.015,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "assim_mass": [
+    0.68,
+    "confirmed (fish/bird bite split)"
+   ],
+   "energy_per_bite": [
+    3.0,
+    "confirmed (eater consumed*3)"
+   ],
+   "trample": [
+    1.6,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "dig": [
+    4e-05,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "move_prob": [
+    0.6,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  },
+  "kinoko": {
+   "code": "fungus",
+   "name": "きのこねこ",
+   "role": "decomposer",
+   "daily_cost": [
+    0.001,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.04,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    859,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "fast_rate": [
+    0.018,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "slow_rate": [
+    0.0075,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "decomposer": [
+    0.72,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "to_nutrient": [
+    0.6,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "energy_per_unit": [
+    1.85,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "move_prob": [
+    0.15,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  },
+  "fuwa": {
+   "code": "fluff",
+   "name": "ふわふわねこ",
+   "role": "regulator",
+   "daily_cost": [
+    0.001,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.04,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    924,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "glean": [
+    0.008,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "glean_mass": [
+    0.65,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "energy_per_unit": [
+    1.25,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cluster_temp_C": [
+    15,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cluster_damage_mult": [
+    0.5,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cluster_warmth_C": [
+    1.5,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "move_prob": [
+    0.22,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  },
+  "chie": {
+   "code": "wisdom",
+   "name": "知恵ねこ",
+   "role": "event/wisdom",
+   "period_days": [
+    300,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "spawn_nutrient": [
+    0.16,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "grace_days": [
+    60,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "collapse_pop": [
+    20,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "catnip_days": [
+    60,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "catnip_mass": [
+    0.015,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "catnip_mult": [
+    1.5,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "fire_days": [
+    60,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "fire_heat_C": [
+    3,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "fire_radius_cells": [
+    1.5,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "water_add_m": [
+    0.005,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "advice_share": [
+    0.28,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "auto_policy": [
+    "nonWisdom<30&charges>0: catnip; desert>=.28: water; cold>=.28: fire; else observe",
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "enabled_in": [
+    [
+     "all8"
+    ],
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ]
+  },
+  "tori": {
+   "code": "bird",
+   "name": "鳥ねこ",
+   "role": "transporter",
+   "daily_cost": [
+    0.002,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.04,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    893,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "bite": [
+    0.012,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "assim_mass": [
+    0.68,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "energy_per_unit": [
+    0.82,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "max_moist": [
+    0.72,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cargo": [
+    0.0015,
+    "confirmed: legacy cargo .0015*flight per day"
+   ],
+   "flight": [
+    0.9,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "move_prob": [
+    0.7,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ],
+   "flight_range_cells": [
+    4,
+    "provisional:Phase4: distant flight; cargo picked at origin, dropped at destination (conserved)"
+   ]
+  },
+  "sakana": {
+   "code": "fish",
+   "name": "魚ねこ",
+   "role": "aquatic",
+   "daily_cost": [
+    0.002,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.06,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    914,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "bite": [
+    0.012,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "assim_mass": [
+    0.68,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "energy_per_unit": [
+    0.82,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "habitat_depth_m": [
+    0.02,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "habitat_sat": [
+    0.8,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "dry_penalty": [
+    0.01,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "cargo": [
+    0.001,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "resuspend": [
+    2e-05,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "move_prob": [
+    0.35,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  },
+  "slime": {
+   "code": "slime",
+   "name": "スライムねこ",
+   "role": "decomposer/retention",
+   "daily_cost": [
+    0.001,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_base": [
+    0.04,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "lifespan_days": [
+    953,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "init_energy": [
+    0.73,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "fast_rate": [
+    0.018,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "slow_rate": [
+    0.009,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "decomposer": [
+    0.9,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "to_nutrient": [
+    0.72,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "energy_per_unit": [
+    1.55,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "retention_capacity_mult": [
+    1.2,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "evap_mult": [
+    0.8,
+    "provisional:Phase4 (not defined in game or changed by Phase4 brief)"
+   ],
+   "move_prob": [
+    0.1,
+    "confirmed:public/index.html V0.9 code"
+   ],
+   "repro_min_age_years": [
+    48,
+    "provisional:Phase4 (legacy 1 game-year = 48 days)"
+   ],
+   "repro_decline_start_years": [
+    336,
+    "provisional:Phase4 (legacy 7 game-years)"
+   ],
+   "repro_decline_span_years": [
+    576,
+    "provisional:Phase4 (legacy 12 game-years)"
+   ],
+   "repro_cooldown_days": [
+    60,
+    "confirmed:legacy global cooldown 60 days"
+   ],
+   "life_stage_years": [
+    [
+     48,
+     336,
+     528
+    ],
+    "legacy kitten<1y, mature>=7y, senior>=11y re-expressed (x48)"
+   ]
+  }
+ },
+ "cat_effects_switch": {
+  "off_disables": [
+   "grass cover addition and cover decay",
+   "trampling compaction and cover wear",
+   "mogumogu digging",
+   "fish resuspension",
+   "slime retention and evaporation reduction",
+   "fluff cluster warmth",
+   "bird/fish nutrient transport"
+  ],
+  "always_on_intrinsic": [
+   "nutrient and water uptake by production",
+   "grazing and decomposition of resource pools",
+   "excretion and carcass organic additions (mass conservation)"
+  ]
+ }
+}

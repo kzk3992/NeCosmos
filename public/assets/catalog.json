@@ -1,0 +1,2383 @@
+{
+  "version": "0.10.0",
+  "units": "metres",
+  "objects": [
+    {
+      "id": "bridge_01",
+      "name": "小さな橋",
+      "title": "小さな橋",
+      "model": "assets/objects/bridge_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "bridge_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "小さな橋",
+        "terrainMode": "TerrainProtected",
+        "model": "bridge_01.glb",
+        "footprint": {
+          "width": 2.4,
+          "depth": 0.7,
+          "parts": [
+            {
+              "x": -1.0,
+              "y": 0.0,
+              "width": 0.4,
+              "depth": 0.7
+            },
+            {
+              "x": 1.0,
+              "y": 0.0,
+              "width": 0.4,
+              "depth": 0.7
+            }
+          ]
+        },
+        "height": 0.65,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "west",
+            "localPosition": [
+              -0.9,
+              0,
+              0.229
+            ],
+            "size": [
+              0.3,
+              0.5
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground",
+              "mid"
+            ]
+          },
+          {
+            "id": "mid",
+            "localPosition": [
+              0,
+              0,
+              0.405
+            ],
+            "size": [
+              0.3,
+              0.5
+            ],
+            "capacity": 2,
+            "connections": [
+              "west",
+              "east"
+            ]
+          },
+          {
+            "id": "east",
+            "localPosition": [
+              0.9,
+              0,
+              0.229
+            ],
+            "size": [
+              0.3,
+              0.5
+            ],
+            "capacity": 1,
+            "connections": [
+              "mid",
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "west_entry",
+            "kind": "climbEntry",
+            "localPosition": [
+              -1.3,
+              0,
+              0
+            ],
+            "facingDeg": 90
+          },
+          {
+            "id": "east_entry",
+            "kind": "climbEntry",
+            "localPosition": [
+              1.3,
+              0,
+              0
+            ],
+            "facingDeg": -90
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.325
+          ],
+          "size": [
+            2.4,
+            0.7,
+            0.65
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cat_house_01",
+      "name": "猫ハウス（三角屋根）",
+      "title": "猫ハウス（三角屋根）",
+      "model": "assets/objects/cat_house_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cat_house_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "猫ハウス（三角屋根）",
+        "terrainMode": "TerrainProtected",
+        "model": "cat_house_01.glb",
+        "footprint": {
+          "width": 0.75,
+          "depth": 0.65
+        },
+        "height": 0.727,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "interior",
+            "localPosition": [
+              0,
+              0.02,
+              0.0
+            ],
+            "size": [
+              0.6,
+              0.5
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.6,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "door",
+            "kind": "enter",
+            "localPosition": [
+              0,
+              -0.33,
+              0
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.364
+          ],
+          "size": [
+            0.75,
+            0.65,
+            0.727
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cat_house_02",
+      "name": "猫ハウス（ドーム型かご）",
+      "title": "猫ハウス（ドーム型かご）",
+      "model": "assets/objects/cat_house_02.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cat_house_02",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "猫ハウス（ドーム型かご）",
+        "terrainMode": "TerrainProtected",
+        "model": "cat_house_02.glb",
+        "footprint": {
+          "width": 0.8,
+          "depth": 0.8
+        },
+        "height": 0.56,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "interior",
+            "localPosition": [
+              0,
+              0.02,
+              0.0
+            ],
+            "size": [
+              0.55,
+              0.55
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.65,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "door",
+            "kind": "enter",
+            "localPosition": [
+              0,
+              -0.4,
+              0
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.28
+          ],
+          "radius": 0.4,
+          "height": 0.56
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cat_tower_01",
+      "name": "キャットタワー（2段）",
+      "title": "キャットタワー（2段）",
+      "model": "assets/objects/cat_tower_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cat_tower_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "キャットタワー（2段）",
+        "terrainMode": "TerrainProtected",
+        "model": "cat_tower_01.glb",
+        "footprint": {
+          "width": 0.7,
+          "depth": 0.7
+        },
+        "height": 1.085,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "lower",
+            "localPosition": [
+              0.1,
+              -0.02,
+              0.559
+            ],
+            "size": [
+              0.44,
+              0.39
+            ],
+            "capacity": 2,
+            "connections": [
+              "ground",
+              "upper"
+            ]
+          },
+          {
+            "id": "upper",
+            "localPosition": [
+              -0.05,
+              0.03,
+              1.025
+            ],
+            "size": [
+              0.34,
+              0.34
+            ],
+            "capacity": 1,
+            "connections": [
+              "lower"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.6,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "climb",
+            "kind": "climbEntry",
+            "localPosition": [
+              0.2,
+              -0.38,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "scratch",
+            "kind": "scratch",
+            "localPosition": [
+              0,
+              -0.12,
+              0.3
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.542
+          ],
+          "size": [
+            0.7,
+            0.7,
+            1.085
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cat_tower_02",
+      "name": "キャットタワー（3段・ツイン柱）",
+      "title": "キャットタワー（3段・ツイン柱）",
+      "model": "assets/objects/cat_tower_02.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cat_tower_02",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "キャットタワー（3段・ツイン柱）",
+        "terrainMode": "TerrainProtected",
+        "model": "cat_tower_02.glb",
+        "footprint": {
+          "width": 1.0,
+          "depth": 0.6
+        },
+        "height": 1.343,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "step1",
+            "localPosition": [
+              -0.28,
+              -0.02,
+              0.445
+            ],
+            "size": [
+              0.42,
+              0.42
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground",
+              "step2"
+            ]
+          },
+          {
+            "id": "step2",
+            "localPosition": [
+              0.3,
+              0.0,
+              0.865
+            ],
+            "size": [
+              0.42,
+              0.42
+            ],
+            "capacity": 1,
+            "connections": [
+              "step1",
+              "top"
+            ]
+          },
+          {
+            "id": "top",
+            "localPosition": [
+              -0.1,
+              0.0,
+              1.343
+            ],
+            "size": [
+              0.52,
+              0.38
+            ],
+            "capacity": 2,
+            "connections": [
+              "step2"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.55,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "climb",
+            "kind": "climbEntry",
+            "localPosition": [
+              -0.28,
+              -0.35,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "toy",
+            "kind": "play",
+            "localPosition": [
+              0.14,
+              -0.12,
+              1.05
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.671
+          ],
+          "size": [
+            1.0,
+            0.6,
+            1.343
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "crystal_01",
+      "name": "結晶1",
+      "title": "結晶1",
+      "model": "assets/objects/crystal_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "crystal_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "結晶1",
+        "terrainMode": "TerrainFollow",
+        "model": "crystal_01.glb",
+        "footprint": {
+          "width": 0.3,
+          "depth": 0.3
+        },
+        "height": 0.3,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.15
+          ],
+          "radius": 0.15,
+          "height": 0.3
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "crystal_02",
+      "name": "結晶2",
+      "title": "結晶2",
+      "model": "assets/objects/crystal_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "crystal_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "結晶2",
+        "terrainMode": "TerrainFollow",
+        "model": "crystal_02.glb",
+        "footprint": {
+          "width": 0.3,
+          "depth": 0.3
+        },
+        "height": 0.398,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.199
+          ],
+          "radius": 0.15,
+          "height": 0.398
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cushion_01",
+      "name": "丸クッション",
+      "title": "丸クッション",
+      "model": "assets/objects/cushion_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cushion_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "丸クッション",
+        "terrainMode": "TerrainFollow",
+        "model": "cushion_01.glb",
+        "footprint": {
+          "width": 0.62,
+          "depth": 0.62
+        },
+        "height": 0.108,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [
+          {
+            "id": "seat",
+            "localPosition": [
+              0,
+              0,
+              0.108
+            ],
+            "size": [
+              0.5,
+              0.5
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "rest",
+            "kind": "rest",
+            "localPosition": [
+              0,
+              0,
+              0.108
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.054
+          ],
+          "radius": 0.31,
+          "height": 0.108
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "cushion_02",
+      "name": "角クッション（背もたれ付き）",
+      "title": "角クッション（背もたれ付き）",
+      "model": "assets/objects/cushion_02.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "cushion_02",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "角クッション（背もたれ付き）",
+        "terrainMode": "TerrainFollow",
+        "model": "cushion_02.glb",
+        "footprint": {
+          "width": 0.58,
+          "depth": 0.5
+        },
+        "height": 0.16,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [
+          {
+            "id": "seat",
+            "localPosition": [
+              0,
+              -0.03,
+              0.08
+            ],
+            "size": [
+              0.5,
+              0.36
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "rest",
+            "kind": "rest",
+            "localPosition": [
+              0,
+              -0.03,
+              0.08
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.08
+          ],
+          "size": [
+            0.58,
+            0.5,
+            0.16
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "fallen_log_01",
+      "name": "倒木",
+      "title": "倒木",
+      "model": "assets/objects/fallen_log_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "fallen_log_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "倒木",
+        "terrainMode": "TerrainNatural",
+        "model": "fallen_log_01.glb",
+        "footprint": {
+          "width": 1.5,
+          "depth": 0.36
+        },
+        "height": 0.322,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [
+          {
+            "id": "top",
+            "localPosition": [
+              0,
+              0,
+              0.298
+            ],
+            "size": [
+              1.0,
+              0.18
+            ],
+            "capacity": 2,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.161
+          ],
+          "size": [
+            1.5,
+            0.36,
+            0.322
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "flower_01",
+      "name": "白い花",
+      "title": "白い花",
+      "model": "assets/objects/flower_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "flower_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "白い花",
+        "terrainMode": "TerrainFollow",
+        "model": "flower_01.glb",
+        "footprint": {
+          "width": 0.22,
+          "depth": 0.22
+        },
+        "height": 0.2,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.1
+          ],
+          "radius": 0.11,
+          "height": 0.2
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "flower_02",
+      "name": "赤い花",
+      "title": "赤い花",
+      "model": "assets/objects/flower_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "flower_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "赤い花",
+        "terrainMode": "TerrainFollow",
+        "model": "flower_02.glb",
+        "footprint": {
+          "width": 0.22,
+          "depth": 0.22
+        },
+        "height": 0.24,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.12
+          ],
+          "radius": 0.11,
+          "height": 0.24
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "flower_03",
+      "name": "青い花",
+      "title": "青い花",
+      "model": "assets/objects/flower_03.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "flower_03",
+        "type": "decoration",
+        "category": "nature",
+        "title": "青い花",
+        "terrainMode": "TerrainFollow",
+        "model": "flower_03.glb",
+        "footprint": {
+          "width": 0.22,
+          "depth": 0.22
+        },
+        "height": 0.17,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.085
+          ],
+          "radius": 0.11,
+          "height": 0.17
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "grass_clump_01",
+      "name": "草の群生1",
+      "title": "草の群生1",
+      "model": "assets/objects/grass_clump_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "grass_clump_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "草の群生1",
+        "terrainMode": "TerrainFollow",
+        "model": "grass_clump_01.glb",
+        "footprint": {
+          "width": 0.3,
+          "depth": 0.3
+        },
+        "height": 0.207,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.104
+          ],
+          "radius": 0.15,
+          "height": 0.207
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "grass_clump_02",
+      "name": "草の群生2",
+      "title": "草の群生2",
+      "model": "assets/objects/grass_clump_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "grass_clump_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "草の群生2",
+        "terrainMode": "TerrainFollow",
+        "model": "grass_clump_02.glb",
+        "footprint": {
+          "width": 0.3,
+          "depth": 0.3
+        },
+        "height": 0.299,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.149
+          ],
+          "radius": 0.15,
+          "height": 0.299
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "lookout_01",
+      "name": "見晴らし台",
+      "title": "見晴らし台",
+      "model": "assets/objects/lookout_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "lookout_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "見晴らし台",
+        "terrainMode": "TerrainProtected",
+        "model": "lookout_01.glb",
+        "footprint": {
+          "width": 1.0,
+          "depth": 1.2
+        },
+        "height": 1.13,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "deck",
+            "localPosition": [
+              0,
+              0.08,
+              0.93
+            ],
+            "size": [
+              0.92,
+              0.92
+            ],
+            "capacity": 3,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.8,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "ladder",
+            "kind": "climbEntry",
+            "localPosition": [
+              0,
+              -0.58,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "view",
+            "kind": "view",
+            "localPosition": [
+              0,
+              0.1,
+              0.93
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.565
+          ],
+          "size": [
+            1.0,
+            1.2,
+            1.13
+          ]
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "moisture_rock",
+      "name": "保湿岩",
+      "title": "保湿岩",
+      "model": "assets/objects/moisture_rock.glb",
+      "price": 40,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "moisture_rock",
+        "type": "environment",
+        "category": "environment",
+        "title": "保湿岩",
+        "terrainMode": "TerrainNatural",
+        "model": "moisture_rock.glb",
+        "footprint": {
+          "width": 0.7,
+          "depth": 0.6
+        },
+        "height": 0.52,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.26
+          ],
+          "radius": 0.35,
+          "height": 0.52
+        },
+        "effect": {
+          "kind": "moisture",
+          "radius": 1.2,
+          "strength": 0.5,
+          "params": {
+            "moisturePerDay": 0.05,
+            "maxMoisture": 0.8
+          },
+          "implemented": false
+        },
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "mushroom_01",
+      "name": "赤いキノコ",
+      "title": "赤いキノコ",
+      "model": "assets/objects/mushroom_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "mushroom_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "赤いキノコ",
+        "terrainMode": "TerrainFollow",
+        "model": "mushroom_01.glb",
+        "footprint": {
+          "width": 0.18,
+          "depth": 0.18
+        },
+        "height": 0.22,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.11
+          ],
+          "radius": 0.09,
+          "height": 0.22
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "mushroom_02",
+      "name": "茶色いキノコの群れ",
+      "title": "茶色いキノコの群れ",
+      "model": "assets/objects/mushroom_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "mushroom_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "茶色いキノコの群れ",
+        "terrainMode": "TerrainFollow",
+        "model": "mushroom_02.glb",
+        "footprint": {
+          "width": 0.2,
+          "depth": 0.18
+        },
+        "height": 0.147,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.074
+          ],
+          "radius": 0.1,
+          "height": 0.147
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "mycelium_bed",
+      "name": "菌糸の苗床",
+      "title": "菌糸の苗床",
+      "model": "assets/objects/mycelium_bed.glb",
+      "price": 40,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "mycelium_bed",
+        "type": "environment",
+        "category": "environment",
+        "title": "菌糸の苗床",
+        "terrainMode": "TerrainNatural",
+        "model": "mycelium_bed.glb",
+        "footprint": {
+          "width": 0.8,
+          "depth": 0.6
+        },
+        "height": 0.175,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.087
+          ],
+          "size": [
+            0.8,
+            0.6,
+            0.175
+          ]
+        },
+        "effect": {
+          "kind": "fungalGrowth",
+          "radius": 1.0,
+          "strength": 0.5,
+          "params": {
+            "decompositionBonus": 0.4,
+            "spawnsMushrooms": true
+          },
+          "implemented": false
+        },
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "pebble_01",
+      "name": "小石1",
+      "title": "小石1",
+      "model": "assets/objects/pebble_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "pebble_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "小石1",
+        "terrainMode": "TerrainFollow",
+        "model": "pebble_01.glb",
+        "footprint": {
+          "width": 0.18,
+          "depth": 0.14
+        },
+        "height": 0.067,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.034
+          ],
+          "radius": 0.09,
+          "height": 0.067
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "pebble_02",
+      "name": "小石2",
+      "title": "小石2",
+      "model": "assets/objects/pebble_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "pebble_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "小石2",
+        "terrainMode": "TerrainFollow",
+        "model": "pebble_02.glb",
+        "footprint": {
+          "width": 0.26,
+          "depth": 0.2
+        },
+        "height": 0.104,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.052
+          ],
+          "radius": 0.13,
+          "height": 0.104
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "pebble_03",
+      "name": "小石3",
+      "title": "小石3",
+      "model": "assets/objects/pebble_03.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "pebble_03",
+        "type": "decoration",
+        "category": "nature",
+        "title": "小石3",
+        "terrainMode": "TerrainFollow",
+        "model": "pebble_03.glb",
+        "footprint": {
+          "width": 0.14,
+          "depth": 0.14
+        },
+        "height": 0.085,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.042
+          ],
+          "radius": 0.07,
+          "height": 0.085
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "rock_01",
+      "name": "岩1",
+      "title": "岩1",
+      "model": "assets/objects/rock_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "rock_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "岩1",
+        "terrainMode": "TerrainNatural",
+        "model": "rock_01.glb",
+        "footprint": {
+          "width": 0.6,
+          "depth": 0.5
+        },
+        "height": 0.293,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.146
+          ],
+          "radius": 0.3,
+          "height": 0.293
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "rock_02",
+      "name": "岩2",
+      "title": "岩2",
+      "model": "assets/objects/rock_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "rock_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "岩2",
+        "terrainMode": "TerrainNatural",
+        "model": "rock_02.glb",
+        "footprint": {
+          "width": 0.9,
+          "depth": 0.76
+        },
+        "height": 0.502,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.251
+          ],
+          "radius": 0.45,
+          "height": 0.502
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "rock_03",
+      "name": "岩3",
+      "title": "岩3",
+      "model": "assets/objects/rock_03.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "rock_03",
+        "type": "decoration",
+        "category": "nature",
+        "title": "岩3",
+        "terrainMode": "TerrainProtected",
+        "model": "rock_03.glb",
+        "footprint": {
+          "width": 1.4,
+          "depth": 1.1
+        },
+        "height": 0.709,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [
+          {
+            "id": "top",
+            "localPosition": [
+              0,
+              0,
+              0.709
+            ],
+            "size": [
+              0.7,
+              0.55
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.354
+          ],
+          "radius": 0.7,
+          "height": 0.709
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "scratcher_01",
+      "name": "爪とぎポール",
+      "title": "爪とぎポール",
+      "model": "assets/objects/scratcher_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "scratcher_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "爪とぎポール",
+        "terrainMode": "TerrainProtected",
+        "model": "scratcher_01.glb",
+        "footprint": {
+          "width": 0.4,
+          "depth": 0.4
+        },
+        "height": 0.735,
+        "protection": {
+          "strength": 0.6,
+          "bufferRadius": 0.3
+        },
+        "platforms": [],
+        "interactionPoints": [
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0,
+              -0.35,
+              0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "scratch",
+            "kind": "scratch",
+            "localPosition": [
+              0,
+              -0.1,
+              0.25
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.368
+          ],
+          "radius": 0.2,
+          "height": 0.735
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "stump_01",
+      "name": "切り株",
+      "title": "切り株",
+      "model": "assets/objects/stump_01.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "stump_01",
+        "type": "decoration",
+        "category": "nature",
+        "title": "切り株",
+        "terrainMode": "TerrainNatural",
+        "model": "stump_01.glb",
+        "footprint": {
+          "width": 0.42,
+          "depth": 0.42
+        },
+        "height": 0.328,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [
+          {
+            "id": "top",
+            "localPosition": [
+              0,
+              0,
+              0.324
+            ],
+            "size": [
+              0.3,
+              0.3
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.164
+          ],
+          "radius": 0.21,
+          "height": 0.328
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "stump_02",
+      "name": "苔むした切り株",
+      "title": "苔むした切り株",
+      "model": "assets/objects/stump_02.glb",
+      "price": 12,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "stump_02",
+        "type": "decoration",
+        "category": "nature",
+        "title": "苔むした切り株",
+        "terrainMode": "TerrainNatural",
+        "model": "stump_02.glb",
+        "footprint": {
+          "width": 0.56,
+          "depth": 0.56
+        },
+        "height": 0.3,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [
+          {
+            "id": "top",
+            "localPosition": [
+              0,
+              0,
+              0.264
+            ],
+            "size": [
+              0.4,
+              0.4
+            ],
+            "capacity": 1,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.15
+          ],
+          "radius": 0.28,
+          "height": 0.3
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "sun_stone",
+      "name": "ひだまり石",
+      "title": "ひだまり石",
+      "model": "assets/objects/sun_stone.glb",
+      "price": 40,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "sun_stone",
+        "type": "environment",
+        "category": "environment",
+        "title": "ひだまり石",
+        "terrainMode": "TerrainProtected",
+        "model": "sun_stone.glb",
+        "footprint": {
+          "width": 0.6,
+          "depth": 0.5
+        },
+        "height": 0.169,
+        "protection": {
+          "strength": 0.8,
+          "bufferRadius": 0.4
+        },
+        "platforms": [
+          {
+            "id": "top",
+            "localPosition": [
+              0,
+              0,
+              0.162
+            ],
+            "size": [
+              0.45,
+              0.35
+            ],
+            "capacity": 2,
+            "connections": [
+              "ground"
+            ]
+          }
+        ],
+        "interactionPoints": [
+          {
+            "id": "bask",
+            "kind": "rest",
+            "localPosition": [
+              0,
+              0,
+              0.162
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.085
+          ],
+          "radius": 0.3,
+          "height": 0.169
+        },
+        "effect": {
+          "kind": "warmth",
+          "radius": 1.5,
+          "strength": 0.6,
+          "params": {
+            "sunlightBonus": 0.3,
+            "comfortBonus": 0.2
+          },
+          "implemented": false
+        },
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "teaser_01",
+      "name": "ねこじゃらし（置き型）",
+      "title": "ねこじゃらし（置き型）",
+      "model": "assets/objects/teaser_01.glb",
+      "price": 60,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "teaser_01",
+        "type": "interactive",
+        "category": "furniture",
+        "title": "ねこじゃらし（置き型）",
+        "terrainMode": "TerrainFollow",
+        "model": "teaser_01.glb",
+        "footprint": {
+          "width": 0.24,
+          "depth": 0.24
+        },
+        "height": 0.527,
+        "protection": {
+          "strength": 0.0,
+          "bufferRadius": 0.0
+        },
+        "platforms": [],
+        "interactionPoints": [
+          {
+            "id": "play",
+            "kind": "play",
+            "localPosition": [
+              0.25,
+              -0.15,
+              0.0
+            ],
+            "facingDeg": 0
+          },
+          {
+            "id": "approach",
+            "kind": "approach",
+            "localPosition": [
+              0.25,
+              -0.45,
+              0
+            ],
+            "facingDeg": 0
+          }
+        ],
+        "collision": {
+          "type": "cylinder",
+          "center": [
+            0,
+            0,
+            0.263
+          ],
+          "radius": 0.12,
+          "height": 0.527
+        },
+        "effect": null,
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    },
+    {
+      "id": "windbreak_rock",
+      "name": "風よけ岩",
+      "title": "風よけ岩",
+      "model": "assets/objects/windbreak_rock.glb",
+      "price": 40,
+      "metadata": {
+        "schemaVersion": "1.0.0",
+        "kind": "necosmos.placeableObject",
+        "id": "windbreak_rock",
+        "type": "environment",
+        "category": "environment",
+        "title": "風よけ岩",
+        "terrainMode": "TerrainProtected",
+        "model": "windbreak_rock.glb",
+        "footprint": {
+          "width": 1.1,
+          "depth": 0.5
+        },
+        "height": 0.739,
+        "protection": {
+          "strength": 0.95,
+          "bufferRadius": 0.5
+        },
+        "platforms": [],
+        "interactionPoints": [],
+        "collision": {
+          "type": "box",
+          "center": [
+            0,
+            0.05,
+            0.37
+          ],
+          "size": [
+            1.1,
+            0.5,
+            0.739
+          ]
+        },
+        "effect": {
+          "kind": "windShelter",
+          "radius": 1.8,
+          "strength": 0.7,
+          "params": {
+            "shelterArcDeg": 120,
+            "shelterDirectionDeg": -90
+          },
+          "implemented": false
+        },
+        "units": "metres",
+        "coordinateSystem": {
+          "source": "Blender Z-up, front -Y, anchor = ground centre of footprint (Z=0)",
+          "rotation": "yaw degrees about +Z, counter-clockwise seen from above",
+          "toThreeJs": "three(x, y, z) = blender(x, z, -y); glTF files are already Y-up"
+        },
+        "spriteAnchor": "cat sprite feet are placed at platform.localPosition transformed to world",
+        "derivedFromGeometry": [
+          "height",
+          "platforms[].localPosition.z",
+          "rest/view interactionPoints z",
+          "collision height"
+        ]
+      }
+    }
+  ],
+  "cats": [
+    {
+      "id": "grass",
+      "name": "草ねこ",
+      "spriteBase": "assets/cats/grass_cat",
+      "spritePrefix": "grass_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "mogumogu",
+      "name": "もぐもぐねこ",
+      "spriteBase": "assets/cats/mogumogu_cat",
+      "spritePrefix": "mogumogu_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "kinoko",
+      "name": "きのこねこ",
+      "spriteBase": "assets/cats/kinoko_cat",
+      "spritePrefix": "kinoko_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "fuwa",
+      "name": "ふわねこ",
+      "spriteBase": "assets/cats/fuwa_cat",
+      "spritePrefix": "fuwa_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "chie",
+      "name": "知恵ねこ",
+      "spriteBase": "assets/cats/chie_cat",
+      "spritePrefix": "chie_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "tori",
+      "name": "鳥ねこ",
+      "spriteBase": "assets/cats/tori_cat",
+      "spritePrefix": "tori_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "sakana",
+      "name": "魚ねこ",
+      "spriteBase": "assets/cats/sakana_cat",
+      "spritePrefix": "sakana_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    },
+    {
+      "id": "slime",
+      "name": "スライムねこ",
+      "spriteBase": "assets/cats/slime_cat",
+      "spritePrefix": "slime_cat",
+      "frameMetres": 0.8,
+      "feetV": 0.18976562500000005
+    }
+  ],
+  "terrains": [
+    {
+      "id": "flat_meadow",
+      "model": "assets/terrain/flat_meadow.glb",
+      "preset": "assets/terrain/flat_meadow.json"
+    },
+    {
+      "id": "rolling_hills",
+      "model": "assets/terrain/rolling_hills.glb",
+      "preset": "assets/terrain/rolling_hills.json"
+    },
+    {
+      "id": "central_mountain",
+      "model": "assets/terrain/central_mountain.glb",
+      "preset": "assets/terrain/central_mountain.json"
+    },
+    {
+      "id": "valley",
+      "model": "assets/terrain/valley.glb",
+      "preset": "assets/terrain/valley.json"
+    },
+    {
+      "id": "pond",
+      "model": "assets/terrain/pond.glb",
+      "preset": "assets/terrain/pond.json"
+    },
+    {
+      "id": "winding_river",
+      "model": "assets/terrain/winding_river.glb",
+      "preset": "assets/terrain/winding_river.json"
+    }
+  ]
+}

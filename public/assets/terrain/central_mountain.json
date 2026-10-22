@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "necosmos.terrainPreset",
+  "id": "central_mountain",
+  "title": "中央に山",
+  "seed": 303,
+  "unlockLevel": 1,
+  "config": {},
+  "units": "metres, Blender Z-up",
+  "ops": [
+    {
+      "op": "noise",
+      "amplitude": 0.08,
+      "octaves": 2,
+      "baseRes": 3
+    },
+    {
+      "op": "hill",
+      "x": 0.0,
+      "y": 0.0,
+      "radius": 3.6,
+      "height": 2.1
+    },
+    {
+      "op": "hill",
+      "x": 0.7,
+      "y": 0.4,
+      "radius": 1.2,
+      "height": 0.35
+    },
+    {
+      "op": "relax",
+      "maxDeg": 45,
+      "iterations": 40
+    },
+    {
+      "op": "biome_patch",
+      "biome": "rock",
+      "threshold": 0.35,
+      "seedOffset": 9
+    }
+  ]
+}

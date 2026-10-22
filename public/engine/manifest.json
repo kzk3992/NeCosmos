@@ -1,0 +1,25 @@
+{
+  "version": "0.10.0",
+  "files": [
+    "NeCosmos-Assets/objects/metadata/cat_tower_01.json",
+    "NeCosmos-Simulation/configs/scenarios/climates.json",
+    "NeCosmos-Simulation/configs/scenarios/compositions.json",
+    "NeCosmos-Simulation/configs/scenarios/frozen.json",
+    "NeCosmos-Simulation/configs/species/species.json",
+    "NeCosmos-Simulation/configs/terrain/terrain.json",
+    "NeCosmos-Simulation/src/__init__.py",
+    "NeCosmos-Simulation/src/coupling/__init__.py",
+    "NeCosmos-Simulation/src/coupling/rng.py",
+    "NeCosmos-Simulation/src/coupling/simulation.py",
+    "NeCosmos-Simulation/src/ecosystem/__init__.py",
+    "NeCosmos-Simulation/src/ecosystem/cats.py",
+    "NeCosmos-Simulation/src/hydrology/__init__.py",
+    "NeCosmos-Simulation/src/hydrology/rivers.py",
+    "NeCosmos-Simulation/src/hydrology/water.py",
+    "NeCosmos-Simulation/src/terrain/__init__.py",
+    "NeCosmos-Simulation/src/terrain/generate.py",
+    "NeCosmos-Simulation/src/terrain/protection.py",
+    "NeCosmos-Simulation/src/terrain/soilmove.py",
+    "bridge.py"
+  ]
+}

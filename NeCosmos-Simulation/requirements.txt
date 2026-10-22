@@ -1,0 +1,5 @@
+# Versions used in the recorded macOS arm64 / Python 3.9.6 runs.
+# The numerical simulator requires only NumPy; figures also use matplotlib/Pillow.
+numpy==2.0.2
+matplotlib==3.9.4
+Pillow==11.3.0

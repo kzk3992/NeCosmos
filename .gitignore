@@ -1,0 +1,21 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+node_modules/
+.wrangler/
+# Local authoring originals and rendered validation byproducts.
+# Only selected production exports under public/assets are released.
+NeCosmos-Assets/*
+!NeCosmos-Assets/objects/
+NeCosmos-Assets/objects/*
+!NeCosmos-Assets/objects/metadata/
+NeCosmos-Simulation/results/
+NeCosmos-Simulation/figures/
+NeCosmos-Simulation/reports/
+NeCosmos-Simulation/tools/
+NeCosmos-Simulation/configs/scenarios/seeds.json
+*.log
+*.time
+*.blend1
+# Integration/browser test output remains local.
+.validation/

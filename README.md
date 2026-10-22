@@ -1,37 +1,45 @@
-# NeCosmos
+# NeCosmos v0.10
 
-猫たちがつくる、小さな生態圏を観察するブラウザ向けシミュレーションプロトタイプです。
+猫たちの生態活動、水循環、土壌移動が少しずつ景観を変える、小さな3D箱庭です。
 
-## Files
+## v0.10
 
-- `public/index.html` — Cloudflare Workerで配信するV0.9
-- `NeCosmos_v07.html` — V0.7の保管用原本
-- `NeCosmos_v05.html` — V0.5の保管用原本
-- `NeCosmos_v04.html` — V0.4 prototype
-- `NeCosmos_v033.html` — V0.3.3 prototype
-- `NeCosmos_引継ぎ資料.md` — 新規プロジェクト向けの引継ぎ資料
-- `wrangler.jsonc` — Workerの静的アセット設定
+- Phase 4の生態系・水文・動的地形モデルを、そのままPython / NumPyで実行します。計算はWeb Worker内のPyodideで行い、描画と分離しています。
+- 8種の猫の方向別ピクセルスプライト、32個の低ポリゴン家具・自然装飾、地形と独立した水面を使用します。
+- 水・土砂・栄養の収支、基盤岩と可動土壌、川と池、生息域開放、設置物の地形保護を扱います。
+- 視点の回転・ズーム、観察速度、一時停止、保存・再開に対応します。旧バージョンの保存データは上書きしません。
 
-## Cloudflare Workers deployment
+ゲームの画面は `public/`、凍結した数値モデルの原本は `NeCosmos-Simulation/src/` と `configs/` にあります。暫定的な生態系パラメータを含む架空生態系です。
 
-Cloudflare Workers Buildsのデプロイコマンドは `npx wrangler deploy` です。`wrangler.jsonc` が `public/` を静的ファイルの配信元に指定します。Workerの名前をCloudflareダッシュボードで変更した場合は、`wrangler.jsonc` の `name` も同じ値にしてください。
+## ローカル実行
 
-カスタムドメインはWorkerの **Settings → Domains & Routes** から追加できます。例: `necosmos.mikaspark.com`。
+```bash
+python3 -m http.server 8766 --directory public
+```
 
-## Run locally
+`http://localhost:8766/` をブラウザで開いてください。Web Workerとファイル読み込みを使うため、HTMLファイルの直接オープンでは動作しません。初回は同梱した計算ランタイムの読み込みに時間がかかります。
 
-`public/index.html` をSafariまたはChromeで開いてください。世界データはブラウザのローカルストレージに保存されます。
+## 再ビルド
 
-## Notes
+```bash
+python3 scripts/build-release.py
+```
 
-本作は架空の生態系を使ったゲームプロトタイプです。現実の生態系を厳密に予測するものではありません。
+凍結した数値モデル・設定と公開用素材を `public/` へ配置し、`release-manifest.json` にファイルのハッシュを記録します。制作環境に元の `NeCosmos-Assets/` があれば、その完成GLBと48px猫画像から再配置します。クローン後は同梱済みの公開用素材をそのまま利用できます。
 
-## V0.9 生態系と環境への助言
+## 検証
 
-- 草ねこは7日齢から繁殖し、繁殖確率を5.5%から6%へ変更。他種の年齢条件は維持。現在は全種の基礎確率に15ポイント加算し、草ねこ21%・もぐもぐねこ16.9%・きのこねこ17.5%・ふわふわねこ17.2%・魚ねこ17.1%・スライムねこ17.7%・鳥ねこ16.9%。質量は繁殖条件に含めず、子の質量は親から移せる分だけ引き継ぐ。個体数補正とマタタビ効果は別途適用。
-- もぐもぐねこは草ねこを追跡・捕食し、捕食のたびに質量を取り込む。草ねこは1回目の捕食を生き延び、2回目でエネルギー枯渇により絶命する。
-- 草ねこが3匹未満の場合、温度8〜30°C・水分35〜82%・土壌栄養0.08以上のセルで自然発生を判定。日確率は草ねこ0匹で1.8%、1匹で1.2%、2匹で0.6%。発生により土壌栄養0.08を消費。
-- おすすめ配置・草原・窓辺・四季ありの16試行では、DAY 280は変更前後とも16/16、DAY 500は10/16から13/16、DAY 1000は4/16から7/16が存続。初期環境を固定した試行結果で、他バイオームでも同じ結果になるとは限りません。
+```bash
+python3 -m pip install -r NeCosmos-Simulation/requirements.txt
+python3 -m unittest discover -s NeCosmos-Simulation/tests -v
+```
 
-- 砂漠では知恵ねこが乾いた区画への給水を、寒冷地では焚き火を提案します。助言の選択を繰り返し行えるよう修正しました。
-- 草原・乾燥地・湿地・寒冷地、置き場所、季節によって生態系の種構成が変化します。
+1,200日×360条件、3,000日×8条件、感度比較75条件を実行済みです。詳細・限界は [v0.10リリースノート](docs/v0.10.md) を参照してください。検証CSV、スナップショット、ログ、試作レンダリング、Blenderバックアップはリポジトリ・配信対象から除外しています。
+
+## 公開
+
+Cloudflare Workers Buildsで `npx wrangler deploy` を実行します。`wrangler.jsonc` の静的アセット配信元は `public/` です。
+
+## 依存ライブラリ
+
+Pyodide 0.27.7 / NumPy 2.0.2、Three.js 0.160.0を同梱しています。実行時のCDNアクセスは不要です。ライセンスと配布元は [NOTICE](public/vendor/NOTICE.md) を参照してください。

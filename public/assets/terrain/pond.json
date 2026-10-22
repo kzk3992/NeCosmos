@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "necosmos.terrainPreset",
+  "id": "pond",
+  "title": "池",
+  "seed": 505,
+  "unlockLevel": 1,
+  "config": {},
+  "units": "metres, Blender Z-up",
+  "ops": [
+    {
+      "op": "noise",
+      "amplitude": 0.06,
+      "octaves": 2,
+      "baseRes": 3
+    },
+    {
+      "op": "hill",
+      "x": 1.2,
+      "y": -0.8,
+      "radius": 2.4,
+      "height": -0.75
+    },
+    {
+      "op": "water",
+      "x": 1.2,
+      "y": -0.8,
+      "volume": 2.2,
+      "radius": 1.0
+    },
+    {
+      "op": "simulate_water",
+      "steps": 400
+    },
+    {
+      "op": "biome_near_water",
+      "biome": "sand"
+    },
+    {
+      "op": "biome_patch",
+      "biome": "meadow",
+      "threshold": 0.3,
+      "seedOffset": 2
+    }
+  ]
+}

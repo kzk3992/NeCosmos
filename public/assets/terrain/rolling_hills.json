@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "necosmos.terrainPreset",
+  "id": "rolling_hills",
+  "title": "なだらかな丘陵",
+  "seed": 202,
+  "unlockLevel": 1,
+  "config": {},
+  "units": "metres, Blender Z-up",
+  "ops": [
+    {
+      "op": "noise",
+      "amplitude": 0.55,
+      "octaves": 3,
+      "baseRes": 3
+    },
+    {
+      "op": "hill",
+      "x": -2.5,
+      "y": 2.0,
+      "radius": 2.6,
+      "height": 0.5
+    },
+    {
+      "op": "hill",
+      "x": 3.0,
+      "y": -1.5,
+      "radius": 2.2,
+      "height": 0.4
+    },
+    {
+      "op": "relax",
+      "maxDeg": 30,
+      "iterations": 20
+    },
+    {
+      "op": "biome_patch",
+      "biome": "meadow",
+      "threshold": 0.2,
+      "seedOffset": 5
+    }
+  ]
+}

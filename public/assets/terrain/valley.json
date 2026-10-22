@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "necosmos.terrainPreset",
+  "id": "valley",
+  "title": "谷",
+  "seed": 404,
+  "unlockLevel": 1,
+  "config": {},
+  "units": "metres, Blender Z-up",
+  "ops": [
+    {
+      "op": "noise",
+      "amplitude": 0.1,
+      "octaves": 2,
+      "baseRes": 3
+    },
+    {
+      "op": "hill",
+      "x": -3.5,
+      "y": 0.0,
+      "radius": 3.0,
+      "height": 0.9
+    },
+    {
+      "op": "hill",
+      "x": 3.5,
+      "y": 0.0,
+      "radius": 3.0,
+      "height": 0.9
+    },
+    {
+      "op": "valley",
+      "points": [
+        [
+          -0.5,
+          -5.2
+        ],
+        [
+          0.4,
+          -2.0
+        ],
+        [
+          -0.4,
+          2.0
+        ],
+        [
+          0.4,
+          5.2
+        ]
+      ],
+      "width": 2.2,
+      "depth": 0.7
+    },
+    {
+      "op": "relax",
+      "maxDeg": 35,
+      "iterations": 30
+    },
+    {
+      "op": "biome_patch",
+      "biome": "forest_floor",
+      "threshold": 0.3,
+      "seedOffset": 4
+    }
+  ]
+}

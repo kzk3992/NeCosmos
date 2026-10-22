@@ -1,0 +1,66 @@
+{
+ "_provenance": "temps/seasons from game env(); rain/evap in SI are provisional mappings of game rain units",
+ "naming": "game biome keys: moss (temperate 19C) / desert / wet / cold. User-requested final climates: 苔原(tundra, NEW provisional, distinct from cold), wet, dry(=game desert), cold. 'moss' (19C) kept only as an extra legacy control, never relabelled as tundra.",
+ "climates": {
+  "moss": {
+   "game_key": "moss",
+   "temp_C": 19,
+   "season_amp_C": 9,
+   "rain_mm_day": 2.2,
+   "wet_day_prob": 0.45,
+   "evap_mm_per_C": 0.12,
+   "evap_base_mm": 0.4,
+   "init_moist": 0.59,
+   "init_nut": 0.59
+  },
+  "wet": {
+   "game_key": "wet",
+   "temp_C": 22,
+   "season_amp_C": 9,
+   "rain_mm_day": 4.5,
+   "wet_day_prob": 0.6,
+   "evap_mm_per_C": 0.12,
+   "evap_base_mm": 0.4,
+   "init_moist": 0.84,
+   "init_nut": 0.7
+  },
+  "dry": {
+   "game_key": "desert",
+   "temp_C": 30,
+   "season_amp_C": 9,
+   "rain_mm_day": 0.6,
+   "wet_day_prob": 0.15,
+   "evap_mm_per_C": 0.12,
+   "evap_base_mm": 0.4,
+   "init_moist": 0.2,
+   "init_nut": 0.3
+  },
+  "cold": {
+   "game_key": "cold",
+   "temp_C": 5,
+   "season_amp_C": 9,
+   "rain_mm_day": 1.6,
+   "wet_day_prob": 0.45,
+   "evap_mm_per_C": 0.12,
+   "evap_base_mm": 0.4,
+   "init_moist": 0.43,
+   "init_nut": 0.4
+  },
+  "tundra": {
+   "game_key": null,
+   "temp_C": -3,
+   "season_amp_C": 12,
+   "rain_mm_day": 1.0,
+   "wet_day_prob": 0.4,
+   "evap_mm_per_C": 0.12,
+   "evap_base_mm": 0.4,
+   "init_moist": 0.65,
+   "init_nut": 0.35,
+   "_provenance": "provisional Phase4 苔原/tundra (not in game): mean -3C, summer ~9C, winter ~-15C; snowpack + frozen ground; moisture target .65 (provisional) for rain calibration on TRAIN seeds"
+  }
+ },
+ "year_days_for_seasons": 360,
+ "light": 1.0,
+ "light_season_amp": 0.18,
+ "lapse_C_per_m": -2.0
+}

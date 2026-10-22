@@ -1,0 +1,172 @@
+{
+ "_provenance": "provisional: Phase4 SI terrain/hydrology/sediment model (game has only abstract h=0..2 and moisture)",
+ "grid": {
+  "n": 32,
+  "cell_m": 0.5,
+  "unlock_initial_fraction": 0.25,
+  "unlock_levels": 4,
+  "unlock_interval_days": 300
+ },
+ "phase3_adapter": {
+  "phase3_samples": 64,
+  "planet_radius_m": 7.6,
+  "eco_cells": 16
+ },
+ "soil": {
+  "initial_depth_m": 0.4,
+  "field_capacity": 0.3,
+  "porosity": 0.45,
+  "dry_density_kg_m3": 1300,
+  "humify_rate_per_day": 0.0005
+ },
+ "hydrology": {
+  "substeps": 12,
+  "ksat_m_per_day": 0.08,
+  "cover_infiltration_bonus": 0.6,
+  "soil_evap_frac": 1.0,
+  "pond_depth_m": 0.05,
+  "wet_depth_m": 0.005,
+  "boundary": "open: perimeter cells drain to outside at their fixed rim height",
+  "pipe_coeff_per_day": 2.64,
+  "_note": "pipe coefficient defined per day; per-substep c = pipe_coeff_per_day/substeps (<=0.25). Ws limited to field capacity; excess exfiltrates to surface.",
+  "storm_substeps": 3,
+  "frozen_ksat_factor": 0.1,
+  "melt_ddf_m_per_C_day": 0.003,
+  "interflow_per_day": 0.5,
+  "_note2": "provisional: storms fall in first storm_substeps of 12; snow below 0C with degree-day melt; frozen ground ksat x0.1; interflow k_if*slope fraction/day of donor soil water"
+ },
+ "sediment": {
+  "k_cap": 0.6,
+  "k_erode": 0.25,
+  "k_dep": 0.35,
+  "min_slope": 0.002,
+  "hardness_protect": 0.8,
+  "cover_protect": 0.7,
+  "creep_coeff": 0.0005,
+  "repose_slope": 0.8,
+  "max_dz_per_day_m": 0.02
+ },
+ "river": {
+  "ema_tau_days": 30,
+  "q_on_m3_day": 0.25,
+  "q_off_m3_day": 0.12,
+  "persist_on_days": 20,
+  "persist_off_days": 30,
+  "min_river_cells": 6,
+  "incision_m": 0.02,
+  "pond_depth_m": 0.05,
+  "pond_velocity_ratio": 0.5,
+  "flow_min_today_frac": 0.25,
+  "overflow_m3_day": 0.02,
+  "anchor_frac_min": 0.3,
+  "max_width_ratio": 2.5,
+  "_note": "candidates: Qema>=threshold (hysteresis) & not pond; anchors: candidates also concentrated vs lateral neighbours; valid river component: acyclic, longest path>=min_river_cells, anchor fraction>=anchor_frac_min, cells/length<=max_width_ratio (rejects sheet flow)"
+ },
+ "terrains": {
+  "flat": {
+   "desc": "flat + 2cm noise",
+   "ops": [
+    [
+     "noise",
+     0.02,
+     3
+    ]
+   ]
+  },
+  "hills": {
+   "desc": "rolling hills + gentle slope to SE outlet",
+   "ops": [
+    [
+     "noise",
+     0.25,
+     2
+    ],
+    [
+     "tilt",
+     0.012,
+     0.008
+    ],
+    [
+     "hill",
+     10,
+     20,
+     7,
+     0.5
+    ],
+    [
+     "hill",
+     22,
+     9,
+     6,
+     0.4
+    ]
+   ]
+  },
+  "valley": {
+   "desc": "tilted V valley (no carved channel) draining to S outlet notch",
+   "ops": [
+    [
+     "valley_v",
+     0.05
+    ],
+    [
+     "tilt",
+     0.0,
+     0.025
+    ],
+    [
+     "noise",
+     0.03,
+     3
+    ]
+   ]
+  },
+  "depression": {
+   "desc": "closed bowl, rim higher than centre (pond basin)",
+   "ops": [
+    [
+     "bowl",
+     11,
+     0.55
+    ],
+    [
+     "noise",
+     0.03,
+     3
+    ]
+   ]
+  },
+  "initial_river": {
+   "desc": "tilted plain with a carved channel that holds an EXISTING river at day 0: finite initial water stock (initial_water_m (3.5 cm, below the 5 cm pond depth) on the 1-cell centreline network, saturated soil beneath; counted in initial storage, no ongoing source) and an initial flow history (Qema = 1.5*q_on, downstream = along the explicit 4-connected centreline path, exiting at the south rim) so the network is present on day 0. Channel cells are labelled preexisting; only incision outside them counts as natural/emergent.",
+   "ops": [
+    [
+     "tilt",
+     0.0,
+     0.02
+    ],
+    [
+     "channel",
+     0.12,
+     1.2
+    ],
+    [
+     "noise",
+     0.02,
+     3
+    ]
+   ],
+   "initial_water_m": 0.035
+  }
+ },
+ "rim": {
+  "fixed_ring_cells": 1,
+  "outlet": "lowest perimeter cell(s) define spill/outflow points"
+ },
+ "soil_biogeochem": {
+  "_provenance": "provisional Phase4 (not in game): abiotic processes so nutrients are not permanently locked; all conserved",
+  "nutrient_diffusion_per_day": 0.01,
+  "litter_decay_per_day": 0.003,
+  "abiotic_mineralization_per_day": 0.0005,
+  "formulas": "N exchange q = D * (N_j - N_i) * min(theta_i, theta_j) between 4-neighbours (Jacobi, donor-limited); G -> O at litter rate; O -> N at abiotic rate (R unaffected)"
+ }
+}

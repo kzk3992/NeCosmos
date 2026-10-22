@@ -1,0 +1,33 @@
+{
+ "candidate": "v2_q0.008_kc0.6_ke0.25_if0.5_nd0.04",
+ "objective": {
+  "candidate": "v2_q0.008_kc0.6_ke0.25_if0.5_nd0.04",
+  "J": 1.8453,
+  "peak_river_cells_max": 28,
+  "survival_frac": 0.524,
+  "shannon": 0.682,
+  "natural_river_frac": 0.25,
+  "pond_frac": 1.0,
+  "flood_excess": 0.019,
+  "defects": [],
+  "rejected": false,
+  "n_runs": 24
+ },
+ "overrides": {
+  "climates.climates.moss.rain_mm_day": 1.4475,
+  "climates.climates.wet.rain_mm_day": 2.7983,
+  "climates.climates.dry.rain_mm_day": 0.7332,
+  "climates.climates.cold.rain_mm_day": 0.4848,
+  "climates.climates.tundra.rain_mm_day": 0.609,
+  "terrain.river.q_on_m3_day": 0.008,
+  "terrain.river.q_off_m3_day": 0.004,
+  "terrain.sediment.k_cap": 0.6,
+  "terrain.sediment.k_erode": 0.25,
+  "terrain.hydrology.interflow_per_day": 0.5,
+  "terrain.soil_biogeochem.nutrient_diffusion_per_day": 0.04
+ },
+ "code_hash": "f33fe9a232a05650",
+ "base_config_hash": "1965af03719d58ed",
+ "frozen_at": "2026-10-22 12:19:00",
+ "rule": "selected on TRAIN seeds only; validation run once afterwards; final seeds unused until final"
+}

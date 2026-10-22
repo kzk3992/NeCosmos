@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "necosmos.terrainPreset",
+  "id": "flat_meadow",
+  "title": "平坦な草地",
+  "seed": 101,
+  "unlockLevel": 1,
+  "config": {},
+  "units": "metres, Blender Z-up",
+  "ops": [
+    {
+      "op": "noise",
+      "amplitude": 0.05,
+      "octaves": 2,
+      "baseRes": 3
+    },
+    {
+      "op": "biome_patch",
+      "biome": "meadow",
+      "threshold": 0.25,
+      "seedOffset": 3
+    }
+  ]
+}

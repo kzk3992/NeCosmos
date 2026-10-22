@@ -1,0 +1,21 @@
+{
+ "producers": {
+  "grass": 16
+ },
+ "pcd": {
+  "grass": 12,
+  "mogumogu": 4,
+  "kinoko": 4
+ },
+ "all8": {
+  "grass": 10,
+  "mogumogu": 3,
+  "kinoko": 3,
+  "fuwa": 3,
+  "tori": 3,
+  "sakana": 3,
+  "slime": 3,
+  "chie": 0
+ },
+ "_note": "chie (wisdom) is never placed initially: it can only appear via the confirmed 300-day spawn rule, enabled for all8 only"
+}

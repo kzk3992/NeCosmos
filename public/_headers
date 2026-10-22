@@ -1,0 +1,12 @@
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/js/*
+  Cache-Control: no-cache
+/engine/*
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: public, max-age=3600
+/vendor/*
+  Cache-Control: public, max-age=86400
