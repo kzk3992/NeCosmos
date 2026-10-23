@@ -358,8 +358,8 @@ class Ecology:
         k = len(p)
         activity = w['weather_activity'][p.j,p.i] if 'weather_activity' in w else 1.0
         go = rng.u01(seed, rng.MOVE, day, p.id) < self.move_p[p.sp] * activity
-        # FSM rest commitment suppresses optional travel, never feeding/birth/death.
-        go &= np.array([getattr(self, 'behavior', {}).get(int(cid), {}).get('state') != 'rest' for cid in p.id])
+        # Rest is an intention, not an extra veto over the species' daily
+        # movement opportunity: withholding that draw stranded slow decomposers.
         cj = p.j[:, None] + NB[None, :, 0]
         ci = p.i[:, None] + NB[None, :, 1]
         inside = (cj >= 0) & (cj < n0) & (ci >= 0) & (ci < n1)
@@ -380,7 +380,16 @@ class Ecology:
         G, OR = decision["G"][cjc, cic], (decision["O"] + decision["R"])[cjc, cic]
         sc = np.where((p.sp == MOGU)[:, None], G + sc, sc)
         sc = np.where((p.sp == TORI)[:, None], G * (w["moist"][cjc, cic] < 0.72) + sc, sc)
-        sc = np.where(((p.sp == KINOKO) | (p.sp == SLIME))[:, None], OR + sc, sc)
+        # Rank usable daily intake, not raw O+R stock. A huge slow-decaying R
+        # pool must not hide an accessible O meal for a hungry decomposer.
+        moisture_candidates=w['moist'][cjc,cic]
+        kd,sd=self.S['kinoko'],self.S['slime']
+        fast=np.where((p.sp==KINOKO)[:,None],_v(kd['fast_rate'])*(.45+moisture_candidates),
+                      _v(sd['fast_rate'])*(.5+moisture_candidates)*(.65+_v(sd['decomposer'])*.7))
+        slow=np.where((p.sp==KINOKO)[:,None],_v(kd['slow_rate'])*(.45+moisture_candidates)*_v(kd['decomposer']),
+                      _v(sd['slow_rate'])*(.5+moisture_candidates)*_v(sd['decomposer']))
+        usable=np.minimum(decision['O'][cjc,cic],fast)+np.minimum(decision['R'][cjc,cic],slow)
+        sc = np.where(((p.sp == KINOKO) | (p.sp == SLIME))[:, None], usable+jitter*1e-6, sc)
         sc = np.where((p.sp == SAKANA)[:, None], w["h"][cjc, cic] + 0.05 * w["theta"][cjc, cic] + sc, sc)
         sc = np.where(((p.sp == GRASS) | (p.sp == CHIE))[:, None], jitter, sc)
         fuwa = p.sp == FUWA

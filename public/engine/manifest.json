@@ -1,5 +1,5 @@
 {
-  "version": "0.10.1",
+  "version": "0.11.0",
   "files": [
     "NeCosmos-Assets/objects/metadata/cat_tower_01.json",
     "NeCosmos-Simulation/configs/scenarios/climates.json",

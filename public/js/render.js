@@ -46,6 +46,11 @@ export class World3D {
     this.batchGeometry = new THREE.PlaneGeometry(1,1);
     this.batchGeometry.translate(0,.5-FEET_V,0);
     this.instanceTransform = new THREE.Object3D();
+    this.atlasReady = this.initCatAtlas();
+    this.frustum = new THREE.Frustum();
+    this.frustumMatrix = new THREE.Matrix4();
+    this.catBounds = new THREE.Sphere();
+    this.frameCost = {};
     this.resolutionCheck=performance.now();
     this.pixelRatio=Math.min(window.devicePixelRatio,2);
     this.presentation = new Presentation();
@@ -68,7 +73,7 @@ export class World3D {
       this.controls.update(); this.renderFrame();
       if (now-this.resolutionCheck>2000) {
         this.resolutionCheck=now;
-        if (this.fps<27 && this.pixelRatio>.5) {this.pixelRatio=Math.max(.5,this.pixelRatio*.8);this.renderer.setPixelRatio(this.pixelRatio);this.resize();}
+        if (this.fps<27 && this.pixelRatio>.25) {this.pixelRatio=Math.max(.25,this.pixelRatio*.7);this.renderer.setPixelRatio(this.pixelRatio);this.renderer.domElement.style.imageRendering=this.pixelRatio<1?"pixelated":"auto";this.resize();}
       } requestAnimationFrame(loop);
     };
     loop();
@@ -181,6 +186,7 @@ export class World3D {
     this.water.geometry.computeVertexNormals();
     this.terrain.geometry.computeBoundingSphere();
     this.updateCats(st);
+    this.water.visible = st.h.some(h => h > .004);
     this.updateObjects(st);
   }
 
@@ -207,7 +213,13 @@ export class World3D {
     return this.texCache[key];
   }
 
-  renderFrame() { this.animateCats();this.updateSpriteDirs();this.updateBatches();this.renderer.render(this.scene, this.camera); }
+  renderFrame() {
+    const start=performance.now();this.animateCats();this.updateSpriteDirs();
+    const animate=performance.now();this.updateBatches();const batch=performance.now();
+    this.renderer.render(this.scene,this.camera);
+    this.frameCost={animateMs:animate-start,batchMs:batch-animate,submitMs:performance.now()-batch,
+      drawCalls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,pixelRatio:this.pixelRatio};
+  }
 
   updateCats(st) {
     this.presentation.sync(st);
@@ -231,7 +243,8 @@ export class World3D {
 
   animateCats() {
     if (!this.state) return;
-    const frustum=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix,this.camera.matrixWorldInverse));
+    this.camera.updateMatrixWorld();
+    const frustum=this.frustum.setFromProjectionMatrix(this.frustumMatrix.multiplyMatrices(this.camera.projectionMatrix,this.camera.matrixWorldInverse));
     for (const [id,s] of this.catSprites) {
       const r=this.presentation.live.get(id);
       if (!r) { s.visible=false; continue; }
@@ -240,7 +253,7 @@ export class World3D {
       const stretch=r.walking ? 1+.025*Math.sin(r.gait) : r.gesture===2 ? 1+.025*Math.sin(r.phase*2) : 1;
       s.scale.set(SPRITE_M*this.catScale,SPRITE_M*this.catScale*stretch,1);
       s.material.rotation=r.behavior==='eat' ? .06*Math.sin(r.phase*3) : r.gesture===3 ? .025*Math.sin(r.phase) : 0;
-      s.visible=frustum.intersectsSphere(new THREE.Sphere(s.position,.9*this.catScale));
+      s.visible=frustum.intersectsSphere(this.catBounds.set(s.position,.9*this.catScale));
       Object.assign(s.userData,{x:r.x,y:r.y,behavior:r.behavior});
     }
   }
@@ -254,32 +267,53 @@ export class World3D {
       const fx = Math.sin(head), fy = -Math.cos(head);
       const az = Math.atan2(fx * dy - fy * dx, fx * dx + fy * dy);
       const idx = ((Math.round(az * 180 / Math.PI / 45) % 8) + 8) % 8;
-      const t = this.texture(s.userData.sp, DIRS[idx]);
-      if (s.material.map !== t) { s.material.map = t; s.material.needsUpdate = true; }
+      s.userData.atlasCell = [idx, 7-this.catalog.cats.findIndex(c=>c.id===s.userData.sp)];
     }
   }
 
+  async initCatAtlas() {
+    // The source PNGs stay shared and unchanged. One atlas / opaque alpha-tested
+    // draw replaces up to 64 transparent materials and their repeated overdraw.
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=48*8;
+    const g=canvas.getContext('2d');g.imageSmoothingEnabled=false;
+    await Promise.all(this.catalog.cats.flatMap((cat,row)=>DIRS.map(async(dir,col)=>{
+      const img=new Image();img.src=`/${cat.spriteBase}/${cat.spritePrefix}_${dir}.png`;
+      await img.decode();g.drawImage(img,col*48,row*48,48,48);
+    })));
+    const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
+    map.magFilter=map.minFilter=THREE.NearestFilter;map.generateMipmaps=false;
+    const geo=this.batchGeometry.clone();
+    geo.setAttribute('atlasCell',new THREE.InstancedBufferAttribute(new Float32Array(512*2),2).setUsage(THREE.DynamicDrawUsage));
+    const material=new THREE.MeshBasicMaterial({map,alphaTest:.5,side:THREE.FrontSide});
+    material.onBeforeCompile=shader=>{
+      shader.vertexShader='attribute vec2 atlasCell; varying vec2 vAtlasCell;\n'+shader.vertexShader;
+      shader.vertexShader=shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\nvAtlasCell=atlasCell;');
+      shader.fragmentShader='varying vec2 vAtlasCell;\n'+shader.fragmentShader;
+      shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',THREE.ShaderChunk.map_fragment.replaceAll('vMapUv','((vMapUv+vAtlasCell)/8.0)'));
+    };
+    material.customProgramCacheKey=()=> 'cat-atlas-v1';
+    const mesh=new THREE.InstancedMesh(geo,material,512);mesh.count=0;mesh.frustumCulled=false;
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.catBatch={mesh,ids:[]};this.batches.set('atlas',this.catBatch);this.scene.add(mesh);
+    return true;
+  }
+
   updateBatches() {
-    for (const b of this.batches.values()) {b.ids=[];b.mesh.count=0;b.mesh.visible=false;}
+    const b=this.catBatch;if(!b)return;
+    b.ids.length=0;
+    const cells=b.mesh.geometry.attributes.atlasCell;
     for (const [id,s] of this.catSprites) {
-      if (!s.visible || !s.material.map) continue;
-      const key=s.material.map.uuid;
-      let b=this.batches.get(key);
-      if (!b) {
-        const mesh=new THREE.InstancedMesh(this.batchGeometry,new THREE.MeshBasicMaterial({map:s.material.map,transparent:true,alphaTest:.5,side:THREE.DoubleSide}),512);
-        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=false;
-        b={mesh,ids:[]};this.batches.set(key,b);this.scene.add(mesh);
-      }
-      if (b.ids.length>=512) continue;
-      const o=this.instanceTransform;
-      o.position.copy(s.position);o.quaternion.copy(this.camera.quaternion);
+      if(!s.visible || !s.userData.atlasCell || b.ids.length>=512)continue;
+      const o=this.instanceTransform;o.position.copy(s.position);o.quaternion.copy(this.camera.quaternion);
       o.rotateZ(s.material.rotation);o.scale.copy(s.scale);o.updateMatrix();
-      b.mesh.setMatrixAt(b.ids.length,o.matrix);b.ids.push(id);
+      b.mesh.setMatrixAt(b.ids.length,o.matrix);
+      cells.setXY(b.ids.length,...s.userData.atlasCell);b.ids.push(id);
     }
-    for (const b of this.batches.values()) {
-      b.mesh.count=b.ids.length;b.mesh.visible=!!b.ids.length;b.mesh.instanceMatrix.needsUpdate=true;
-      if(b.ids.length) {b.mesh.computeBoundingBox();b.mesh.computeBoundingSphere();}
-    }
+    b.mesh.count=b.ids.length;b.mesh.visible=!!b.ids.length;
+    b.mesh.instanceMatrix.needsUpdate=true;cells.needsUpdate=true;
+    // Bounds are only needed for picking; rebuild on demand rather than twice
+    // per animation frame for every directional batch.
+    b.mesh.boundingSphere=null;b.mesh.boundingBox=null;
   }
 
   // ------------------------------------------------------------------ objects

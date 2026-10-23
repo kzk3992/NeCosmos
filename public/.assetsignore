@@ -1,0 +1,5 @@
+# Never publish native test caches or local build configuration.
+**/__pycache__/**
+**/*.pyc
+**/.DS_Store
+.assetsignore

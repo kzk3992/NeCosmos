@@ -4,8 +4,8 @@ import { World3D } from "./render.js";
 import { PlanetClock, ModeSwitch, MODES } from "./time.js";
 const clock = new PlanetClock();
 
-const VERSION = "0.10.1";
-const compatibleSave = (meta) => meta && ["0.10.0", VERSION].includes(meta.version);
+const VERSION = "0.11.0";
+const compatibleSave = (meta) => meta && ["0.10.0", "0.10.1", VERSION].includes(meta.version);
 const SAVE_KEY = "necosmos_v010_save", META_KEY = "necosmos_v010_meta";
 const SPECIES_JP = { grass: "草ねこ", mogumogu: "もぐもぐねこ", kinoko: "きのこねこ", fuwa: "ふわふわねこ", chie: "知恵ねこ",
   tori: "鳥ねこ", sakana: "魚ねこ", slime: "スライムねこ" };
@@ -505,7 +505,7 @@ window.NeCosmos = {
   displayPositions: () => [...app.world.presentation.live.values()].map(({id,x,y,behavior,walking,gait})=>({id,x,y,behavior,walking,gait})),
   setSpeed: speed => modeSwitch.request(speed),
   playback: () => ({speed:app.speed, running:app.running, switching:app.switching, pendingDays:clock.acc}),
-  presentation: () => ({live:app.world.presentation.live.size, pool:app.world.presentation.pool.length, fps:app.world.fps, reassignMs:app.world.presentation.reassignMs, reassignments:app.world.presentation.reassignments}),
+  presentation: () => ({live:app.world.presentation.live.size, pool:app.world.presentation.pool.length, fps:app.world.fps, frameCost:app.world.frameCost, reassignMs:app.world.presentation.reassignMs, reassignments:app.world.presentation.reassignments}),
   // Synthetic render-only load; does not raise the ecology's production cap.
   renderStress: count => {
     if (new URLSearchParams(location.search).get('smoke') !== 'stress') throw new Error('stress query required');
@@ -519,6 +519,7 @@ window.NeCosmos = {
   newWorld: (p) => newWorld(p),
   async step(n) { app.running = false; while (app.busy) await new Promise((r) => setTimeout(r, 20)); let st; let left = n; while (left > 0) { const k = Math.min(left, 50, EVAL_PERIOD - app.state.day % EVAL_PERIOD); st = await step(k); left -= k; } return st; },
   state: () => app.state,
+  memory: () => app.engine.call("memory"),
   residual: () => app.state?.residual,
   hash: () => app.engine.call("hash"),
   save: saveGame, load: loadGame,
@@ -534,6 +535,7 @@ window.NeCosmos = {
   try {
     app.catalog = await (await fetch("/assets/catalog.json")).json();
     app.world = new World3D($("view"), app.catalog);
+    await app.world.atlasReady;
     app.engine = new Engine();
     wire();
     loop();

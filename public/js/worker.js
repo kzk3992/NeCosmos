@@ -67,6 +67,7 @@ const handlers = {
   save: async () => call("save"),
   load: async (b64) => JSON.parse(call("load", b64)),
   hash: async () => call("state_hash"),
+  memory: async () => ({wasmLinearMemoryBytes:py._module.HEAPU8.buffer.byteLength}),
 };
 
 onmessage = async (ev) => {

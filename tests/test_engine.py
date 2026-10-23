@@ -91,3 +91,38 @@ class PlayerOperationTests(unittest.TestCase):
    # event history, persistent FSM, and wisdom's day-300 state.
    if expected is None:expected=full()
    else:self.assertEqual(expected,full(),str(mode))
+
+class ForagingRegressionTests(unittest.TestCase):
+ def test_decomposer_prefers_usable_food_over_large_slow_pool(self):
+  import numpy as np
+  sys.path.insert(0,str(ROOT/'NeCosmos-Simulation/tests'))
+  from test_requirements import make_eco,eco_world
+  from src.ecosystem.cats import SLIME
+  eco=make_eco(cat_effects=False);world=eco_world();world['O'][:]=0;world['R'][:]=0
+  world['R'][2,2]=100.;world['O'][2,3]=.1
+  eco.pop.add([SLIME],[2],[2],[.2],[.2],0);eco.move_p[SLIME]=1.
+  eco.behavior={1:{'state':'rest'}}
+  stats={'sp_moved':np.zeros(8,int)}
+  eco._move(world,1,21001,np.array([0.]),stats)
+  self.assertEqual((eco.pop.j[0],eco.pop.i[0]),(2,3))
+ def test_life_reproduction_food_coefficients_unchanged(self):
+  fixture=json.loads((ROOT/'tests/fixtures/v0101-save.json').read_text());b.load(fixture['save'])
+  old=b.STATE['sim'].eco
+  cfg=json.loads((ROOT/'NeCosmos-Simulation/configs/species/species.json').read_text())
+  self.assertEqual(old.S,cfg['species'])
+  for key in ('reproduction','senescence','days_per_year'):
+   self.assertEqual(old.cfg[key],cfg[key])
+
+class CommitmentTests(unittest.TestCase):
+ def test_safe_commitment_skips_neighbor_search_but_hunger_interrupts(self):
+  from unittest.mock import patch
+  sys.path.insert(0,str(ROOT/'NeCosmos-Simulation/tests'))
+  from test_requirements import make_eco,eco_world
+  from src.ecosystem.behavior import update
+  from src.ecosystem.cats import SLIME
+  e=make_eco();w=eco_world();e.pop.add([SLIME],[2],[2],[.8],[.2],0)
+  e.behavior={1:{'state':'rest','goal':[2,2],'since':1,'until':4,'fatigue':.3}}
+  with patch('src.ecosystem.spatial.SpatialIndex',side_effect=AssertionError('unnecessary spatial index')):
+   self.assertEqual(update(e,w,2)[1]['state'],'rest')
+  e.pop.energy[:]=.1
+  self.assertEqual(update(e,w,3)[1]['state'],'seekFood')

@@ -4,7 +4,6 @@ Daily budgets remain in Ecology.step; this controller labels their decisions wit
 replacing species equations. Goals persist until arrival, completion or danger.
 No additional random draws and no dependency on cameras or real time.
 """
-import numpy as np
 STATES = ('idle','seekFood','move','eat','rest','explore','socialize','avoidDanger','interact')
 
 
@@ -12,13 +11,20 @@ def update(eco, w, day):
     p=eco.pop
     previous=getattr(eco,'behavior',{})
     from .spatial import SpatialIndex
-    index=SpatialIndex(p.j,p.i,p.id)
+    index=None
     result={}
     for k in range(len(p)):
         cid=int(p.id[k]);sp=int(p.sp[k]);j=int(p.j[k]);i=int(p.i[k])
         hunger=max(0.,1.-float(p.energy[k]));stress=float(p.stress[k])
         old=previous.get(cid)
         fatigue=min(1.,max(0.,(old or {}).get('fatigue',0.) + (.15 if (old or {}).get('travelled',False) else -.1)))
+        if old and day < old['until'] and stress < .004 and hunger < .7 and int(p.action[k]) == 0:
+            # Continue a safe commitment without rebuilding/evaluating utility
+            # scores. Movement still uses the unchanged species opportunity.
+            result[cid]={'state':old['state'],'goal':[j,i],'since':old['since'],
+                         'fatigue':fatigue,'until':old['until']}
+            continue
+        if index is None:index=SpatialIndex(p.j,p.i,p.id)
         nearby=len(index.nearby(j,i,cross=True))-1
         resource=float(w['G'][j,i] if sp in (1,5,6) else w['O'][j,i]+w['R'][j,i])
         scores={'idle':.1,'seekFood':hunger*(1+min(resource,1)), 'rest':.15+fatigue*.6,

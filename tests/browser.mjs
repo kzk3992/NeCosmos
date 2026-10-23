@@ -1,11 +1,13 @@
 import {chromium} from 'playwright';
 import fs from 'node:fs';
-const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const base=process.env.NECOSMOS_BASE_URL || 'http://127.0.0.1:8080';
+const proxy=base.startsWith('http://127.0.0.1')?undefined:{server:process.env.HTTPS_PROXY || process.env.HTTP_PROXY};
+const browser=await chromium.launch({proxy,executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const reports=[];
 for(const mobile of [false,true]) {
  const context=await browser.newContext({viewport:mobile?{width:390,height:844}:{width:1440,height:1000},deviceScaleFactor:1,isMobile:mobile,hasTouch:mobile});
- const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e)));
- await page.goto('http://127.0.0.1:8080');await page.waitForFunction(()=>window.NeCosmos?.status.ready && window.NeCosmos?.status.day!==undefined,{},{timeout:120000});await page.evaluate(()=>NeCosmos.ready);
+ const page=await context.newPage();const errors=[];page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+ await page.goto(base);await page.waitForFunction(()=>window.NeCosmos?.status.ready && window.NeCosmos?.status.day!==undefined,{},{timeout:120000});await page.evaluate(()=>NeCosmos.ready);
  await page.waitForTimeout(1500);
  const result=await page.evaluate(async()=>{
    const api=NeCosmos;api.play(false);
@@ -13,7 +15,7 @@ for(const mobile of [false,true]) {
    const hash0=await api.hash();
    await Promise.all([api.setSpeed(5),api.setSpeed(20),api.setSpeed(.05)]);
    const paused=api.playback();const hash1=await api.hash();
-   api.play(true);return {hash0,hash1,paused,initial:api.status};
+   api.play(true);return {hash0,hash1,paused,version:api.version,initial:api.status};
  });
  await page.waitForTimeout(3000);
  const observed=await page.evaluate(async()=>{
@@ -34,5 +36,5 @@ for(const mobile of [false,true]) {
  reports.push({mobile,errors,result,observed,fastStart:fast,fastResult,bootRestored,uiMode});await context.close();
 }
 await browser.close();fs.writeFileSync('artifacts/browser.json',JSON.stringify(reports,null,2));
-for(const r of reports) {if(r.errors.length || r.result.hash0!==r.result.hash1 || r.fastResult.hash!==r.fastResult.reloaded || r.fastResult.day<=r.fastStart || r.result.paused.running || r.observed.coordinateErrorMetres>1e-8 || r.bootRestored.status!=="ready" || r.uiMode.running) throw new Error(JSON.stringify(r));}
+for(const r of reports) {if(r.errors.length || r.result.hash0!==r.result.hash1 || r.fastResult.hash!==r.fastResult.reloaded || r.fastResult.day<=r.fastStart || r.result.version!=="0.11.0" || r.result.paused.running || r.observed.coordinateErrorMetres>1e-8 || r.bootRestored.status!=="ready" || r.uiMode.running) throw new Error(JSON.stringify(r));}
 console.log(JSON.stringify(reports,null,2));

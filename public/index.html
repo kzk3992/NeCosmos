@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101926">
-<title>NeCosmos v0.10.1 — 猫だけの小さな宇宙</title>
+<link rel="icon" type="image/png" href="/assets/cats/grass_cat/grass_cat_front.png">
+<title>NeCosmos v0.11.0 — 猫だけの小さな宇宙</title>
 <style>
 :root{color-scheme:dark;--bg:#0d1420;--panel:#192437cc;--line:#35435a;--gold:#f6d38d;--muted:#a6b8cc;--mint:#9de2c0;--red:#e08a7a}
 *{box-sizing:border-box}
@@ -65,7 +66,7 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
 <body>
 <div id="app">
   <header>
-    <h1>NeCosmos</h1><span class="ver">v0.10.1 · 猫だけの小さな宇宙</span>
+    <h1>NeCosmos</h1><span class="ver">v0.11.0 · 猫だけの小さな宇宙</span>
     <button id="newWorldBtn" class="primary" disabled>＋ 新しい世界</button>
     <div class="hud"><span id="day">—</span><span id="weatherSummary" aria-live="polite">—</span><span id="total">—</span><span>🥝 <b id="kiwi">0</b></span><span id="level"></span>
       <button id="aboutBtn">ⓘ</button></div>
@@ -155,7 +156,7 @@ dialog{padding:24px;width:min(520px,calc(100vw - 36px));box-shadow:0 20px 80px #
   </div>
 </dialog>
 <dialog id="about">
-  <h3>NeCosmos v0.10.1 について</h3>
+  <h3>NeCosmos v0.11.0 について</h3>
   <p>猫だけで成り立つ小さな惑星を観察するゲームです。猫を直接操作することはできません。猫たちの暮らしが、草や水、土の流れと少しずつ影響し合います。</p>
   <ul class="muted">
     <li>シミュレーション：Python / NumPy の生態系・地形モデルを、ブラウザ内の Pyodide（Web Worker）で動かしています。寿命・繁殖・資源の係数を維持し、行動目標と移動・採食の順序を分離しています。</li>
