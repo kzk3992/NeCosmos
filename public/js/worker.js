@@ -52,7 +52,13 @@ function call(fn, ...args) {
 const handlers = {
   init: async () => init(),
   new: async (p) => JSON.parse(call("new_world", JSON.stringify(p))),
-  step: async (n) => JSON.parse(call("step", n)),
+  step: async (n) => {
+    const start=performance.now();
+    const result=JSON.parse(call("step",n));
+    result.performance={stepMs:performance.now()-start,days:n};return result;
+  },
+  observe: async fraction => JSON.parse(call("observe", fraction)),
+  prepare: async () => JSON.parse(call("prepare")),
   state: async () => JSON.parse(call("state")),
   unlock: async (lvl) => JSON.parse(call("unlock", lvl)),
   check: async (meta, x, y, yaw) => JSON.parse(call("check_place", JSON.stringify(meta), x, y, yaw)),
@@ -61,6 +67,7 @@ const handlers = {
   save: async () => call("save"),
   load: async (b64) => JSON.parse(call("load", b64)),
   hash: async () => call("state_hash"),
+  memory: async () => ({wasmLinearMemoryBytes:py._module.HEAPU8.buffer.byteLength}),
 };
 
 onmessage = async (ev) => {

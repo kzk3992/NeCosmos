@@ -20,7 +20,7 @@ for rel in ['species/species.json','terrain/terrain.json','scenarios/climates.js
 copy(ASSETS/'objects/metadata/cat_tower_01.json',PUB/'engine/NeCosmos-Assets/objects/metadata/cat_tower_01.json')
 engine=PUB/'engine'
 paths=[str(p.relative_to(engine)) for p in sorted(engine.rglob('*')) if p.is_file() and p.suffix in ('.py','.json') and p.name!='manifest.json']
-(engine/'manifest.json').write_text(json.dumps({'version':'0.10.1','files':paths},indent=2)+'\n')
+(engine/'manifest.json').write_text(json.dumps({'version':'0.11.0','files':paths},indent=2)+'\n')
 
 catalog_path=PUB/'assets/catalog.json'
 if ASSETS.exists():
@@ -47,11 +47,11 @@ if ASSETS.exists():
         copy(ASSETS/'terrain/presets'/(tid+'.json'),PUB/'assets/terrain'/(tid+'.json'))
         terrains.append({'id':tid,'model':'assets/terrain/'+tid+'.glb','preset':'assets/terrain/'+tid+'.json'})
     catalog_path.parent.mkdir(parents=True,exist_ok=True)
-    catalog_path.write_text(json.dumps({'version':'0.10.1','units':'metres','objects':objects,'cats':cats,'terrains':terrains},ensure_ascii=False,indent=2)+'\n')
+    catalog_path.write_text(json.dumps({'version':'0.11.0','units':'metres','objects':objects,'cats':cats,'terrains':terrains},ensure_ascii=False,indent=2)+'\n')
 else:
     assert catalog_path.exists(),'Production catalog missing; original source asset folder is optional after staging'
 
-inventory={str(p.relative_to(PUB)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(PUB.rglob('*')) if p.is_file() and p.name!='release-manifest.json'}
+inventory={str(p.relative_to(PUB)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(PUB.rglob('*')) if p.is_file() and p.name not in ('release-manifest.json','.assetsignore') and '__pycache__' not in p.parts and p.suffix!='.pyc'}
 assert all(v['bytes']<25*1024*1024 for v in inventory.values()),'Cloudflare single-asset limit exceeded'
-(PUB/'release-manifest.json').write_text(json.dumps({'version':'0.10.1','files':inventory},indent=2)+'\n')
+(PUB/'release-manifest.json').write_text(json.dumps({'version':'0.11.0','files':inventory},indent=2)+'\n')
 print(json.dumps({'files':len(inventory),'bytes':sum(v['bytes'] for v in inventory.values()),'objects':len(json.loads(catalog_path.read_text())['objects']),'cats':len(json.loads(catalog_path.read_text())['cats'])}))

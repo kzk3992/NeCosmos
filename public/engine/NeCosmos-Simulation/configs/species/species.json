@@ -684,5 +684,16 @@
    "grazing and decomposition of resource pools",
    "excretion and carcass organic additions (mass conservation)"
   ]
+ },
+ "planet_time": {
+  "biological_year_planet_days": 48,
+  "season_cycle_planet_days": 360,
+  "lifespan_target_biological_years": [
+   16,
+   22
+  ],
+  "apply_lifespan_target": false,
+  "balance_age_divisor": 1,
+  "note": "Biological display is agePlanetDays/48. Legacy daily hazard, age stages and reproduction thresholds remain unchanged; target lifespan is not enabled by this release."
  }
 }

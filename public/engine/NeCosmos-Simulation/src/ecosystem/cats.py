@@ -4,8 +4,8 @@ Species index: 0 grass(草ねこ) 1 mogumogu 2 kinoko 3 fuwa 4 chie(知恵) 5 to
 Matter unit: kg dry mass per cell (provisional scale: 1 game unit = 1 kg). Energy: game units.
 
 Daily order (all decisions read the start-of-day state; draws are counter-based per id):
-  age/senescence -> stress -> production & feeding (per-cell proportional allocation of N, Ws, G,
-  O, R so array order never matters) -> energy costs -> excretion -> movement -> reproduction
+  age/senescence -> utility/FSM movement -> stress -> production & feeding (per-cell proportional allocation of N, Ws, G,
+  O, R so array order never matters) -> energy costs -> excretion -> reproduction
   (occupancy from before births) -> deaths (carcass -> O) -> spontaneous grass -> wisdom clock.
 Formulas marked [confirmed] come from public/index.html V0.9; [provisional] are Phase 4 choices.
 """
@@ -53,6 +53,7 @@ class Population:
         self.infl_cover = np.zeros(0)
         self.infl_transport_kg = np.zeros(0)
         self.next_id = 1
+        self.birth_records = []
 
     def __len__(self):
         return len(self.id)
@@ -62,6 +63,9 @@ class Population:
         ids = np.arange(self.next_id, self.next_id + k, dtype=np.int64)
         self.next_id += k
         cat = lambda a, b, dt=None: np.concatenate([a, np.asarray(b, dtype=a.dtype if dt is None else dt)])
+        if not hasattr(self, 'birth_records'): self.birth_records = []
+        self.birth_records.extend({'id': int(cid), 'species': SP[int(sp[k])], 'day': int(day),
+                                   'j': int(j[k]), 'i': int(i[k])} for k,cid in enumerate(ids))
         self.id = cat(self.id, ids)
         self.sp = cat(self.sp, sp)
         self.j = cat(self.j, j)
@@ -202,6 +206,9 @@ class Ecology:
               "sp_moved": np.zeros(8, int), "sp_transport_kg": np.zeros(8), "transport_events": []}
         A = w["A"]
         if len(p) == 0:
+            self.motion_plan = []
+            self.feeding_plan = []
+            self.behavior = {}
             self._wisdom(w, day, seed, st)
             self._spawn_grass(w, day, seed, st, env)
             self.stats = st
@@ -217,6 +224,11 @@ class Ecology:
         p.infl_transport_kg = np.zeros(len(p))
         years = p.age / self.dpy
         sen = rng.u01(seed, rng.SENESCENCE, day, p.id) < self.senescence_risk(p.sp, years)
+        # Choose and move before feeding: a daily transaction can expose this
+        # committed plan to observation playback without re-running ecology.
+        from .behavior import update
+        update(self, w, day)
+        self._move(w, day, seed, years, st)
         J, I = p.j, p.i
         T = w["T"][J, I]
         m = w["moist"][J, I]
@@ -293,6 +305,10 @@ class Ecology:
             st["decomposed"] += float(take.sum())
             p.action = np.where(take > 0, 4, p.action)
             st["sp_decomposed"] += np.bincount(p.sp, take, 8)
+        self.feeding_plan = [{'id': int(p.id[k]), 'position': [int(p.j[k]),int(p.i[k])],
+                              'kind': 'eat'} for k in np.flatnonzero(np.isin(p.action, [3,4]))]
+        for cid in p.id[np.isin(p.action,[3,4])]:
+            if int(cid) in getattr(self, 'behavior', {}): self.behavior[int(cid)]['state'] = 'eat'
         # ---- energy budget [confirmed costs/age factors]
         aef = self.age_factor_energy(p.sp, years)
         dry_pen = np.where(p.sp == SAKANA, np.maximum(0, 0.62 - np.where(hab, 1.0, m)) * _v(self.S["sakana"]["dry_penalty"]) * 0.6, 0)
@@ -304,8 +320,6 @@ class Ecology:
         exc = np.minimum(np.maximum(p.mass, 0), 0.0005)                 # [confirmed] excretion -> organic
         p.mass -= exc
         _credit(w, "O", (J, I), exc)
-        # ---- movement (targets from today's fields; constraints: unlocked, slope, water)
-        self._move(w, day, seed, years, st)
         # ---- reproduction (occupancy before births; explicit space capacity K per cell)
         self._reproduce(w, day, seed, years, st)
         # ---- deaths
@@ -344,12 +358,17 @@ class Ecology:
         k = len(p)
         activity = w['weather_activity'][p.j,p.i] if 'weather_activity' in w else 1.0
         go = rng.u01(seed, rng.MOVE, day, p.id) < self.move_p[p.sp] * activity
+        # Rest is an intention, not an extra veto over the species' daily
+        # movement opportunity: withholding that draw stranded slow decomposers.
         cj = p.j[:, None] + NB[None, :, 0]
         ci = p.i[:, None] + NB[None, :, 1]
         inside = (cj >= 0) & (cj < n0) & (ci >= 0) & (ci < n1)
         cjc, cic = np.clip(cj, 0, n0 - 1), np.clip(ci, 0, n1 - 1)
         z = w["z"]
         ok = inside & w["unlocked"][cjc, cic]
+        if 'obstacles' in w:
+            ok &= ~w['obstacles'][cjc,cic] | (p.sp == TORI)[:,None]
+            ok[:,0] = True  # an existing occupant can always remain in place
         dz = np.abs(z[cjc, cic] - z[p.j, p.i][:, None]) / w["dx"]
         ok &= (dz <= self.walk) | (p.sp == TORI)[:, None]
         wet = w["h"][cjc, cic] > self.wade
@@ -361,23 +380,36 @@ class Ecology:
         G, OR = decision["G"][cjc, cic], (decision["O"] + decision["R"])[cjc, cic]
         sc = np.where((p.sp == MOGU)[:, None], G + sc, sc)
         sc = np.where((p.sp == TORI)[:, None], G * (w["moist"][cjc, cic] < 0.72) + sc, sc)
-        sc = np.where(((p.sp == KINOKO) | (p.sp == SLIME))[:, None], OR + sc, sc)
+        # Rank usable daily intake, not raw O+R stock. A huge slow-decaying R
+        # pool must not hide an accessible O meal for a hungry decomposer.
+        moisture_candidates=w['moist'][cjc,cic]
+        kd,sd=self.S['kinoko'],self.S['slime']
+        fast=np.where((p.sp==KINOKO)[:,None],_v(kd['fast_rate'])*(.45+moisture_candidates),
+                      _v(sd['fast_rate'])*(.5+moisture_candidates)*(.65+_v(sd['decomposer'])*.7))
+        slow=np.where((p.sp==KINOKO)[:,None],_v(kd['slow_rate'])*(.45+moisture_candidates)*_v(kd['decomposer']),
+                      _v(sd['slow_rate'])*(.5+moisture_candidates)*_v(sd['decomposer']))
+        usable=np.minimum(decision['O'][cjc,cic],fast)+np.minimum(decision['R'][cjc,cic],slow)
+        sc = np.where(((p.sp == KINOKO) | (p.sp == SLIME))[:, None], usable+jitter*1e-6, sc)
         sc = np.where((p.sp == SAKANA)[:, None], w["h"][cjc, cic] + 0.05 * w["theta"][cjc, cic] + sc, sc)
         sc = np.where(((p.sp == GRASS) | (p.sp == CHIE))[:, None], jitter, sc)
         fuwa = p.sp == FUWA
         if fuwa.sum() > 1:
             fj, fi = p.j[fuwa], p.i[fuwa]
             idx = np.flatnonzero(fuwa)
+            from .spatial import SpatialIndex
+            index = SpatialIndex(fj,fi,idx)
             for a, kk in enumerate(idx):
                 if w["T"][p.j[kk], p.i[kk]] < 15:
-                    d2 = (fj - p.j[kk]) ** 2 + (fi - p.i[kk]) ** 2
-                    d2[a] = 10 ** 9
-                    t = np.argmin(d2)
-                    sc[kk] = -np.hypot(cj[kk] - fj[t], ci[kk] - fi[t]) + jitter[kk] * 1e-3
+                    target = index.nearest(int(p.j[kk]),int(p.i[kk]),int(kk))
+                    sc[kk] = -np.hypot(cj[kk] - p.j[target], ci[kk] - p.i[target]) + jitter[kk] * 1e-3
                 else:
                     sc[kk] = jitter[kk]
         elif fuwa.any():
             sc[fuwa] = jitter[fuwa]
+        avoid = np.array([getattr(self,'behavior',{}).get(int(cid),{}).get('state') == 'avoidDanger' for cid in p.id])
+        thermal = np.maximum(0,13-w['T'][cjc,cic]) + np.maximum(0,w['T'][cjc,cic]-31)
+        moisture = np.maximum(0,.3-w['moist'][cjc,cic]) + np.maximum(0,w['moist'][cjc,cic]-.85)
+        sc = np.where(avoid[:,None], -thermal-.5*moisture+jitter*1e-3, sc)
         sc = np.where(ok, sc, -np.inf)
         best = np.argmax(sc, axis=1)
         best = np.where(go & np.isfinite(sc[np.arange(k), best]), best, 0)
@@ -399,6 +431,15 @@ class Ecology:
         moved = (p.j != j_from) | (p.i != i_from)
         p.action = np.where(moved, np.where(p.sp == TORI, 6, 1), p.action)
         st["sp_moved"] += np.bincount(p.sp[moved], minlength=8)
+        self.motion_plan = [{'id': int(p.id[k]), 'origin': [int(j_from[k]),int(i_from[k])],
+                             'position': [int(p.j[k]),int(p.i[k])]} for k in range(len(p))]
+        for k, cid in enumerate(p.id):
+            rec = getattr(self, 'behavior', {}).get(int(cid))
+            if rec:
+                rec['goal'] = [int(p.j[k]),int(p.i[k])]
+                rec['travelled'] = bool(moved[k])
+                if moved[k]: rec['state'] = 'move'
+
         if not self.effects:
             return
         # conserved nutrient cargo: picked at the origin cell (shared per origin cell if several

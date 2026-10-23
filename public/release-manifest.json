@@ -1,5 +1,5 @@
 {
-  "version": "0.10.1",
+  "version": "0.11.0",
   "files": {
     "_headers": {
       "bytes": 231,
@@ -7,7 +7,7 @@
     },
     "assets/catalog.json": {
       "bytes": 64986,
-      "sha256": "506aa34c5f4a275e065a043a75471c005532b6d4fe6602e5e10d97123facd15c"
+      "sha256": "324d03033815848140c7cae0accf5cbe460c460fbb539af162827e987e1d97f5"
     },
     "assets/cats/chie_cat/chie_cat_back.png": {
       "bytes": 2881,
@@ -590,8 +590,8 @@
       "sha256": "15b49f101884907b92925eccf04cd1612c07638317615d32ab3cd34ba6c3ddf8"
     },
     "engine/NeCosmos-Simulation/configs/species/species.json": {
-      "bytes": 16450,
-      "sha256": "616c26421e28c3ec842812fa8ce29886db9a04235a17ecafe69dbc563dca5ec9"
+      "bytes": 16843,
+      "sha256": "418b8368bb51e5143560a682a2516c733665ef3d74d074cd6d929d5955df25b8"
     },
     "engine/NeCosmos-Simulation/configs/terrain/terrain.json": {
       "bytes": 4245,
@@ -617,9 +617,21 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "engine/NeCosmos-Simulation/src/ecosystem/behavior.py": {
+      "bytes": 2548,
+      "sha256": "da767df5d90d92f0585b323dcfeb54724ddc919444bb03187de6ab7919a332bb"
+    },
     "engine/NeCosmos-Simulation/src/ecosystem/cats.py": {
-      "bytes": 29596,
-      "sha256": "82e99a5f3409383914e15f92a3d4060583932220b9b26c46cc35d410953139aa"
+      "bytes": 32420,
+      "sha256": "3c7152c5604f9831202e72a5ed49e023f5b3bbd6666ca78b78be6b08e470e669"
+    },
+    "engine/NeCosmos-Simulation/src/ecosystem/spatial.py": {
+      "bytes": 1545,
+      "sha256": "6a1c4b61a5be4c190ff7de831da75900891fa1467c2397943c9251d7ad00a7bb"
+    },
+    "engine/NeCosmos-Simulation/src/ecosystem/timeline.py": {
+      "bytes": 1009,
+      "sha256": "392f578472937ca91d7ce5c878e16d076716bc4e7102cc733fb79e323857eac6"
     },
     "engine/NeCosmos-Simulation/src/hydrology/__init__.py": {
       "bytes": 0,
@@ -658,32 +670,40 @@
       "sha256": "1213e1b4abf5957b43ac5c8d6cd45465125d9c957caad59ab91ec575dc83a4f2"
     },
     "engine/bridge.py": {
-      "bytes": 18376,
-      "sha256": "95394ed0f3680e27605cc6dd2e79ad30e1fcdfcfb6d909af697bd047478712b7"
+      "bytes": 22653,
+      "sha256": "034aff7b6a84a8c9a648c3fc7ba300104617186c0feb3d02c68c235a698096e1"
     },
     "engine/manifest.json": {
-      "bytes": 1228,
-      "sha256": "1d4fe842ca4fccb5009336ad5079e80271a96f2caf7ee0723734c36d38da15a4"
+      "bytes": 1386,
+      "sha256": "61bb0cab9aae38917025b6eb49b88982f02361211917791f325dd64d6c8bf25f"
     },
     "index.html": {
-      "bytes": 11716,
-      "sha256": "5af6b013709dc282add538d95fa65719adab79f3faa6508f1066c3f30a103d75"
+      "bytes": 12144,
+      "sha256": "f09fce7c1cfc2405a9bddf2ce7c36abe1497041301d3c61c987b9d5269360dbb"
     },
     "js/main.js": {
-      "bytes": 23833,
-      "sha256": "42604d59a95972b67a5cde9c92c5ac9b6d6634164c165a9ee19221f51ffa3f9c"
+      "bytes": 28008,
+      "sha256": "7c5b1a2274ad51e7efcfe8407d5796f0cf028101207138e2e5685896960a3518"
+    },
+    "js/presentation.js": {
+      "bytes": 3367,
+      "sha256": "58490287ba5303fe05d3847f36a9b308cc3115b27cb5f49ff9fb9c67ea0c1dee"
     },
     "js/render.js": {
-      "bytes": 14835,
-      "sha256": "e42e4783fdf3cc12f38d33a36cfb00129281849b92f633135d7abd17ca91482a"
+      "bytes": 19861,
+      "sha256": "c02389c608e8ebd67fd5e2a641c34dc783e5076f4ab9c3a41730ef626a783bda"
     },
     "js/smoke.js": {
       "bytes": 3381,
       "sha256": "afbeb80c19a7e29e3a49a56d255ab4d5d4bd3c343b54e0de73c6594391bcfbe2"
     },
+    "js/time.js": {
+      "bytes": 1745,
+      "sha256": "f9c2f673b4ee72c7af06c88048e2664d5e0ef9d657874607f29f309630385094"
+    },
     "js/worker.js": {
-      "bytes": 2972,
-      "sha256": "86d0eb8d2074690e4f10a4a69fac3dfc5ea5aa89c93eedaf1cab55ed40c6e1e8"
+      "bytes": 3313,
+      "sha256": "069a476546221d9795dcca851c740fc29e355c7111b8366722c5df1e768f4c85"
     },
     "vendor/NOTICE.md": {
       "bytes": 745,
