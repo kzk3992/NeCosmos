@@ -16,6 +16,7 @@ docs/phase234/results/browser-performance.json
 docs/phase234/results/browser-performance.txt
 docs/phase234/results/browser.json
 docs/phase234/results/changes.txt
+docs/phase234/results/ci.json
 docs/phase234/results/native-performance.json
 docs/phase234/results/observation-performance.json
 docs/phase234/results/spatial.json

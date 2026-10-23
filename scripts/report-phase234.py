@@ -114,6 +114,9 @@ lines+=['','参照実装は座標配列をキャッシュし、距離をNumPyで
 observation=read('performance-observation.json');obs=observation['out'][0]
 (R/'observation-performance.json').write_text(json.dumps(observation,indent=2)+'\n')
 lines+=['','## 追加の観察性能','',f"50匹・観察モード8秒サンプルは {obs['fps']:.1f}FPS、日内時刻からの実効 {obs['observationDaysPerSecond']:.6f}日/秒（要求1/300）。短時間試験なので日末の資源取引はまだ発生しない。300秒/日の換算は固定時計テスト、日内歩行はブラウザ座標照合で別々に検証。[測定値](results/observation-performance.json)。"]
+ci=read('ci.json');(R/'ci.json').write_text(json.dumps(ci,indent=2)+'\n')
+lines+=['','## GitHub / Cloudflare チェック','',
+ '実装コミット8fc8fa9の Workers Builds: necosmos は failure（開始/終了同時刻、GitHubのsummaryに原因やログなし、annotations=0）。ローカルbuildと100件のテスト成功とは別の未解決事項。この環境にCloudflare詳細ログの権限がないため、失敗原因は未確認。自動チェック成功や本番デプロイ成功とは報告しない。[PR #2のチェック](https://github.com/kzk3992/NeCosmos/pull/2/checks)、[取得したチェック情報](results/ci.json)。公開manifestを読み取り、v0.11.0のままと確認。']
 (D/'report.md').write_text('\n'.join(lines)+'\n')
 (R/'changes.txt').touch()
 changed=set(subprocess.check_output(['git','diff','--name-only','origin/main'],cwd=ROOT,text=True).splitlines())
