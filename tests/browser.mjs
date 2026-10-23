@@ -36,5 +36,5 @@ for(const mobile of [false,true]) {
  reports.push({mobile,errors,result,observed,fastStart:fast,fastResult,bootRestored,uiMode});await context.close();
 }
 await browser.close();fs.writeFileSync('artifacts/browser.json',JSON.stringify(reports,null,2));
-for(const r of reports) {if(r.errors.length || r.result.hash0!==r.result.hash1 || r.fastResult.hash!==r.fastResult.reloaded || r.fastResult.day<=r.fastStart || r.result.version!=="0.11.0" || r.result.paused.running || r.observed.coordinateErrorMetres>1e-8 || r.bootRestored.status!=="ready" || r.uiMode.running) throw new Error(JSON.stringify(r));}
+for(const r of reports) {if(r.errors.length || r.result.hash0!==r.result.hash1 || r.fastResult.hash!==r.fastResult.reloaded || r.fastResult.day<=r.fastStart || r.result.version!=="0.12.0" || r.result.paused.running || r.observed.coordinateErrorMetres>1e-8 || r.bootRestored.status!=="ready" || r.uiMode.running) throw new Error(JSON.stringify(r));}
 console.log(JSON.stringify(reports,null,2));

@@ -1,7 +1,7 @@
 {
   "name": "necosmos",
   "private": true,
-  "version": "0.11.0",
+  "version": "0.12.0",
   "type": "module",
   "scripts": {
     "test": "node --test tests/time.test.js && python -m unittest discover -s tests -p 'test_*.py' && python -m unittest discover -s NeCosmos-Simulation/tests",

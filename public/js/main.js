@@ -4,8 +4,8 @@ import { World3D } from "./render.js";
 import { PlanetClock, ModeSwitch, MODES } from "./time.js";
 const clock = new PlanetClock();
 
-const VERSION = "0.11.0";
-const compatibleSave = (meta) => meta && ["0.10.0", "0.10.1", VERSION].includes(meta.version);
+const VERSION = "0.12.0";
+const compatibleSave = (meta) => meta && ["0.10.0", "0.10.1", "0.11.0", VERSION].includes(meta.version);
 const SAVE_KEY = "necosmos_v010_save", META_KEY = "necosmos_v010_meta";
 const SPECIES_JP = { grass: "草ねこ", mogumogu: "もぐもぐねこ", kinoko: "きのこねこ", fuwa: "ふわふわねこ", chie: "知恵ねこ",
   tori: "鳥ねこ", sakana: "魚ねこ", slime: "スライムねこ" };
@@ -27,6 +27,8 @@ class Engine {
       const p = this.pending.get(m.id);
       if (!p) return;
       this.pending.delete(m.id);
+      const elapsed=performance.now()-p.sent;
+      this.lastTiming={command:p.cmd,roundTripMs:elapsed,workerMs:m.workerMs,communicationMs:Math.max(0,elapsed-(m.workerMs||0))};
       m.ok ? p.ok(m.result) : p.bad(new Error(m.error));
     };
     this.worker.onerror = (e) => { for (const p of this.pending.values()) p.bad(new Error(e.message || "worker error")); this.pending.clear(); };
@@ -35,7 +37,7 @@ class Engine {
   call(cmd, ...args) {
     const run = () => new Promise((ok, bad) => {
       const id = ++this.seq;
-      this.pending.set(id, { ok, bad });
+      this.pending.set(id, { ok, bad,cmd,sent:performance.now() });
       this.worker.postMessage({ id, cmd, args });
     });
     const p = (this.queue || Promise.resolve()).then(run, run);
@@ -376,8 +378,11 @@ function refreshAll() {
   drawChart();
 }
 
+let shopKey=null;
 function refreshShop() {
   if (!app.catalog) return;
+  const key=JSON.stringify([app.placeId,app.mode,app.catalog.objects.map(o=>app.kiwi>=o.price)]);
+  if(key===shopKey)return;shopKey=key;
   const groups = { furniture: "猫の家具", nature: "自然の飾り", environment: "環境オブジェクト" };
   $("shop").innerHTML = Object.entries(groups).map(([cat, title]) => `<h4>${title}</h4><div class="grid">` +
     app.catalog.objects.filter((o) => (o.metadata.category || "nature") === cat).map((o) =>
@@ -390,8 +395,11 @@ function renderLog() {
   $("log").innerHTML = app.log.slice(0, 40).map((e) => `<div class="ev ${e.kind}"><span>${e.day}日</span>${e.text}</div>`).join("");
 }
 
+let chartKey=null;
 function drawChart() {
   const c = $("chart"), g = c.getContext("2d");
+  const key=JSON.stringify([c.clientWidth,devicePixelRatio,app.history.length,app.history[0],app.history.at(-1)]);
+  if(key===chartKey)return;chartKey=key;
   const w = c.width = c.clientWidth * devicePixelRatio, h = c.height = c.clientHeight * devicePixelRatio;
   g.clearRect(0, 0, w, h);
   const H = app.history;
@@ -505,7 +513,14 @@ window.NeCosmos = {
   displayPositions: () => [...app.world.presentation.live.values()].map(({id,x,y,behavior,walking,gait})=>({id,x,y,behavior,walking,gait})),
   setSpeed: speed => modeSwitch.request(speed),
   playback: () => ({speed:app.speed, running:app.running, switching:app.switching, pendingDays:clock.acc}),
-  presentation: () => ({live:app.world.presentation.live.size, pool:app.world.presentation.pool.length, fps:app.world.fps, frameCost:app.world.frameCost, reassignMs:app.world.presentation.reassignMs, reassignments:app.world.presentation.reassignments}),
+  presentation: () => ({live:app.world.presentation.live.size, pool:app.world.presentation.pool.length, fps:app.world.fps, frameCost:app.world.frameCost,missingAssets:app.world.missingAssets,renderPool:app.world.spritePool.length,communication:app.engine.lastTiming, reassignMs:app.world.presentation.reassignMs, reassignments:app.world.presentation.reassignments}),
+  async benchmarkWorld(count,n=32) {
+    if(new URLSearchParams(location.search).get('smoke')!=='stress')throw new Error('stress query required');
+    app.running=false;await waitIdle();clock.reset();
+    const st=await app.engine.call('benchmark',count,n);app.state=st;app.world.setWorld(st);
+    app.world.presentation.setMode(app.speed);app.world.presentation.sync(st,true);refreshAll();return st.day;
+  },
+  cameraTest: () => {app.world.camera.position.set(12,18,9);app.world.controls.target.set(2,0,2);app.world.camera.zoom=1.2;app.world.camera.updateProjectionMatrix();},
   // Synthetic render-only load; does not raise the ecology's production cap.
   renderStress: count => {
     if (new URLSearchParams(location.search).get('smoke') !== 'stress') throw new Error('stress query required');

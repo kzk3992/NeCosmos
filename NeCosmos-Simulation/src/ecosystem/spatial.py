@@ -30,3 +30,16 @@ class SpatialIndex:
                         best,best_d=key,distance
             if best is not None and best_d < (radius+1)**2:break
         return best
+
+    def nearest_reference(self,j,i,exclude=None):
+        """Vector oracle for equivalence tests / measured small-population fallback."""
+        import numpy as np
+        if not hasattr(self,'_vector_points'):
+            self._vector_keys=np.array(sorted(self.keys))
+            self._vector_points=np.array([self.points[key] for key in self._vector_keys])
+        valid=self._vector_keys!=exclude
+        if not valid.any():return None
+        points=self._vector_points
+        distances=(points[:,0]-j)**2+(points[:,1]-i)**2
+        distances=np.where(valid,distances,np.iinfo(np.int64).max)
+        return int(self._vector_keys[int(np.argmin(distances))])

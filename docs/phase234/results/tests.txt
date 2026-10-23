@@ -1,0 +1,37 @@
+
+> necosmos@0.12.0 test
+> node --test tests/time.test.js && python -m unittest discover -s tests -p 'test_*.py' && python -m unittest discover -s NeCosmos-Simulation/tests
+
+✔ time conversion 1 (4.674598ms)
+✔ time conversion 5 (0.14171ms)
+✔ time conversion 10 (0.10817ms)
+✔ time conversion 20 (0.112126ms)
+✔ time conversion 100 (0.143353ms)
+✔ time conversion 0.05 (0.436297ms)
+✔ FPS/partition independent integer ticks and pause (1.257674ms)
+✔ mode switch coalesces pending requests (0.878112ms)
+✔ teleport is throttled without resetting gesture phase; pooling removes dead (1.293617ms)
+✔ observation walks at .25 metres/s and gait tracks distance, then waits (0.456116ms)
+✔ observation intake pose survives render frames, mode switch clears walking (0.232284ms)
+✔ pool reuse clears selection, orientation and animation metadata (0.171965ms)
+✔ gestures use real time at every mode without world mutation (0.778254ms)
+✔ churn remains bounded and never duplicates live IDs (199.5034ms)
+✔ requests at drain completion and failure remain recoverable (1.065309ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 272.225059
+..................................
+----------------------------------------------------------------------
+Ran 34 tests in 33.454s
+
+OK
+...................................................
+----------------------------------------------------------------------
+Ran 51 tests in 32.600s
+
+OK

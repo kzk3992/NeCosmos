@@ -35,3 +35,20 @@ test('observation intake pose survives render frames, mode switch clears walking
  p.sampleObservation(299.5/300);p.frame(.016);assert.equal(p.live.get(1).behavior,'eat');
  p.sampleObservation(.5/300);assert.ok(p.live.get(1).walking);p.setMode(100);assert.equal(p.live.get(1).walking,false);
 });
+test('pool reuse clears selection, orientation and animation metadata',()=>{
+ const p=new Presentation();p.sync(world(),true);const r=p.live.get(1);r.selected=true;r.privateOldId=1;r.spriteFrame=99;
+ p.sync(world([]),true);p.sync(world([9]),true);assert.equal(p.live.get(9),r);assert.equal(r.selected,false);assert.equal(r.spriteFrame,0);assert.ok(!('privateOldId'in r));
+});
+test('gestures use real time at every mode without world mutation',()=>{
+ const states=[];
+ for(const mode of [.05,1,5,10,20,100]){const p=new Presentation();p.setMode(mode);const w=world();const before=JSON.stringify(w);p.sync(w,true);for(let i=0;i<60;i++)p.frame(1/60);states.push([p.live.get(1).phase,p.live.get(1).animation]);assert.equal(JSON.stringify(w),before);}
+ for(const s of states)assert.deepEqual(s,states[0]);
+});
+test('churn remains bounded and never duplicates live IDs',()=>{
+ const p=new Presentation();
+ for(let day=0;day<2000;day++){p.sync(world(Array.from({length:50},(_,k)=>day*100+k)),true);assert.equal(p.live.size,50);assert.ok(p.pool.length<=50);}
+});
+test('requests at drain completion and failure remain recoverable',async()=>{
+ const calls=[];let fail=true;const s=new ModeSwitch(async latest=>{const v=latest();calls.push(v);if(fail)throw Error('test');});
+ await assert.rejects(s.request(5));fail=false;await s.request(20);await Promise.resolve().then(()=>s.request(100));assert.deepEqual(calls,[5,20,100]);
+});

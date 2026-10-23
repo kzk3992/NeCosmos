@@ -1,11 +1,12 @@
 {
-  "version": "0.11.0",
+  "version": "0.12.0",
   "files": [
     "NeCosmos-Assets/objects/metadata/cat_tower_01.json",
     "NeCosmos-Simulation/configs/scenarios/climates.json",
     "NeCosmos-Simulation/configs/scenarios/compositions.json",
     "NeCosmos-Simulation/configs/scenarios/frozen.json",
     "NeCosmos-Simulation/configs/scenarios/weather.json",
+    "NeCosmos-Simulation/configs/species/behavior.json",
     "NeCosmos-Simulation/configs/species/species.json",
     "NeCosmos-Simulation/configs/terrain/terrain.json",
     "NeCosmos-Simulation/src/__init__.py",

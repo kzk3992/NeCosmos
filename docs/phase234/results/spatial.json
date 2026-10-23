@@ -1,0 +1,20 @@
+[
+  {
+    "population": 50,
+    "equivalent": true,
+    "nearest_us": 4.5513840013882145,
+    "nearest_reference_us": 7.91392799874302
+  },
+  {
+    "population": 200,
+    "equivalent": true,
+    "nearest_us": 2.2296285005722893,
+    "nearest_reference_us": 9.420440000212693
+  },
+  {
+    "population": 500,
+    "equivalent": true,
+    "nearest_us": 1.9360448000952601,
+    "nearest_reference_us": 10.529889800091041
+  }
+]

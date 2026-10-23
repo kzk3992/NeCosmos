@@ -15,6 +15,7 @@ import base64
 import hashlib
 import json
 import math
+import time
 import zlib
 
 import numpy as np
@@ -114,16 +115,36 @@ def new_world(params_json):
     return state(include_static=True)
 
 
+def benchmark_world(count, n=32):
+    """Explicit diagnostic world, never called by production UI or save migration.
+
+    Its cap belongs to this temporary Simulation, not MAX_POPULATION. The browser
+    API requires ?smoke=stress. Loading a save always restores the production cap.
+    """
+    count,n=int(count),int(n)
+    if count not in (50,200,500) or n not in (32,64):raise ValueError('unsupported benchmark')
+    cfg=load_cfg();cfg['terrain']['grid']['n']=n
+    cfg['comps']['benchmark']={sp:count//8+(k<count%8) for k,sp in enumerate(SP)}
+    params=dict(terrain='hills',climate='wet',composition='benchmark',seed=21001,weatherMode='normal')
+    sim=Simulation(dict(terrain='hills',climate='wet',composition='benchmark',seed=21001,days=10**9,
+                        unlock='fixed',overrides=_frozen_overrides(),weather_mode='normal',max_population=count),cfg)
+    STATE.update(sim=sim,objects={},next_pid=1,params=params,behavior_events=[])
+    STATE.pop('pending_sim',None);STATE.pop('pending_row',None)
+    return state(include_static=True)
+
+
 def step(n):
     sim = STATE["sim"]
     if not isinstance(n, (int, float)) or int(n) != n or not 1 <= n <= 300:
         raise ValueError("step requires 1..300 whole planet days")
     rows = []
     behavior_events = []
+    simulation_ms=0.
     for _ in range(int(n)):
         p = sim.eco.pop
         before = {int(cid): (int(p.j[k]), int(p.i[k])) for k, cid in enumerate(p.id)}
         deaths_start = len(sim.eco.deaths)
+        compute_start=time.perf_counter()
         pending = STATE.pop('pending_sim', None)
         if pending is not None and pending.day == sim.day + 1:
             sim = pending
@@ -131,6 +152,7 @@ def step(n):
             rows.append(STATE.pop('pending_row'))
         else:
             rows.append(sim.step())
+        simulation_ms+=(time.perf_counter()-compute_start)*1000
         p = sim.eco.pop
         for k, cid in enumerate(p.id):
             cid = int(cid)
@@ -166,6 +188,7 @@ def step(n):
         if rows[0]["day"] <= d <= last["day"]:
             events.append({"day": d, "kind": "tipping", "detail": ev})
     out = json.loads(state())
+    out["performance"]={"simulationMs":simulation_ms}
     out["events"] = events
     out["behaviorEvents"] = behavior_events
     out["daily"] = [{"day": r["day"], "pop": r["pop_total"], **{s: r[f"pop_{s}"] for s in SP}} for r in rows]
@@ -187,7 +210,8 @@ def prepare():
         STATE['pending_sim'], STATE['pending_row'] = future, row
     future = STATE['pending_sim']
     return json.dumps({'day': future.day, 'moves': getattr(future.eco, 'motion_plan', []),
-                       'feeds': getattr(future.eco, 'feeding_plan', []), 'cell_m': future.w['dx']})
+                       'feeds': getattr(future.eco, 'feeding_plan', []),
+                       'actions': {cid:rec.get('intent','idle') for cid,rec in getattr(future.eco,'behavior',{}).items()}, 'cell_m': future.w['dx']})
 
 
 def observe(fraction):
@@ -209,7 +233,7 @@ def state(include_static=False):
     w = sim.w
     p = sim.eco.pop
     z = w["bedrock"] + w["soil"]
-    out = {"day": sim.day, "level": sim.level, "maxPopulation": MAX_POPULATION, "n": int(z.shape[0]), "cell_m": w["dx"],
+    out = {"day": sim.day, "level": sim.level, "maxPopulation": getattr(sim.eco,"max_population",MAX_POPULATION), "n": int(z.shape[0]), "cell_m": w["dx"],
            "z": _r(z), "h": _r(w["h"]), "snow": _r(w["snow"]), "biome": w["biome_id"].ravel().astype(int).tolist(),
            "unlocked": w["unlocked"].ravel().astype(int).tolist(), "protection": _r(w["protection"], 3),
            "river": getattr(sim, "river_mask", getattr(sim.river, "preexisting", np.zeros_like(z, bool))).ravel().astype(int).tolist(),
@@ -217,6 +241,8 @@ def state(include_static=False):
            "cats": {"id": p.id.tolist(), "sp": p.sp.tolist(), "j": p.j.tolist(), "i": p.i.tolist(), "age": p.age.tolist(),
                     "energy": np.round(p.energy, 3).tolist(), "mass": np.round(p.mass, 4).tolist(), "action": p.action.tolist(),
                     "biologicalAgeYears": (p.age / 48).tolist(),
+                    "goals": [getattr(sim.eco,'behavior',{}).get(int(cid),{}).get('goal',[int(j),int(i)]) for cid,j,i in zip(p.id,p.j,p.i)],
+                    "personality": [getattr(sim.eco,'personalities',{}).get(int(cid),{}) for cid in p.id],
                     "behavior": [getattr(sim.eco, 'behavior', {}).get(int(cid), {}).get('state', 'idle') for cid in p.id]},
            "planetTime": sim.day, "biologicalYearDays": 48,
            "behaviorEvents": STATE.get('behavior_events', []),

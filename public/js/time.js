@@ -29,16 +29,24 @@ export class PlanetClock {
 }
 // New requests supersede old ones; the caller supplies the engine/render barrier.
 export class ModeSwitch {
-  constructor(apply) { this.apply = apply; this.pending = null; this.job = null; }
+  constructor(apply) { this.apply=apply;this.pending=null;this.job=false;this.waiters=[]; }
   request(speed) {
     if (!MODES[String(speed)]) return Promise.reject(new RangeError('Unknown playback mode'));
-    this.pending = Number(speed);
-    if (!this.job) this.job = this.drain().finally(() => { this.job = null; });
-    return this.job;
+    this.pending=Number(speed);
+    const result=new Promise((resolve,reject)=>this.waiters.push({resolve,reject}));
+    if(!this.job){this.job=true;this.drain();}
+    return result;
   }
   async drain() {
-    while (this.pending !== null) {
-      await this.apply(() => { const speed = this.pending; this.pending = null; return speed; });
+    try {
+      while(this.pending!==null)await this.apply(()=>{const speed=this.pending;this.pending=null;return speed;});
+      // Clear ownership synchronously with the final pending check. A request in
+      // a following microtask starts a fresh drain instead of joining a dead job.
+      this.job=false;const waiters=this.waiters;this.waiters=[];
+      for(const w of waiters)w.resolve();
+    } catch(error) {
+      this.job=false;this.pending=null;const waiters=this.waiters;this.waiters=[];
+      for(const w of waiters)w.reject(error);
     }
   }
 }

@@ -39,7 +39,6 @@ export class World3D {
     sun.position.set(-8, 16, 10);
     this.scene.add(sun);
     this.catScale = 1.6;
-    this.texCache = {};
     this.catSprites = new Map();
     this.spritePool = [];
     this.batches = new Map();
@@ -51,6 +50,7 @@ export class World3D {
     this.frustumMatrix = new THREE.Matrix4();
     this.catBounds = new THREE.Sphere();
     this.frameCost = {};
+    this.gl=this.renderer.getContext();this.gpuExtension=this.gl.getExtension('EXT_disjoint_timer_query_webgl2');this.gpuQueries=[];this.gpuMs=null;
     this.resolutionCheck=performance.now();
     this.pixelRatio=Math.min(window.devicePixelRatio,2);
     this.presentation = new Presentation();
@@ -73,7 +73,7 @@ export class World3D {
       this.controls.update(); this.renderFrame();
       if (now-this.resolutionCheck>2000) {
         this.resolutionCheck=now;
-        if (this.fps<27 && this.pixelRatio>.25) {this.pixelRatio=Math.max(.25,this.pixelRatio*.7);this.renderer.setPixelRatio(this.pixelRatio);this.renderer.domElement.style.imageRendering=this.pixelRatio<1?"pixelated":"auto";this.resize();}
+        if (this.fps<35 && this.pixelRatio>.25) {this.pixelRatio=Math.max(.25,this.pixelRatio*.7);this.renderer.setPixelRatio(this.pixelRatio);this.renderer.domElement.style.imageRendering=this.pixelRatio<1?"pixelated":"auto";this.resize();}
       } requestAnimationFrame(loop);
     };
     loop();
@@ -89,11 +89,11 @@ export class World3D {
   // ------------------------------------------------------------------ terrain / water / rock
   setWorld(st) {
     for (const k of ["terrain", "water", "rock"]) if (this[k]) { this.scene.remove(this[k]); this[k].geometry.dispose(); this[k].material.dispose(); }
-    for (const s of this.catSprites.values()) { this.scene.remove(s); this.spritePool.push(s); }
+    for (const s of this.catSprites.values()) this.spritePool.push(s);
     this.presentation = new Presentation();
     this.catSprites.clear(); this.lastCell.clear(); this.heading.clear();
     for(const b of this.batches.values()) {b.mesh.visible=false;b.ids=[];b.mesh.count=0;}
-    for (const o of this.objects.values()) this.scene.remove(o.root);
+    for (const o of this.objects.values()) this.releaseObject(o);
     this.objects.clear();
     const n = st.n, d = st.cell_m;
     this.n = n; this.d = d;
@@ -164,6 +164,7 @@ export class World3D {
 
   update(st) {
     this.state = st;
+    const updateStart=performance.now();
     const n = st.n;
     const tp = this.terrain.geometry.attributes.position, tc = this.terrain.geometry.attributes.color;
     const wp = this.water.geometry.attributes.position, wc = this.water.geometry.attributes.color;
@@ -185,6 +186,7 @@ export class World3D {
     this.terrain.geometry.computeVertexNormals();
     this.water.geometry.computeVertexNormals();
     this.terrain.geometry.computeBoundingSphere();
+    this.terrainUpdateMs=performance.now()-updateStart;
     this.updateCats(st);
     this.water.visible = st.h.some(h => h > .004);
     this.updateObjects(st);
@@ -199,45 +201,41 @@ export class World3D {
   }
 
   // ------------------------------------------------------------------ cats
-  texture(species, dir) {
-    const key = species + "/" + dir;
-    if (!this.texCache[key]) {
-      const cat = this.catalog.cats.find((c) => c.id === species);
-      const t = new THREE.TextureLoader().load(`/${cat.spriteBase}/${cat.spritePrefix}_${dir}.png`);
-      t.colorSpace = THREE.SRGBColorSpace;
-      t.magFilter = THREE.NearestFilter;
-      t.minFilter = THREE.NearestFilter;
-      t.generateMipmaps = false;
-      this.texCache[key] = t;
-    }
-    return this.texCache[key];
-  }
-
   renderFrame() {
     const start=performance.now();this.animateCats();this.updateSpriteDirs();
     const animate=performance.now();this.updateBatches();const batch=performance.now();
+    const gl=this.gl,ext=this.gpuExtension;
+    if(ext){
+      while(this.gpuQueries.length&&gl.getQueryParameter(this.gpuQueries[0],gl.QUERY_RESULT_AVAILABLE)){
+        const query=this.gpuQueries.shift();if(!gl.getParameter(ext.GPU_DISJOINT_EXT))this.gpuMs=gl.getQueryParameter(query,gl.QUERY_RESULT)/1e6;gl.deleteQuery(query);
+      }
+    }
+    const query=ext&&this.gpuQueries.length<4?gl.createQuery():null;
+    if(query)gl.beginQuery(ext.TIME_ELAPSED_EXT,query);
     this.renderer.render(this.scene,this.camera);
+    if(query){gl.endQuery(ext.TIME_ELAPSED_EXT);this.gpuQueries.push(query);}
     this.frameCost={animateMs:animate-start,batchMs:batch-animate,submitMs:performance.now()-batch,
-      drawCalls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,pixelRatio:this.pixelRatio};
+      drawCalls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,pixelRatio:this.pixelRatio,terrainUpdateMs:this.terrainUpdateMs,capacity:this.catBatch?.capacity,visible:this.catBatch?.ids.length,geometries:this.renderer.info.memory.geometries,textures:this.renderer.info.memory.textures,gpuTimerSupported:!!this.gpuExtension,gpuMs:this.gpuMs};
   }
 
   updateCats(st) {
     this.presentation.sync(st);
     const cats=st.cats, seen=new Set(cats.id);
     for (const [id,s] of this.catSprites) if (!seen.has(id)) {
-      this.scene.remove(s); this.spritePool.push(s); this.catSprites.delete(id);
+      this.spritePool.push(s); this.catSprites.delete(id);
       this.lastCell.delete(id); this.heading.delete(id);
     }
     for (let k=0;k<cats.id.length;k++) {
       const id=cats.id[k], sp=st.species[cats.sp[k]];
       let s=this.catSprites.get(id);
       if (!s) {
-        s=this.spritePool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({transparent:true,alphaTest:.5}));
-        s.center.set(.5,FEET_V); s.userData={id,sp}; s.material.rotation=0;
+        s=this.spritePool.pop() || {position:new THREE.Vector3(),scale:new THREE.Vector3(),material:{rotation:0}};
+        s.userData={id,sp}; s.material.rotation=0;s.visible=false;s.position.set(0,0,0);s.scale.set(1,1,1);
         this.catSprites.set(id,s);
       }
       Object.assign(s.userData,{age:cats.age[k],energy:cats.energy[k],mass:cats.mass[k],action:cats.action[k],j:cats.j[k],i:cats.i[k],sp});
     }
+    this.spritePool.length=Math.min(this.spritePool.length,Math.max(16,this.catSprites.size));
     this.animateCats();
   }
 
@@ -250,10 +248,10 @@ export class World3D {
       if (!r) { s.visible=false; continue; }
       this.heading.set(id,r.heading);
       s.position.copy(toThree(r.x,r.y,this.heightAt(r.x,r.y)+.01+(r.walking ? .025*Math.abs(Math.sin(r.gait)) : (r.bob||0))));
-      const stretch=r.walking ? 1+.025*Math.sin(r.gait) : r.gesture===2 ? 1+.025*Math.sin(r.phase*2) : 1;
-      s.scale.set(SPRITE_M*this.catScale,SPRITE_M*this.catScale*stretch,1);
-      s.material.rotation=r.behavior==='eat' ? .06*Math.sin(r.phase*3) : r.gesture===3 ? .025*Math.sin(r.phase) : 0;
+      s.scale.set(SPRITE_M*this.catScale*(r.scaleX||1),SPRITE_M*this.catScale*(r.scaleY||1),1);
+      s.material.rotation=r.rotation||0;
       s.visible=frustum.intersectsSphere(this.catBounds.set(s.position,.9*this.catScale));
+      if (s.position.distanceToSquared(this.camera.position)>24*24) {s.material.rotation=0;s.scale.set(SPRITE_M*this.catScale,SPRITE_M*this.catScale,1);}
       Object.assign(s.userData,{x:r.x,y:r.y,behavior:r.behavior});
     }
   }
@@ -276,14 +274,16 @@ export class World3D {
     // draw replaces up to 64 transparent materials and their repeated overdraw.
     const canvas=document.createElement('canvas');canvas.width=canvas.height=48*8;
     const g=canvas.getContext('2d');g.imageSmoothingEnabled=false;
+    this.missingAssets=[];
     await Promise.all(this.catalog.cats.flatMap((cat,row)=>DIRS.map(async(dir,col)=>{
       const img=new Image();img.src=`/${cat.spriteBase}/${cat.spritePrefix}_${dir}.png`;
-      await img.decode();g.drawImage(img,col*48,row*48,48,48);
+      try {await img.decode();g.drawImage(img,col*48,row*48,48,48);}
+      catch {this.missingAssets.push(img.src);g.fillStyle=['#79bd79','#efae77','#bb8adb','#d6e8ed','#d7b7ff','#f1d76f','#77cfe0','#84dda5'][row];g.fillRect(col*48+13,row*48+20,22,19);g.fillRect(col*48+12,row*48+12,7,12);g.fillRect(col*48+29,row*48+12,7,12);}
     })));
     const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
     map.magFilter=map.minFilter=THREE.NearestFilter;map.generateMipmaps=false;
     const geo=this.batchGeometry.clone();
-    geo.setAttribute('atlasCell',new THREE.InstancedBufferAttribute(new Float32Array(512*2),2).setUsage(THREE.DynamicDrawUsage));
+    geo.setAttribute('atlasCell',new THREE.InstancedBufferAttribute(new Float32Array(16*2),2).setUsage(THREE.DynamicDrawUsage));
     const material=new THREE.MeshBasicMaterial({map,alphaTest:.5,side:THREE.FrontSide});
     material.onBeforeCompile=shader=>{
       shader.vertexShader='attribute vec2 atlasCell; varying vec2 vAtlasCell;\n'+shader.vertexShader;
@@ -292,18 +292,30 @@ export class World3D {
       shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',THREE.ShaderChunk.map_fragment.replaceAll('vMapUv','((vMapUv+vAtlasCell)/8.0)'));
     };
     material.customProgramCacheKey=()=> 'cat-atlas-v1';
-    const mesh=new THREE.InstancedMesh(geo,material,512);mesh.count=0;mesh.frustumCulled=false;
+    const mesh=new THREE.InstancedMesh(geo,material,16);mesh.count=0;mesh.frustumCulled=false;
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.catBatch={mesh,ids:[]};this.batches.set('atlas',this.catBatch);this.scene.add(mesh);
+    this.catBatch={mesh,ids:[],capacity:16};this.batches.set('atlas',this.catBatch);this.scene.add(mesh);
     return true;
+  }
+
+  ensureCatCapacity(count) {
+    const b=this.catBatch;if(!b||count<=b.capacity)return;
+    const capacity=2**Math.ceil(Math.log2(Math.max(16,count)));
+    const geometry=this.batchGeometry.clone();
+    geometry.setAttribute('atlasCell',new THREE.InstancedBufferAttribute(new Float32Array(capacity*2),2).setUsage(THREE.DynamicDrawUsage));
+    const old=b.mesh,mesh=new THREE.InstancedMesh(geometry,old.material,capacity);
+    mesh.frustumCulled=false;mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.scene.remove(old);old.geometry.dispose();old.dispose();this.scene.add(mesh);
+    Object.assign(b,{mesh,capacity}); // material/texture owned once by the atlas
   }
 
   updateBatches() {
     const b=this.catBatch;if(!b)return;
+    this.ensureCatCapacity(this.catSprites.size);
     b.ids.length=0;
     const cells=b.mesh.geometry.attributes.atlasCell;
     for (const [id,s] of this.catSprites) {
-      if(!s.visible || !s.userData.atlasCell || b.ids.length>=512)continue;
+      if(!s.visible || !s.userData.atlasCell)continue;
       const o=this.instanceTransform;o.position.copy(s.position);o.quaternion.copy(this.camera.quaternion);
       o.rotateZ(s.material.rotation);o.scale.copy(s.scale);o.updateMatrix();
       b.mesh.setMatrixAt(b.ids.length,o.matrix);
@@ -325,6 +337,10 @@ export class World3D {
     return this.models[id];
   }
 
+  releaseObject(rec) {
+    rec.released=true;this.scene.remove(rec.root);rec.marker?.geometry.dispose();rec.marker?.material.dispose();
+  }
+
   async updateObjects(st) {
     const seen = new Set();
     for (const o of st.objects) {
@@ -334,7 +350,7 @@ export class World3D {
         rec = { root: new THREE.Group(), marker: null };
         this.objects.set(o.pid, rec);
         this.scene.add(rec.root);
-        this.model(o.id).then((m) => rec.root.add(m.clone(true))).catch((e) => console.error("model", o.id, e));
+        this.model(o.id).then((m) => {if(!rec.released)rec.root.add(m.clone(true));}).catch((e) => console.error("model", o.id, e));
         const ring = new THREE.Mesh(new THREE.RingGeometry(0.35, 0.45, 24), new THREE.MeshBasicMaterial({ color: 0x5fd0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.04;
@@ -346,7 +362,7 @@ export class World3D {
       rec.marker.visible = !!o.submerged;
       rec.root.userData = o;
     }
-    for (const [pid, rec] of this.objects) if (!seen.has(pid)) { this.scene.remove(rec.root); this.objects.delete(pid); }
+    for (const [pid, rec] of this.objects) if (!seen.has(pid)) { this.releaseObject(rec); this.objects.delete(pid); }
   }
 
   async setGhost(id, x, y, yaw, ok) {
