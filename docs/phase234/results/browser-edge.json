@@ -1,0 +1,70 @@
+{
+  "fatal": [],
+  "report": {
+    "original": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+    "cameraAndPoolHash": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+    "switchingHash": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+    "paused": {
+      "speed": 0.05,
+      "running": false,
+      "switching": false,
+      "pendingDays": 0
+    },
+    "presentation": {
+      "live": 28,
+      "pool": 0,
+      "fps": 21.844849117737233,
+      "frameCost": {
+        "animateMs": 0.2000000011175871,
+        "batchMs": 0,
+        "submitMs": 0.2999999988824129,
+        "drawCalls": 3,
+        "triangles": 3094,
+        "pixelRatio": 0.48999999999999994,
+        "terrainUpdateMs": 1.099999999627471,
+        "capacity": 512,
+        "visible": 28,
+        "geometries": 3,
+        "textures": 1,
+        "gpuTimerSupported": true,
+        "gpuMs": 17.370781
+      },
+      "missingAssets": [
+        "http://127.0.0.1:8080/assets/cats/grass_cat/grass_cat_back.png"
+      ],
+      "renderPool": 28,
+      "communication": {
+        "command": "hash",
+        "roundTripMs": 4.900000000372529,
+        "workerMs": 1.5,
+        "communicationMs": 3.400000000372529
+      },
+      "reassignMs": 0,
+      "reassignments": 1456
+    },
+    "renderedHash": "6bad351d1332408393b91bd1f291b438b8a542c651941de76de15e19fc1629a1",
+    "alternateHash": "6bad351d1332408393b91bd1f291b438b8a542c651941de76de15e19fc1629a1",
+    "object": {
+      "count": 1,
+      "restored": 1,
+      "removed": 0,
+      "kiwiPreserved": true
+    },
+    "activeControls": {
+      "saved": true,
+      "resumed": {
+        "speed": 20,
+        "running": true,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "paused": {
+        "speed": 1,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "population": 500
+    }
+  }
+}

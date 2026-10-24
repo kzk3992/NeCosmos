@@ -55,8 +55,9 @@ const handlers = {
   step: async (n) => {
     const start=performance.now();
     const result=JSON.parse(call("step",n));
-    result.performance={stepMs:performance.now()-start,days:n};return result;
+    result.performance={...result.performance,stepMs:performance.now()-start,days:n};return result;
   },
+  benchmark: async (count,n) => JSON.parse(call("benchmark_world",count,n)),
   observe: async fraction => JSON.parse(call("observe", fraction)),
   prepare: async () => JSON.parse(call("prepare")),
   state: async () => JSON.parse(call("state")),
@@ -74,8 +75,9 @@ onmessage = async (ev) => {
   const { id, cmd, args } = ev.data;
   try {
     if (cmd !== "init" && !bridge) throw new Error("engine not ready");
+    const received=performance.now();
     const result = await handlers[cmd](...(args || []));
-    postMessage({ id, ok: true, result });
+    postMessage({ id, ok: true, result, workerMs:performance.now()-received });
   } catch (e) {
     postMessage({ id, ok: false, error: String(e && e.message ? e.message : e) });
   }

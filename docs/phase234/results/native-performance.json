@@ -1,0 +1,118 @@
+{
+  "before": [
+    {
+      "initial_population": 50,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 114.7895007412027,
+      "ecology_ms_mean": 8.71106933000192,
+      "ecology_ms_max": 38.77510099846404,
+      "ecosystem_kernel_ms_mean": 1.9139498801450827,
+      "ai_ms_mean": 0.28635933000259683,
+      "nearest_query_ms_mean": 0.005026884070086856,
+      "neighbor_query_ms_mean": 0.0015684465759453422,
+      "memory_python_peak_bytes": 1437974,
+      "final_population": 50
+    },
+    {
+      "initial_population": 200,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 113.05193293326714,
+      "ecology_ms_mean": 8.844886579918239,
+      "ecology_ms_max": 18.98766599879309,
+      "ecosystem_kernel_ms_mean": 2.971006580046378,
+      "ai_ms_mean": 0.8769759399547183,
+      "nearest_query_ms_mean": 0.0013850434263944491,
+      "neighbor_query_ms_mean": 0.0016409657687876682,
+      "memory_python_peak_bytes": 1618170,
+      "final_population": 200
+    },
+    {
+      "initial_population": 500,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 90.1636593309557,
+      "ecology_ms_mean": 11.090415670023503,
+      "ecology_ms_max": 18.005870000706636,
+      "ecosystem_kernel_ms_mean": 5.564192480087513,
+      "ai_ms_mean": 2.1692354299739236,
+      "nearest_query_ms_mean": 0.0011995994769993593,
+      "neighbor_query_ms_mean": 0.0018066907970385002,
+      "memory_python_peak_bytes": 1982116,
+      "final_population": 500
+    },
+    {
+      "initial_population": 500,
+      "grid": 64,
+      "area_factor": 4.0,
+      "days_per_second": 64.11515960783305,
+      "ecology_ms_mean": 15.596296319872636,
+      "ecology_ms_max": 25.843137000265415,
+      "ecosystem_kernel_ms_mean": 5.861624639983347,
+      "ai_ms_mean": 2.338963540023542,
+      "nearest_query_ms_mean": 0.001507031314361348,
+      "neighbor_query_ms_mean": 0.0020536745567066956,
+      "memory_python_peak_bytes": 5672529,
+      "final_population": 500
+    }
+  ],
+  "after": [
+    {
+      "initial_population": 50,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 119.36611412920384,
+      "ecology_ms_mean": 8.376971179895918,
+      "ecology_ms_max": 43.8885540006595,
+      "ecosystem_kernel_ms_mean": 2.266570799984038,
+      "ai_ms_mean": 0.8303130001695536,
+      "nearest_query_ms_mean": 0.009184757392616504,
+      "neighbor_query_ms_mean": 0.0020318110068018687,
+      "memory_python_peak_bytes": 1446518,
+      "final_population": 50
+    },
+    {
+      "initial_population": 200,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 95.74172030310442,
+      "ecology_ms_mean": 10.444211090107274,
+      "ecology_ms_max": 15.736477998871123,
+      "ecosystem_kernel_ms_mean": 4.838011249939882,
+      "ai_ms_mean": 2.525022829977388,
+      "nearest_query_ms_mean": 0.0023923793217361573,
+      "neighbor_query_ms_mean": 0.001985688387108009,
+      "memory_python_peak_bytes": 1843145,
+      "final_population": 200
+    },
+    {
+      "initial_population": 500,
+      "grid": 32,
+      "area_factor": 1.0,
+      "days_per_second": 60.74254439116963,
+      "ecology_ms_mean": 16.462299849881674,
+      "ecology_ms_max": 31.33867399992596,
+      "ecosystem_kernel_ms_mean": 10.652339239968569,
+      "ai_ms_mean": 5.987990490120865,
+      "nearest_query_ms_mean": 0.0019231441024301198,
+      "neighbor_query_ms_mean": 0.001977564205152337,
+      "memory_python_peak_bytes": 2472384,
+      "final_population": 500
+    },
+    {
+      "initial_population": 500,
+      "grid": 64,
+      "area_factor": 4.0,
+      "days_per_second": 44.85969382274921,
+      "ecology_ms_mean": 22.290975490013807,
+      "ecology_ms_max": 33.86888899876794,
+      "ecosystem_kernel_ms_mean": 12.502676199928828,
+      "ai_ms_mean": 7.487056399895664,
+      "nearest_query_ms_mean": 0.0031380753629374576,
+      "neighbor_query_ms_mean": 0.001842365599932178,
+      "memory_python_peak_bytes": 6303678,
+      "final_population": 500
+    }
+  ]
+}

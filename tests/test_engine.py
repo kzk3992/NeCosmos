@@ -123,6 +123,6 @@ class CommitmentTests(unittest.TestCase):
   e=make_eco();w=eco_world();e.pop.add([SLIME],[2],[2],[.8],[.2],0)
   e.behavior={1:{'state':'rest','goal':[2,2],'since':1,'until':4,'fatigue':.3}}
   with patch('src.ecosystem.spatial.SpatialIndex',side_effect=AssertionError('unnecessary spatial index')):
-   self.assertEqual(update(e,w,2)[1]['state'],'rest')
+   self.assertEqual(update(e,w,2)[1]['state'],'resting')
   e.pop.energy[:]=.1
   self.assertEqual(update(e,w,3)[1]['state'],'seekFood')

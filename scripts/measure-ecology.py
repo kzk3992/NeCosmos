@@ -13,7 +13,7 @@ for seed in (21001,21002,21003):
   row=s.step();peak=max(peak,len(s.eco.pop))
   for sp in SP:births[sp]+=row.get('births_'+sp,0)
   if day in (500,1000,3000,10000):
-   checkpoints.append(dict(day=day,counts={sp:int((s.eco.pop.sp==i).sum()) for i,sp in enumerate(SP)},resources={k:float(s.w[k].sum()) for k in ('G','O','R','N')},hash=s.state_hash()))
+   checkpoints.append(dict(day=day,counts={sp:int((s.eco.pop.sp==i).sum()) for i,sp in enumerate(SP)},resources={k:float(s.w[k].sum()) for k in ('G','O','R','N','Ws','h')},energy=float(s.eco.pop.energy.sum()),temperature=float(s.w['T'].mean()),moisture=float(s.w['moist'].mean()),mass=float(s.eco.pop.mass.sum()),hash=s.state_hash()))
  deaths=s.eco.deaths
  results.append(dict(seed=seed,seconds=time.perf_counter()-t,peak=peak,births=dict(births),deaths_by_species=dict(collections.Counter(d['species'] for d in deaths)),causes=dict(collections.Counter(d['cause'] for d in deaths)),death_age_days=[d['age'] for d in deaths],checkpoints=checkpoints,extinct=s.extinct))
  Path(a.out).write_text(json.dumps(results,indent=2));print(seed,results[-1]['seconds'],flush=True)

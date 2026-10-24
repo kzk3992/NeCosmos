@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "hold_days": 3,
+  "hysteresis": 0.18,
+  "emergency_hunger": 0.75,
+  "emergency_stress": 0.004,
+  "weights": {"idle": 0.05, "food": 2.0, "rest": 0.3, "fatigue": 0.65, "explore": 0.25, "curiosity": 0.45, "social": 0.8, "danger": 100.0, "vigilance": 0.2, "species": 0.6},
+  "species_activity": ["photosynthesis", "graze", "decompose", "warmth", "wisdom", "flight", "aquatic", "decompose"]
+}

@@ -187,6 +187,8 @@ class Ecology:
         self.pop.add(sp, np.array(js, int), np.array(is_, int), self.init_e[sp], np.full(len(sp), 0.20), 0)  # [confirmed] mass .20
         # [confirmed] every new grass cat seeds min(N,.025) of nutrient into grass resource
         self._seed_grass(w, sp == GRASS)
+        from .behavior import initialize
+        initialize(self, seed)
 
     def _seed_grass(self, w, which):
         for k in np.flatnonzero(which):
@@ -227,7 +229,7 @@ class Ecology:
         # Choose and move before feeding: a daily transaction can expose this
         # committed plan to observation playback without re-running ecology.
         from .behavior import update
-        update(self, w, day)
+        update(self, w, day, seed)
         self._move(w, day, seed, years, st)
         J, I = p.j, p.i
         T = w["T"][J, I]
@@ -308,7 +310,7 @@ class Ecology:
         self.feeding_plan = [{'id': int(p.id[k]), 'position': [int(p.j[k]),int(p.i[k])],
                               'kind': 'eat'} for k in np.flatnonzero(np.isin(p.action, [3,4]))]
         for cid in p.id[np.isin(p.action,[3,4])]:
-            if int(cid) in getattr(self, 'behavior', {}): self.behavior[int(cid)]['state'] = 'eat'
+            if int(cid) in getattr(self, 'behavior', {}): self.behavior[int(cid)]['state'] = 'eating'
         # ---- energy budget [confirmed costs/age factors]
         aef = self.age_factor_energy(p.sp, years)
         dry_pen = np.where(p.sp == SAKANA, np.maximum(0, 0.62 - np.where(hab, 1.0, m)) * _v(self.S["sakana"]["dry_penalty"]) * 0.6, 0)
@@ -347,6 +349,8 @@ class Ecology:
             p.keep(~dead)
         self._spawn_grass(w, day, seed, st, env)
         self._wisdom(w, day, seed, st)
+        from .behavior import initialize
+        initialize(self, seed)
         self.stats = st
         return st
 
@@ -406,10 +410,18 @@ class Ecology:
                     sc[kk] = jitter[kk]
         elif fuwa.any():
             sc[fuwa] = jitter[fuwa]
-        avoid = np.array([getattr(self,'behavior',{}).get(int(cid),{}).get('state') == 'avoidDanger' for cid in p.id])
+        avoid = np.array([getattr(self,'behavior',{}).get(int(cid),{}).get('state') in ('avoidDanger','avoidingDanger') for cid in p.id])
         thermal = np.maximum(0,13-w['T'][cjc,cic]) + np.maximum(0,w['T'][cjc,cic]-31)
         moisture = np.maximum(0,.3-w['moist'][cjc,cic]) + np.maximum(0,w['moist'][cjc,cic]-.85)
         sc = np.where(avoid[:,None], -thermal-.5*moisture+jitter*1e-3, sc)
+        # Goals influence roaming/social destinations. Food selection retains the
+        # species intake ranking (including slow/fast decomposer availability).
+        for kk,cid in enumerate(p.id):
+            rec=getattr(self,'behavior',{}).get(int(cid),{})
+            if rec.get('intent')=='seekFood' and p.sp[kk] not in (GRASS,CHIE):
+                gj,gi=rec['goal'];sc[kk]=-np.hypot(cj[kk]-gj,ci[kk]-gi)+jitter[kk]*1e-6
+            if rec.get('intent') in ('exploring','socializing') and p.sp[kk] not in (GRASS,CHIE,KINOKO,SLIME,SAKANA,TORI) and p.energy[kk]>=.5:
+                gj,gi=rec['goal'];sc[kk]=-np.hypot(cj[kk]-gj,ci[kk]-gi)+jitter[kk]*1e-3
         sc = np.where(ok, sc, -np.inf)
         best = np.argmax(sc, axis=1)
         best = np.where(go & np.isfinite(sc[np.arange(k), best]), best, 0)
@@ -421,6 +433,12 @@ class Ecology:
         for kk in np.flatnonzero(go & (p.sp == TORI)):
             j0, i0 = j_from[kk], i_from[kk]
             ja, jb, ia, ib = max(0, j0 - R), min(n0, j0 + R + 1), max(0, i0 - R), min(n1, i0 + R + 1)
+            rec=getattr(self,'behavior',{}).get(int(p.id[kk]),{})
+            if rec.get('intent')=='seekFood':
+                gj,gi=rec['goal']
+                if ja<=gj<jb and ia<=gi<ib and w['unlocked'][gj,gi] and w['h'][gj,gi]<=self.wade:
+                    p.j[kk],p.i[kk]=gj,gi
+                    continue
             Gs = decision["G"][ja:jb, ia:ib] * (w["moist"][ja:jb, ia:ib] < 0.72)
             okb = w["unlocked"][ja:jb, ia:ib] & (w["h"][ja:jb, ia:ib] <= self.wade)
             jit = rng.u01(seed, rng.MOVE, day + 2_000_000, p.id[kk] * 1024 + np.arange(Gs.size)).reshape(Gs.shape) * 1e-6
@@ -436,9 +454,9 @@ class Ecology:
         for k, cid in enumerate(p.id):
             rec = getattr(self, 'behavior', {}).get(int(cid))
             if rec:
-                rec['goal'] = [int(p.j[k]),int(p.i[k])]
+                rec['arrived'] = rec.get('goal') == [int(p.j[k]),int(p.i[k])]
                 rec['travelled'] = bool(moved[k])
-                if moved[k]: rec['state'] = 'move'
+                if moved[k]: rec['state'] = 'moving'
 
         if not self.effects:
             return

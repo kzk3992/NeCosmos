@@ -545,6 +545,11 @@ class Simulation:
         if self.weather_driver:
             h.update(json.dumps(self.weather_driver.export_state(), sort_keys=True).encode())
             for value in self.terrain_attribution.values(): h.update(np.ascontiguousarray(value).tobytes())
+        # New AI state is part of replay identity. Legacy saves without these
+        # fields retain their original hash until the first deterministic migration.
+        if hasattr(self.eco,'personalities'):
+            ai={k:getattr(self.eco,k,{}) for k in ('personalities','behavior','behavior_config')}
+            h.update(json.dumps(ai,sort_keys=True).encode())
         return h.hexdigest()
 
 

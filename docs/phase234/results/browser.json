@@ -1,0 +1,274 @@
+[
+  {
+    "mobile": false,
+    "errors": [],
+    "result": {
+      "hash0": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+      "hash1": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+      "paused": {
+        "speed": 0.05,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "version": "0.12.0",
+      "initial": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 0,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      }
+    },
+    "observed": {
+      "status": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 0,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      },
+      "presentation": {
+        "live": 28,
+        "pool": 0,
+        "fps": 28.79827618104027,
+        "frameCost": {
+          "animateMs": 0.09999999962747097,
+          "batchMs": 0,
+          "submitMs": 0.19999999925494194,
+          "drawCalls": 3,
+          "triangles": 3094,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 1.900000000372529,
+          "capacity": 32,
+          "visible": 28,
+          "geometries": 3,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 6.076241
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "observe",
+          "roundTripMs": 3.299999998882413,
+          "workerMs": 2.900000000372529,
+          "communicationMs": 0.3999999985098839
+        },
+        "reassignMs": 0,
+        "reassignments": 28
+      },
+      "playback": {
+        "speed": 0.05,
+        "running": true,
+        "switching": false,
+        "pendingDays": 0.009988333333333332
+      },
+      "coordinateErrorMetres": 1.2560739669470201e-15
+    },
+    "fastStart": 0,
+    "fastResult": {
+      "day": 23,
+      "hash": "181f28c228b737fd61367e8ad40426557f495c3b8aa9ef2548caf57df6556568",
+      "reloaded": "181f28c228b737fd61367e8ad40426557f495c3b8aa9ef2548caf57df6556568",
+      "presentation": {
+        "live": 34,
+        "pool": 0,
+        "fps": 19.316212901053355,
+        "frameCost": {
+          "animateMs": 0,
+          "batchMs": 0,
+          "submitMs": 116.69999999925494,
+          "drawCalls": 4,
+          "triangles": 5028,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 1.699999999254942,
+          "capacity": 64,
+          "visible": 34,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 9.785622
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 119.30000000074506,
+          "workerMs": 3,
+          "communicationMs": 116.30000000074506
+        },
+        "reassignMs": 0,
+        "reassignments": 34
+      },
+      "status": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 23,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      }
+    },
+    "bootRestored": {
+      "status": "ready",
+      "error": null,
+      "ready": true,
+      "day": 23,
+      "engine": {
+        "files": 27,
+        "pyodide": "0.27.7"
+      }
+    },
+    "uiMode": {
+      "speed": 5,
+      "running": false,
+      "switching": false,
+      "pendingDays": 0
+    }
+  },
+  {
+    "mobile": true,
+    "errors": [],
+    "result": {
+      "hash0": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+      "hash1": "8dd3f420644a0bff4cc394ca9d5afddeea5049ef5f28bca80319a9b69d13b27a",
+      "paused": {
+        "speed": 0.05,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "version": "0.12.0",
+      "initial": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 0,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      }
+    },
+    "observed": {
+      "status": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 0,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      },
+      "presentation": {
+        "live": 28,
+        "pool": 0,
+        "fps": 63.31730847082844,
+        "frameCost": {
+          "animateMs": 0,
+          "batchMs": 0,
+          "submitMs": 0.30000000074505806,
+          "drawCalls": 3,
+          "triangles": 3094,
+          "pixelRatio": 1,
+          "terrainUpdateMs": 2.700000001117587,
+          "capacity": 32,
+          "visible": 28,
+          "geometries": 3,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 9.574461
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "observe",
+          "roundTripMs": 35.30000000074506,
+          "workerMs": 2.100000001490116,
+          "communicationMs": 33.19999999925494
+        },
+        "reassignMs": 0,
+        "reassignments": 28
+      },
+      "playback": {
+        "speed": 0.05,
+        "running": true,
+        "switching": false,
+        "pendingDays": 0.009982666666669148
+      },
+      "coordinateErrorMetres": 0
+    },
+    "fastStart": 0,
+    "fastResult": {
+      "day": 23,
+      "hash": "181f28c228b737fd61367e8ad40426557f495c3b8aa9ef2548caf57df6556568",
+      "reloaded": "181f28c228b737fd61367e8ad40426557f495c3b8aa9ef2548caf57df6556568",
+      "presentation": {
+        "live": 34,
+        "pool": 0,
+        "fps": 44.01971841649113,
+        "frameCost": {
+          "animateMs": 0,
+          "batchMs": 0,
+          "submitMs": 0.30000000074505806,
+          "drawCalls": 4,
+          "triangles": 5028,
+          "pixelRatio": 0.7,
+          "terrainUpdateMs": 0.8000000007450581,
+          "capacity": 64,
+          "visible": 34,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 21.02179
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 3.799999998882413,
+          "workerMs": 1.699999999254942,
+          "communicationMs": 2.099999999627471
+        },
+        "reassignMs": 0.09999999962747097,
+        "reassignments": 34
+      },
+      "status": {
+        "status": "ready",
+        "error": null,
+        "ready": true,
+        "day": 23,
+        "engine": {
+          "files": 27,
+          "pyodide": "0.27.7"
+        }
+      }
+    },
+    "bootRestored": {
+      "status": "ready",
+      "error": null,
+      "ready": true,
+      "day": 23,
+      "engine": {
+        "files": 27,
+        "pyodide": "0.27.7"
+      }
+    },
+    "uiMode": {
+      "speed": 5,
+      "running": false,
+      "switching": false,
+      "pendingDays": 0
+    }
+  }
+]

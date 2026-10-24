@@ -1,0 +1,1 @@
+PASS: missing-asset fallback, camera/pool invariance, mode barrier, rendered replay

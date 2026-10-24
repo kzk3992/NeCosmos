@@ -1,0 +1,2443 @@
+{
+  "renderer": "Chromium / SwiftShader, PC emulation",
+  "out": [
+    {
+      "count": 50,
+      "grid": 32,
+      "areaFactor": 1,
+      "speed": 1,
+      "initialPopulation": 50,
+      "finalPopulation": 50,
+      "days": 2,
+      "elapsed": 31.00990000000037,
+      "fps": 34.92433061699609,
+      "daysPerSecond": 0.06449553207201494,
+      "samples": [
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0.10000000149011612,
+            "submitMs": 0.5,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.383409
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.40000000037252903,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 42.981134
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.602172
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.778199
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 44.676187
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 42.161581
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 53.080749
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 13.047479
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.815073
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 43.700071
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.13365
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 38.465316
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.904378
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.02387
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 38.226591
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0.10000000149011612,
+            "submitMs": 0.3999999985098839,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.527565
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.619519
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 6.599999999627471,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.562524
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 6.900000000372529,
+            "workerMs": 6.300000000745058,
+            "communicationMs": 0.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.261323
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.411338
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.142859
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 6.444854
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.313538
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.625236
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.725665
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.7999999988824129,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.417478
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 43.544565
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0,
+            "submitMs": 0,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.225042
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 11.047625
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.163287
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.422522
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.434634
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.00698
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.36843
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.770971
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 91.70000100000308,
+            "stepMs": 144.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 3,
+            "triangles": 3138,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1.6000000014901161,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.79706
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 147.19999999925494,
+            "workerMs": 144.59999999962747,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 76.59999999999911,
+            "stepMs": 91.40000000037253,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5060,
+            "pixelRatio": 0.7,
+            "terrainUpdateMs": 1,
+            "capacity": 64,
+            "visible": 50,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 13.520448
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 92.5,
+            "workerMs": 91.5,
+            "communicationMs": 1
+          }
+        }
+      ],
+      "presentation": {
+        "live": 50,
+        "pool": 0,
+        "fps": 24.428622170786536,
+        "frameCost": {
+          "animateMs": 0.09999999962747097,
+          "batchMs": 0.19999999925494194,
+          "submitMs": 0.2000000011175871,
+          "drawCalls": 4,
+          "triangles": 5060,
+          "pixelRatio": 0.7,
+          "terrainUpdateMs": 1.400000000372529,
+          "capacity": 64,
+          "visible": 50,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 54.96412
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 103.29999999888241,
+          "workerMs": 3.100000001490116,
+          "communicationMs": 100.1999999973923
+        },
+        "reassignMs": 0.10000000149011612,
+        "reassignments": 50
+      },
+      "heapBytes": 11532514,
+      "workerMemory": {
+        "wasmLinearMemoryBytes": 36306944
+      },
+      "inputMs": [
+        4,
+        26.300000000745058,
+        70.80000000074506,
+        56.399999998509884,
+        89.60000000149012
+      ],
+      "saveRestoreEqual": true,
+      "paused": {
+        "speed": 1,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "browserPssBytes": 554035200
+    },
+    {
+      "count": 200,
+      "grid": 32,
+      "areaFactor": 1,
+      "speed": 20,
+      "initialPopulation": 200,
+      "finalPopulation": 200,
+      "days": 15,
+      "elapsed": 12.006900000000373,
+      "fps": 32.5646086833394,
+      "daysPerSecond": 1.2492816630437111,
+      "samples": [
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 3438,
+            "pixelRatio": 0.3429999999999999,
+            "terrainUpdateMs": 4,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.943707
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 123,
+            "workerMs": 8.300000000745058,
+            "communicationMs": 114.69999999925494
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 89.69999899999692,
+            "stepMs": 105.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.40000000037252903,
+            "drawCalls": 3,
+            "triangles": 3438,
+            "pixelRatio": 0.3429999999999999,
+            "terrainUpdateMs": 0.599999999627471,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.336695
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 139.7000000011176,
+            "workerMs": 105.39999999850988,
+            "communicationMs": 34.3000000026077
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 47.20000000000368,
+            "stepMs": 98,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.3429999999999999,
+            "terrainUpdateMs": 1.200000001117587,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 10.484749
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 100.09999999962747,
+            "workerMs": 98,
+            "communicationMs": 2.099999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 93.60000000000213,
+            "stepMs": 160.7000000011176,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.3429999999999999,
+            "terrainUpdateMs": 0.900000000372529,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 15.598818
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 162.09999999962747,
+            "workerMs": 160.7000000011176,
+            "communicationMs": 1.3999999985098839
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 141.10000000000156,
+            "stepMs": 165,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.108558
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 166.7000000011176,
+            "workerMs": 165.09999999962747,
+            "communicationMs": 1.6000000014901161
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 44.299999000003254,
+            "stepMs": 100.10000000149012,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0.2999999988824129,
+            "submitMs": 0.900000000372529,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1.300000000745058,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.532656
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 100.90000000037253,
+            "workerMs": 100.10000000149012,
+            "communicationMs": 0.7999999988824129
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 139.29999900000212,
+            "stepMs": 165.19999999925494,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1.199999999254942,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.901597
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 168.2000000011176,
+            "workerMs": 165.2999999988824,
+            "communicationMs": 2.900000002235174
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 75.10000100000269,
+            "stepMs": 90.59999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.599999999627471,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 44.142102
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 93.40000000037253,
+            "workerMs": 90.59999999962747,
+            "communicationMs": 2.800000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 94.50000000000358,
+            "stepMs": 121.59999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.764367
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 122.80000000074506,
+            "workerMs": 121.59999999962747,
+            "communicationMs": 1.200000001117587
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 60.700001000000725,
+            "stepMs": 75.39999999850988,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.10000000149011612,
+            "batchMs": 0,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.8000000007450581,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.960236
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 79.80000000074506,
+            "workerMs": 75.39999999850988,
+            "communicationMs": 4.400000002235174
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 39.60000000000008,
+            "stepMs": 59.899999998509884,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0.19999999925494194,
+            "submitMs": 0.10000000149011612,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.299999998882413,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.481597
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 89.80000000074506,
+            "workerMs": 59.899999998509884,
+            "communicationMs": 29.900000002235174
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 96.4000000000027,
+            "stepMs": 145.09999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.7000000011175871,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 40.808314
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 146.30000000074506,
+            "workerMs": 145.19999999925494,
+            "communicationMs": 1.1000000014901161
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 29.000000000003467,
+            "stepMs": 40.29999999888241,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.6999999992549419,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 7.43528
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 41.30000000074506,
+            "workerMs": 40.29999999888241,
+            "communicationMs": 1.0000000018626451
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 74.59999999999667,
+            "stepMs": 94.29999999888241,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2999999988824129,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 4,
+            "triangles": 5360,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1,
+            "capacity": 256,
+            "visible": 200,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 39.460326
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 95.30000000074506,
+            "workerMs": 94.29999999888241,
+            "communicationMs": 1.0000000018626451
+          }
+        }
+      ],
+      "presentation": {
+        "live": 200,
+        "pool": 0,
+        "fps": 43.447023616982726,
+        "frameCost": {
+          "animateMs": 0.09999999962747097,
+          "batchMs": 0,
+          "submitMs": 0.2000000011175871,
+          "drawCalls": 4,
+          "triangles": 5360,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 0.8000000007450581,
+          "capacity": 256,
+          "visible": 200,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 7.923533
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 32.29999999888241,
+          "workerMs": 4.300000000745058,
+          "communicationMs": 27.999999998137355
+        },
+        "reassignMs": 0,
+        "reassignments": 200
+      },
+      "heapBytes": 15994269,
+      "workerMemory": {
+        "wasmLinearMemoryBytes": 36306944
+      },
+      "inputMs": [
+        96.20000000111759,
+        2.699999999254942,
+        9.599999999627471,
+        78.80000000074506,
+        17
+      ],
+      "saveRestoreEqual": true,
+      "paused": {
+        "speed": 20,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "browserPssBytes": 585385984
+    },
+    {
+      "count": 500,
+      "grid": 32,
+      "areaFactor": 1,
+      "speed": 100,
+      "initialPopulation": 500,
+      "finalPopulation": 500,
+      "days": 100,
+      "elapsed": 15.057299999998882,
+      "fps": 21.916279811123143,
+      "daysPerSecond": 6.641296912461558,
+      "samples": [
+        {
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.19999999925494194,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 3,
+            "triangles": 4038,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.8000000007450581,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 11.407426
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 8.099999999627471,
+            "workerMs": 7.400000000372529,
+            "communicationMs": 0.6999999992549419
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 90.00000000000341,
+            "stepMs": 110.70000000111759,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.19999999925494194,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1.199999999254942,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 20.967004
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 112.40000000037253,
+            "workerMs": 110.70000000111759,
+            "communicationMs": 1.699999999254942
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 95.99999999998943,
+            "stepMs": 125.80000000074506,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0.19999999925494194,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.599999999627471,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 24.336558
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 127.69999999925494,
+            "workerMs": 125.80000000074506,
+            "communicationMs": 1.8999999985098839
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 41.499999999999204,
+            "stepMs": 67.19999999925494,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.40000000037252903,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.6999999992549419,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 45.064537
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 82.70000000111759,
+            "workerMs": 67.19999999925494,
+            "communicationMs": 15.500000001862645
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 85.3000000000037,
+            "stepMs": 142.09999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0.30000000074505806,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.6999999992549419,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 17.175816
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 144.90000000037253,
+            "workerMs": 142.09999999962747,
+            "communicationMs": 2.800000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 102.19999900000687,
+            "stepMs": 135,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0.2000000011175871,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 17.991644
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 150.80000000074506,
+            "workerMs": 135,
+            "communicationMs": 15.800000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 105.79999899999848,
+            "stepMs": 172.59999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 24.798322
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 175.90000000037253,
+            "workerMs": 172.59999999962747,
+            "communicationMs": 3.300000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 150.6000000000114,
+            "stepMs": 218.10000000149012,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 2.200000001117587,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.599999999627471,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 18.220794
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 224.40000000037253,
+            "workerMs": 218.2000000011176,
+            "communicationMs": 6.199999999254942
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 50.59999899999923,
+            "stepMs": 69.59999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1.099999999627471,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 13.99369
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 101.30000000074506,
+            "workerMs": 69.59999999962747,
+            "communicationMs": 31.700000001117587
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 71.10000000000127,
+            "stepMs": 108.79999999888241,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 0.7000000011175871,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 13.340211
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 110.5,
+            "workerMs": 108.79999999888241,
+            "communicationMs": 1.700000001117587
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 42.69999899999277,
+            "stepMs": 60.20000000111759,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0.10000000149011612,
+            "submitMs": 0.5,
+            "drawCalls": 4,
+            "triangles": 5960,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 1.099999999627471,
+            "capacity": 512,
+            "visible": 500,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 36.979724
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 61.90000000037253,
+            "workerMs": 60.20000000111759,
+            "communicationMs": 1.699999999254942
+          }
+        }
+      ],
+      "presentation": {
+        "live": 500,
+        "pool": 0,
+        "fps": 42.430767354423246,
+        "frameCost": {
+          "animateMs": 0.19999999925494194,
+          "batchMs": 0.09999999962747097,
+          "submitMs": 0.2000000011175871,
+          "drawCalls": 4,
+          "triangles": 5960,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 0.8000000007450581,
+          "capacity": 512,
+          "visible": 500,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 16.508916
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 117.29999999888241,
+          "workerMs": 9.599999999627471,
+          "communicationMs": 107.69999999925494
+        },
+        "reassignMs": 0.5,
+        "reassignments": 500
+      },
+      "heapBytes": 34046832,
+      "workerMemory": {
+        "wasmLinearMemoryBytes": 43581440
+      },
+      "inputMs": [
+        1,
+        4,
+        60.40000000037253,
+        41.30000000074506,
+        25.5
+      ],
+      "saveRestoreEqual": true,
+      "paused": {
+        "speed": 100,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "browserPssBytes": 643620864
+    },
+    {
+      "count": 500,
+      "grid": 64,
+      "areaFactor": 4,
+      "speed": 100,
+      "initialPopulation": 500,
+      "finalPopulation": 500,
+      "days": 98,
+      "elapsed": 15.015099999999627,
+      "fps": 28.77103715593041,
+      "daysPerSecond": 6.526763058521251,
+      "samples": [
+        {
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0.10000000149011612,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 3,
+            "triangles": 10316,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.5,
+            "capacity": 512,
+            "visible": 55,
+            "geometries": 3,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 4.368754
+          },
+          "transport": {
+            "command": "state",
+            "roundTripMs": 21.40000000037253,
+            "workerMs": 17.40000000037253,
+            "communicationMs": 4
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 98.39999900000862,
+            "stepMs": 132.7000000011176,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 18254,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.400000000372529,
+            "capacity": 512,
+            "visible": 55,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.272204
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 134.5,
+            "workerMs": 132.7000000011176,
+            "communicationMs": 1.799999998882413
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 305.2999979999953,
+            "stepMs": 383.7999999988824,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 18248,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.5,
+            "capacity": 512,
+            "visible": 52,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 6.857936
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 387.7000000011176,
+            "workerMs": 383.7999999988824,
+            "communicationMs": 3.900000002235174
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 80.50000000000068,
+            "stepMs": 151.40000000037253,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0,
+            "submitMs": 0.2999999988824129,
+            "drawCalls": 4,
+            "triangles": 18244,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.5,
+            "capacity": 512,
+            "visible": 50,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 6.782074
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 153.40000000037253,
+            "workerMs": 151.40000000037253,
+            "communicationMs": 2
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 109.70000100000732,
+            "stepMs": 176.40000000037253,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 4,
+            "triangles": 18242,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 5.899999998509884,
+            "capacity": 512,
+            "visible": 49,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 8.723231
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 177.90000000037253,
+            "workerMs": 176.40000000037253,
+            "communicationMs": 1.5
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 166.00000000001103,
+            "stepMs": 210.90000000037253,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 18258,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 3.199999999254942,
+            "capacity": 512,
+            "visible": 57,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.044588
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 214.2000000011176,
+            "workerMs": 210.90000000037253,
+            "communicationMs": 3.300000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 81.59999999999457,
+            "stepMs": 115.09999999962747,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.2000000011175871,
+            "batchMs": 0,
+            "submitMs": 0.40000000037252903,
+            "drawCalls": 4,
+            "triangles": 18248,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 3.699999999254942,
+            "capacity": 512,
+            "visible": 52,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.765073
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 117.60000000149012,
+            "workerMs": 115.09999999962747,
+            "communicationMs": 2.500000001862645
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 286.49999999998954,
+            "stepMs": 356.7000000011176,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 3,
+            "triangles": 10310,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.200000001117587,
+            "capacity": 512,
+            "visible": 52,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 6.655114
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 358.90000000037253,
+            "workerMs": 356.7000000011176,
+            "communicationMs": 2.199999999254942
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 132.29999899999711,
+            "stepMs": 207.69999999925494,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 18230,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.300000000745058,
+            "capacity": 512,
+            "visible": 43,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 12.062107
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 209.7999999988824,
+            "workerMs": 207.69999999925494,
+            "communicationMs": 2.099999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 182.80000100000393,
+            "stepMs": 216.69999999925494,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.2999999988824129,
+            "batchMs": 0,
+            "submitMs": 0.2000000011175871,
+            "drawCalls": 4,
+            "triangles": 18228,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 3,
+            "capacity": 512,
+            "visible": 42,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 41.671249
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 219,
+            "workerMs": 216.69999999925494,
+            "communicationMs": 2.300000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 352.5000009999957,
+            "stepMs": 386.90000000037253,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.09999999962747097,
+            "drawCalls": 4,
+            "triangles": 18242,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 3.699999999254942,
+            "capacity": 512,
+            "visible": 49,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 13.232107
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 389.2000000011176,
+            "workerMs": 386.90000000037253,
+            "communicationMs": 2.300000000745058
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 107.20000100000959,
+            "stepMs": 136.30000000074506,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.19999999925494194,
+            "batchMs": 0,
+            "submitMs": 0.40000000037252903,
+            "drawCalls": 4,
+            "triangles": 18234,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.199999999254942,
+            "capacity": 512,
+            "visible": 45,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 9.088151
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 138.90000000037253,
+            "workerMs": 136.30000000074506,
+            "communicationMs": 2.599999999627471
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 254.40000199999702,
+            "stepMs": 289.40000000037253,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.2999999988824129,
+            "batchMs": 0,
+            "submitMs": 0.6000000014901161,
+            "drawCalls": 4,
+            "triangles": 18256,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.5,
+            "capacity": 512,
+            "visible": 56,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 38.673923
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 291.7999999988824,
+            "workerMs": 289.5,
+            "communicationMs": 2.299999998882413
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 117.60000000001014,
+            "stepMs": 189.5,
+            "days": 2
+          },
+          "render": {
+            "animateMs": 0.09999999962747097,
+            "batchMs": 0.09999999962747097,
+            "submitMs": 0.19999999925494194,
+            "drawCalls": 4,
+            "triangles": 18250,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 3.799999998882413,
+            "capacity": 512,
+            "visible": 53,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 45.372921
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 191.90000000037253,
+            "workerMs": 189.5,
+            "communicationMs": 2.400000000372529
+          }
+        },
+        {
+          "timing": {
+            "simulationMs": 172.20000100000732,
+            "stepMs": 253.5,
+            "days": 1
+          },
+          "render": {
+            "animateMs": 0.30000000074505806,
+            "batchMs": 0,
+            "submitMs": 0.30000000074505806,
+            "drawCalls": 4,
+            "triangles": 18260,
+            "pixelRatio": 0.25,
+            "terrainUpdateMs": 2.299999998882413,
+            "capacity": 512,
+            "visible": 58,
+            "geometries": 4,
+            "textures": 1,
+            "gpuTimerSupported": true,
+            "gpuMs": 39.038553
+          },
+          "transport": {
+            "command": "step",
+            "roundTripMs": 255.2000000011176,
+            "workerMs": 253.5,
+            "communicationMs": 1.700000001117587
+          }
+        }
+      ],
+      "presentation": {
+        "live": 500,
+        "pool": 0,
+        "fps": 38.762824619670965,
+        "frameCost": {
+          "animateMs": 0.19999999925494194,
+          "batchMs": 0,
+          "submitMs": 0.09999999962747097,
+          "drawCalls": 4,
+          "triangles": 18230,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 7,
+          "capacity": 512,
+          "visible": 43,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 19.566861
+        },
+        "missingAssets": [],
+        "renderPool": 0,
+        "communication": {
+          "command": "hash",
+          "roundTripMs": 82.59999999962747,
+          "workerMs": 13.199999999254942,
+          "communicationMs": 69.40000000037253
+        },
+        "reassignMs": 0.19999999925494194,
+        "reassignments": 500
+      },
+      "heapBytes": 41718299,
+      "workerMemory": {
+        "wasmLinearMemoryBytes": 52297728
+      },
+      "inputMs": [
+        1.200000001117587,
+        13.799999998882413,
+        76.20000000111759,
+        19.40000000037253,
+        10.399999998509884
+      ],
+      "saveRestoreEqual": true,
+      "paused": {
+        "speed": 100,
+        "running": false,
+        "switching": false,
+        "pendingDays": 0
+      },
+      "browserPssBytes": 716934144
+    }
+  ],
+  "churn": [
+    {
+      "presentation": {
+        "live": 50,
+        "pool": 50,
+        "fps": 48.980486798664465,
+        "frameCost": {
+          "animateMs": 0.2000000011175871,
+          "batchMs": 0,
+          "submitMs": 0.09999999962747097,
+          "drawCalls": 4,
+          "triangles": 18154,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 2.900000000372529,
+          "capacity": 512,
+          "visible": 5,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 9.478818
+        },
+        "missingAssets": [],
+        "renderPool": 50,
+        "communication": {
+          "command": "memory",
+          "roundTripMs": 0.2999999988824129,
+          "workerMs": 0,
+          "communicationMs": 0.2999999988824129
+        },
+        "reassignMs": 0,
+        "reassignments": 23050
+      },
+      "heapBytes": 8492352
+    },
+    {
+      "presentation": {
+        "live": 50,
+        "pool": 50,
+        "fps": 52.401925283364115,
+        "frameCost": {
+          "animateMs": 0.10000000149011612,
+          "batchMs": 0,
+          "submitMs": 0.19999999925494194,
+          "drawCalls": 4,
+          "triangles": 18154,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 2.400000000372529,
+          "capacity": 512,
+          "visible": 5,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 6.362339
+        },
+        "missingAssets": [],
+        "renderPool": 50,
+        "communication": {
+          "command": "memory",
+          "roundTripMs": 0.2999999988824129,
+          "workerMs": 0,
+          "communicationMs": 0.2999999988824129
+        },
+        "reassignMs": 0,
+        "reassignments": 45550
+      },
+      "heapBytes": 8197728
+    },
+    {
+      "presentation": {
+        "live": 50,
+        "pool": 50,
+        "fps": 48.058046179447764,
+        "frameCost": {
+          "animateMs": 0.09999999962747097,
+          "batchMs": 0,
+          "submitMs": 0.09999999962747097,
+          "drawCalls": 4,
+          "triangles": 18154,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 6.5,
+          "capacity": 512,
+          "visible": 5,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 42.650683
+        },
+        "missingAssets": [],
+        "renderPool": 50,
+        "communication": {
+          "command": "memory",
+          "roundTripMs": 0.2999999988824129,
+          "workerMs": 0,
+          "communicationMs": 0.2999999988824129
+        },
+        "reassignMs": 0.10000000149011612,
+        "reassignments": 68050
+      },
+      "heapBytes": 8158140
+    },
+    {
+      "presentation": {
+        "live": 50,
+        "pool": 50,
+        "fps": 52.93018237109616,
+        "frameCost": {
+          "animateMs": 0.09999999962747097,
+          "batchMs": 0,
+          "submitMs": 0.2000000011175871,
+          "drawCalls": 4,
+          "triangles": 18154,
+          "pixelRatio": 0.25,
+          "terrainUpdateMs": 2.199999999254942,
+          "capacity": 512,
+          "visible": 5,
+          "geometries": 4,
+          "textures": 1,
+          "gpuTimerSupported": true,
+          "gpuMs": 39.715181
+        },
+        "missingAssets": [],
+        "renderPool": 50,
+        "communication": {
+          "command": "memory",
+          "roundTripMs": 0.2999999988824129,
+          "workerMs": 0,
+          "communicationMs": 0.2999999988824129
+        },
+        "reassignMs": 0,
+        "reassignments": 90550
+      },
+      "heapBytes": 8178224
+    }
+  ],
+  "fatal": []
+}
